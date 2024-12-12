@@ -18,6 +18,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # コンテナ起動時に実行するコマンド（例: main.pyの実行）
-CMD ["python3", "discordbot.py"]
+CMD ["python3.12", "discordbot.py"]
 
 ENV DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
