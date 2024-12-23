@@ -17,6 +17,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # プロジェクトのソースコードをコンテナにコピー
 COPY . .
 
+EXPOSE 8080
+
 # コンテナ起動時に実行するコマンド（例: main.pyの実行）
 CMD ["python3.12", "discordbot.py"]
 
