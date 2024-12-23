@@ -9,11 +9,7 @@ import secrets
 from dotenv import load_dotenv
 
 
-# .envファイルを読み込む
-load_dotenv()
 
-# 環境変数からトークンを取得
-TOKEN = "MTIzNjI4Nzk5ODEyODAzMzkxNA.G67EE2.xfFG-OZ1vubhJJnhIu5KFaSxxVReLj0H-DVVrE"
 
 intents = discord.Intents.default()
 intents.members = True # メンバー管理の権限
