@@ -21,11 +21,7 @@ first_time_action()
 
 
 
-# .envファイルを読み込む
-load_dotenv()
-
-# 環境変数からトークンを取得
-TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 
 intents = discord.Intents.default()
 intents.members = True # メンバー管理の権限
