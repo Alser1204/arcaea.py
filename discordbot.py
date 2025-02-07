@@ -22,7 +22,8 @@ first_time_action()
 
 
 TOKEN = os.environ["DISCORD_BOT_TOKEN"]
-print(f"Token: {token[:10]}... (truncated)")
+print(f"Token: {TOKEN[:10]}... (truncated)")
+
 
 intents = discord.Intents.default()
 intents.members = True # メンバー管理の権限
