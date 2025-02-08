@@ -47,7 +47,7 @@ bot = commands.Bot(
 async def on_ready():
     print(f'ログインしました: {bot.user}')
     channel = bot.get_channel(1320752464374530139)
-    await channel.send("ログインしました")
+    #await channel.send("ログインしました")
 
 @bot.command()
 async def setDefault(ctx, DefaultDivision: float):
