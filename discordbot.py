@@ -24,7 +24,7 @@ load_dotenv(verbose=True)
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
-TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+TOKEN = os.getenv("DISCORD_TOKEN")
 print(TOKEN)
 
 
