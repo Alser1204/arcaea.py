@@ -43,12 +43,16 @@ async def on_ready():
     print(f'ログインしました: {bot.user}')
 
 @bot.command(aliases=["dman"])
-async def deeman(ctx, bad:str):
+async def deeman(ctx, bad:str="deeman"):
     await ctx.send("deemanはカス")
 
 @bot.command(aliases=["frtk"])
-async def frtkshop(ctx, bad:str):
+async def frtkshop(ctx, bad:str="frtkshop"):
     await ctx.send("ふらつきショップはカス")
+
+@bot.command()
+async def alser(ctx, bad:str="alser"):
+    await ctx.send("Alserはカス")
 
 @bot.command()
 async def setDefaultGuessc(ctx, DefaultDivision: float):
