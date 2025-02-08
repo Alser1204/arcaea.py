@@ -43,7 +43,7 @@ async def on_ready():
     print(f'ログインしました: {bot.user}')
 
 @bot.command(aliases=["Deeman"])
-async def deeman(ctx, bad:string):
+async def deeman(ctx, bad:str):
     await ctx.send("Deemanはカス")
 
 @bot.command()
