@@ -16,8 +16,10 @@ has_run = False
 def first_time_action():
     global has_run
     if not has_run:
-        global Default
-        Default = 6
+        global DefaultG
+        DefaultG = 6
+        global DefaultM
+        DefaultM = 6
         has_run = True
 
 first_time_action()
@@ -50,15 +52,26 @@ async def on_ready():
     #await channel.send("ログインしました")
 
 @bot.command()
-async def setDefault(ctx, DefaultDivision: float):
-    global Default
+async def setDefaultGuessc(ctx, DefaultDivision: float):
+    global DefaultG
     # 入力値を検証
     if DefaultDivision < 1 or DefaultDivision > 20:
         await ctx.send("エラー: 分割数は1以上20以下の値を指定してください。")
         return
     
-    Default = DefaultDivision
-    await ctx.send(f"デフォルトの分割数を {Default} に設定しました。")
+    DefaultG = DefaultDivision
+    await ctx.send(f"デフォルトの分割数を {DefaultG} に設定しました。")
+
+@bot.command()
+async def setDefaultMosaic(ctx, DefaultMosaic: int):
+    global DefaultM
+    # 入力値を検証
+    if DefaultMosaic < 5 or DefaultMosaic > 500:
+        await ctx.send("エラー: 分割数は5以上50以下の値を指定してください。")
+        return
+    
+    DefaultM = DefaultMosaic
+    await ctx.send(f"デフォルトの分割数を {DefaultM} に設定しました。")
 
 @bot.command(aliases=["p"])
 async def potential(ctx: commands.context, const: float, score: float) -> None:
@@ -102,7 +115,14 @@ def is_acronym(input_str, answer_str):
 # モザイク処理の追加
 @bot.command(aliases=["m"])
 async def mosaic(ctx, block_size: int = 80):
+    global DefaultM
+    if DefaultM is not None:
+        block_size = DefaultM
     try:
+        if block_size < 5 or block_size > 500:
+            await ctx.send("分割数は5以上500以下の数にしてください。")
+            return
+
         # 画像の選択
         image_files = [f for f in os.listdir(IMAGE_DIR) if f.endswith(('png', 'jpg', 'jpeg', 'gif'))]
         if not image_files:
@@ -168,9 +188,9 @@ async def mosaic(ctx, block_size: int = 80):
 
 @bot.command(aliases=["g"])
 async def guessc(ctx, n: float = 6):
-    global Default
-    if Default is not None:
-        n = Default
+    global DefaultG
+    if DefaultG is not None:
+        n = DefaultG
     try:
         # nが1以上の数であることを確認
         if n < 1 or n > 20:
