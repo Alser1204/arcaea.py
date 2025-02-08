@@ -1,26 +1,22 @@
 from discord.ext import commands
 import discord
-from PIL import Image
 import os
 from os.path import join, dirname
 import random
-import io
-import asyncio
 import secrets
 from dotenv import load_dotenv
 import numpy as np
-import matplotlib.pyplot as plt
+from PIL import Image
+import asyncio
 
-has_run = False
+# サーバーごとのデフォルト設定を保持する辞書
+server_settings = {}
 
 def first_time_action():
-    global has_run
-    if not has_run:
-        global DefaultG
-        DefaultG = 6
-        global DefaultM
-        DefaultM = 6
-        has_run = True
+    global server_settings
+    if not server_settings:
+        # 初期設定（例: 全サーバーにデフォルトの設定を追加）
+        server_settings = {}
 
 first_time_action()
 
@@ -29,49 +25,58 @@ dotenv_path = join(dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 
 TOKEN = os.getenv("DISCORD_TOKEN")
-print(TOKEN)
-
 
 intents = discord.Intents.default()
-intents.members = True # メンバー管理の権限
-intents.message_content = True # メッセージの内容を取得する権限
+intents.members = True  # メンバー管理の権限
+intents.message_content = True  # メッセージの内容を取得する権限
 
 IMAGE_DIR = './images'
 
-
 bot = commands.Bot(
-    command_prefix="!", # $コマンド名　でコマンドを実行できるようになる
-    case_insensitive=True, # 大文字小文字を区別しない ($hello も $Hello も同じ!)
-    intents=intents # 権限を設定
+    command_prefix="!",
+    case_insensitive=True,
+    intents=intents
 )
 
 @bot.event
 async def on_ready():
     print(f'ログインしました: {bot.user}')
-    channel = bot.get_channel(1320752464374530139)
-    #await channel.send("ログインしました")
 
 @bot.command()
 async def setDefaultGuessc(ctx, DefaultDivision: float):
-    global DefaultG
+    """サーバーごとにDefaultGを設定"""
+    server_id = str(ctx.guild.id)
+    
+    # サーバーがまだ設定されていない場合、初期設定を追加
+    if server_id not in server_settings:
+        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
+    
     # 入力値を検証
     if DefaultDivision < 1 or DefaultDivision > 20:
         await ctx.send("エラー: 分割数は1以上20以下の値を指定してください。")
         return
     
-    DefaultG = DefaultDivision
-    await ctx.send(f"デフォルトの分割数を {DefaultG} に設定しました。")
+    # サーバーごとの設定を更新
+    server_settings[server_id]['DefaultG'] = DefaultDivision
+    await ctx.send(f"サーバーのデフォルト分割数を {DefaultDivision} に設定しました。")
 
 @bot.command()
 async def setDefaultMosaic(ctx, DefaultMosaic: int):
-    global DefaultM
+    """サーバーごとにDefaultMを設定"""
+    server_id = str(ctx.guild.id)
+    
+    # サーバーがまだ設定されていない場合、初期設定を追加
+    if server_id not in server_settings:
+        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
+    
     # 入力値を検証
     if DefaultMosaic < 5 or DefaultMosaic > 500:
-        await ctx.send("エラー: 分割数は5以上50以下の値を指定してください。")
+        await ctx.send("エラー: 分割数は5以上500以下の値を指定してください。")
         return
     
-    DefaultM = DefaultMosaic
-    await ctx.send(f"デフォルトの分割数を {DefaultM} に設定しました。")
+    # サーバーごとの設定を更新
+    server_settings[server_id]['DefaultM'] = DefaultMosaic
+    await ctx.send(f"サーバーのデフォルトモザイク分割数を {DefaultMosaic} に設定しました。")
 
 @bot.command(aliases=["p"])
 async def potential(ctx: commands.context, const: float, score: float) -> None:
@@ -115,7 +120,13 @@ def is_acronym(input_str, answer_str):
 # モザイク処理の追加
 @bot.command(aliases=["m"])
 async def mosaic(ctx, block_size: int = 80):
-    global DefaultM
+    await ctx.send("こっちはローカル")
+    server_id = str(ctx.guild.id)
+    
+    # サーバーのデフォルト設定を参照
+    if server_id not in server_settings:
+        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
+    DefaultM = server_settings[server_id]['DefaultM']
     if DefaultM is not None:
         block_size = DefaultM
     try:
@@ -188,9 +199,14 @@ async def mosaic(ctx, block_size: int = 80):
 
 @bot.command(aliases=["g"])
 async def guessc(ctx, n: float = 6):
-    global DefaultG
+    server_id = str(ctx.guild.id)
+    
+    # サーバーのデフォルト設定を参照
+    if server_id not in server_settings:
+        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
+    DefaultG = server_settings[server_id]['DefaultG']
     if DefaultG is not None:
-        n = DefaultG
+        block_size = DefaultG
     try:
         # nが1以上の数であることを確認
         if n < 1 or n > 20:
