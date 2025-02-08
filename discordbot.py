@@ -8,6 +8,8 @@ import io
 import asyncio
 import secrets
 from dotenv import load_dotenv
+import numpy as np
+import matplotlib.pyplot as plt
 
 has_run = False
 
