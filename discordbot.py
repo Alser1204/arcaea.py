@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 from PIL import Image
 import os
+from os.path import join, dirname
 import random
 import io
 import asyncio
