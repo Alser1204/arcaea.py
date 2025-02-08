@@ -31,6 +31,7 @@ intents.members = True  # メンバー管理の権限
 intents.message_content = True  # メッセージの内容を取得する権限
 
 IMAGE_DIR = './images'
+YAJU_DIR = './yaju'
 
 bot = commands.Bot(
     command_prefix="!",
@@ -131,16 +132,19 @@ def is_acronym(input_str, answer_str):
 
 # モザイク処理の追加
 @bot.command(aliases=["m"])
-async def mosaic(ctx, block_size: int = 80):
-    await ctx.send("こっちはローカル")
+async def mosaic(ctx, block_size: int = None ,yaju: str='null'):
     server_id = str(ctx.guild.id)
     
     # サーバーのデフォルト設定を参照
     if server_id not in server_settings:
         server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
     DefaultM = server_settings[server_id]['DefaultM']
-    if DefaultM is not None:
-        block_size = DefaultM
+    # block_sizeが指定されていなければデフォルト値を使用
+    if block_size is None:
+        if DefaultM is not None:
+            block_size = DefaultM
+        else:
+            block_size = 80  # デフォルトの値をここに設定（もしデフォルト値がない場合）
     try:
         if block_size < 5 or block_size > 500:
             await ctx.send("分割数は5以上500以下の数にしてください。")
@@ -154,6 +158,14 @@ async def mosaic(ctx, block_size: int = 80):
 
         random_image = secrets.choice(image_files)
         image_path = os.path.join(IMAGE_DIR, random_image)
+
+        if(yaju=='yaju'):
+            image_files = [f for f in os.listdir(YAJU_DIR) if f.endswith(('png', 'jpg', 'jpeg', 'gif'))]
+            if not image_files:
+                await ctx.send("画像が見つかりません。")
+                return
+            random_image = secrets.choice(image_files)
+            image_path = os.path.join(YAJU_DIR, random_image)
 
         # 画像の読み込み
         img = Image.open(image_path)
@@ -217,8 +229,12 @@ async def guessc(ctx, n: float = 6):
     if server_id not in server_settings:
         server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
     DefaultG = server_settings[server_id]['DefaultG']
-    if DefaultG is not None:
-        block_size = DefaultG
+    # block_sizeが指定されていなければデフォルト値を使用
+    if n is None:
+        if DefaultG is not None:
+            n = DefaultG
+        else:
+            n = 6  # デフォルトの値をここに設定（もしデフォルト値がない場合）
     try:
         # nが1以上の数であることを確認
         if n < 1 or n > 20:
