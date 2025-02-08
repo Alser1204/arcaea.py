@@ -101,7 +101,7 @@ def is_acronym(input_str, answer_str):
 
 # モザイク処理の追加
 @bot.command(aliases=["m"])
-async def mosaic(ctx, block_size: int = 5):
+async def mosaic(ctx, block_size: int = 80):
     try:
         # 画像の選択
         image_files = [f for f in os.listdir(IMAGE_DIR) if f.endswith(('png', 'jpg', 'jpeg', 'gif'))]
