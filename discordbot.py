@@ -44,7 +44,7 @@ async def on_ready():
 
 @bot.command(aliases=["dman"])
 async def deeman(ctx, bad:str):
-    await ctx.send("Deemanはカス")
+    await ctx.send("deemanはカス")
 
 @bot.command()
 async def setDefaultGuessc(ctx, DefaultDivision: float):
