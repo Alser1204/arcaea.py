@@ -46,6 +46,10 @@ async def on_ready():
 async def deeman(ctx, bad:str):
     await ctx.send("deemanはカス")
 
+@bot.command(aliases=["frtk"])
+async def frtkshop(ctx, bad:str):
+    await ctx.send("ふらつきショップはカス")
+
 @bot.command()
 async def setDefaultGuessc(ctx, DefaultDivision: float):
     """サーバーごとにDefaultGを設定"""
