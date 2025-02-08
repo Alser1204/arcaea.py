@@ -42,6 +42,10 @@ bot = commands.Bot(
 async def on_ready():
     print(f'ログインしました: {bot.user}')
 
+@bot.command(aliases=["Deeman"])
+async def deeman(ctx, bad:string):
+    await ctx.send("Deemanはカス")
+
 @bot.command()
 async def setDefaultGuessc(ctx, DefaultDivision: float):
     """サーバーごとにDefaultGを設定"""
