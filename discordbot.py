@@ -97,6 +97,72 @@ def is_acronym(input_str, answer_str):
     acronym = ''.join(word[0] for word in answer_str.split() if word)
     return input_str.lower() == acronym.lower()
 
+# モザイク処理の追加
+@bot.command(aliases=["m"])
+async def mosaic(ctx, block_size: int = 5):
+    try:
+        # 画像の選択
+        image_files = [f for f in os.listdir(IMAGE_DIR) if f.endswith(('png', 'jpg', 'jpeg', 'gif'))]
+        if not image_files:
+            await ctx.send("画像が見つかりません。")
+            return
+
+        random_image = secrets.choice(image_files)
+        image_path = os.path.join(IMAGE_DIR, random_image)
+
+        # 画像の読み込み
+        img = Image.open(image_path)
+        img_width, img_height = img.size
+        img_array = np.array(img)
+
+        # モザイク処理
+        for y in range(0, img_height, block_size):
+            for x in range(0, img_width, block_size):
+                block = img_array[y:y + block_size, x:x + block_size]
+                avg_color = np.mean(block, axis=(0, 1)).astype(int)
+                img_array[y:y + block_size, x:x + block_size] = avg_color
+
+        # モザイク画像を保存
+        mosaic_img = Image.fromarray(img_array)
+        temp_image_path = 'temp_image.png'
+        mosaic_img.save(temp_image_path)
+
+        # モザイク画像を送信
+        sent_message = await ctx.send(file=discord.File(temp_image_path))
+        
+        # ファイル削除前に送信したメッセージに関連するファイルパスを保持
+        os.remove(temp_image_path)
+
+        def check(m):
+            return m.channel == ctx.channel and m.reference is not None and m.reference.message_id == sent_message.id
+
+        start_time = asyncio.get_event_loop().time()
+        FRAG = 1
+
+        while asyncio.get_event_loop().time() - start_time < 30:
+            try:
+                response = await asyncio.wait_for(bot.wait_for('message', check=check), timeout=30.0)
+                if (response.content.lower() == os.path.splitext(random_image)[0].lower()) or (len(response.content) >= 3 and response.content.lower() in os.path.splitext(random_image)[0].lower()) or (len(response.content) >= 3 and is_acronym(response.content, os.path.splitext(random_image)[0])):
+                    await response.reply("正解です！")
+                    FRAG = 0
+                    break
+                elif (response.content.lower() == ("!s" or "!skip")):
+                    break
+                else:
+                    await response.reply("残念！もう一度お試しください。")
+            except asyncio.TimeoutError:
+                continue
+
+        if FRAG:
+            await ctx.send("時間切れです！")
+        await ctx.send(f"正解は `{os.path.splitext(random_image)[0]}` でした！")
+        await ctx.send(file=discord.File(image_path))
+
+    except Exception as e:
+        await ctx.send(f"エラーが発生しました: {e}")
+
+
+
 
 @bot.command(aliases=["g"])
 async def guessc(ctx, n: float = 6):
