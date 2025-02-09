@@ -61,7 +61,7 @@ async def debug(ctx, query: str):
         await ctx.send("画像ディレクトリが存在しません。")
         return
     
-    matched_files = [f for f in os.listdir(IMAGE_DIR) if query in f]
+    matched_files = [f for f in os.listdir(IMAGE_DIR) if query.lower() in f.lower()]
     
     if not matched_files:
         await ctx.send("該当する画像が見つかりませんでした。")
