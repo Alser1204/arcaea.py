@@ -57,19 +57,18 @@ async def alser(ctx, bad:str="alser"):
 
 @bot.command()
 async def debug(ctx, query: str):
-    image_dir = "image"  # 画像ディレクトリ
-    if not os.path.exists(image_dir):
+    if not os.path.exists(IMAGE_DIR):
         await ctx.send("画像ディレクトリが存在しません。")
         return
     
-    matched_files = [f for f in os.listdir(image_dir) if query in f]
+    matched_files = [f for f in os.listdir(IMAGE_DIR) if query in f]
     
     if not matched_files:
         await ctx.send("該当する画像が見つかりませんでした。")
         return
     
     for file in matched_files:
-        file_path = os.path.join(image_dir, file)
+        file_path = os.path.join(IMAGE_DIR, file)
         await ctx.send(f"ファイル名: {file}", file=discord.File(file_path))
 
 @bot.command()
