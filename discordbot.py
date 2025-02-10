@@ -56,20 +56,23 @@ async def alser(ctx, bad:str="alser"):
     await ctx.send("Alserはカス")
 
 @bot.command()
-async def debug(ctx, query: str):
-    if not os.path.exists(IMAGE_DIR):
-        await ctx.send("画像ディレクトリが存在しません。")
+async def debug(ctx, directory: str, query: str):
+    # 指定されたディレクトリの存在を確認
+    if not os.path.exists(directory) or not os.path.isdir(directory):
+        await ctx.send("指定されたディレクトリが存在しません。")
         return
     
-    matched_files = [f for f in os.listdir(IMAGE_DIR) if query.lower() in f.lower()]
+    # 指定ディレクトリ内のファイルを検索
+    matched_files = [f for f in os.listdir(directory) if query.lower() in f.lower()]
     
     if not matched_files:
         await ctx.send("該当する画像が見つかりませんでした。")
         return
     
     for file in matched_files:
-        file_path = os.path.join(IMAGE_DIR, file)
-        await ctx.send(f"ファイル名: {file}", file=discord.File(file_path))
+        file_path = os.path.join(directory, file)
+        if os.path.isfile(file_path):  # ファイルであることを確認
+            await ctx.send(f"ファイル名: {file}", file=discord.File(file_path))
 
 @bot.command()
 async def setDefaultGuessc(ctx, DefaultDivision: float):
