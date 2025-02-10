@@ -55,6 +55,13 @@ async def frtkshop(ctx, bad:str="frtkshop"):
 async def alser(ctx, bad:str="alser"):
     await ctx.send("Alserはカス")
 
+responses = ["共用の…強要！", "アルターエゴ楽しすぎる", "末代まで祟ってやる", "生きててごめんなさい…", "今キンタマに篭城してます", "ピュピュピュピュピュピュ ピュ〜〜〜〜〜〜〜〜", "おじさんを、持参！", "イクーーーーッ！！！", "おやふら"]
+
+@bot.command()
+async def dmeigen(ctx):
+    response = random.choice(responses)
+    await ctx.send(response)
+
 @bot.command()
 async def debug(ctx, directory: str, query: str):
     # 指定されたディレクトリの存在を確認
