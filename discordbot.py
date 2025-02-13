@@ -374,6 +374,9 @@ async def blue(ctx, x:int,y:int):
     if(turn==1):
         await ctx.send("今は赤のターンです。")
         return
+    if(chance==0):
+        await ctx.send("まずは値をセットしてください")
+        return
     try:
         font = ImageFont.truetype("meiryo.ttc", 40)
     except:
@@ -446,6 +449,9 @@ async def red(ctx, y:int,x:int):
     if(turn==0):
         await ctx.send("今は青のターンです。")
         return
+    if(chance==0):
+        await ctx.send("まずは値をセットしてください")
+        return
     try:
         font = ImageFont.truetype("meiryo.ttc", 40)
     except:
@@ -486,6 +492,7 @@ async def red(ctx, y:int,x:int):
     if(chance==0 and turn==1):
         await ctx.send("チャンスを使い切りました。")
         await ctx.send("次は青のターンです。")
+        turn=0
         return
     if(redcount==8 or bluecount==9 or turn==2 or turn==3):
         command = bot.get_command("finish")
@@ -494,6 +501,8 @@ async def red(ctx, y:int,x:int):
 @bot.command()
 async def next(ctx):
     global FLAG,turn
+    global FLAGS
+    FLAGS=0
     if(FLAG==1):
         return
     if(turn==0):
@@ -506,6 +515,8 @@ async def next(ctx):
 @bot.command()
 async def set(ctx, vain:str, n:int):
     global FLAG
+    global FLAGS
+    FLAGS=0
     if(FLAG==1):
         return
     global chance,chancenum
@@ -537,7 +548,6 @@ async def finish(ctx):
         await ctx.send("赤の勝利です！")
     else:
         await ctx.send("強制終了")
-    FLAGS=1
     FLAG=0
     global imgleader
     global imgleader_buffer
@@ -558,12 +568,33 @@ async def finish(ctx):
     await ctx.invoke(command)
 
 @bot.command()
+async def leaderdisplay(ctx):
+    global FLAG,FLAGS
+    global imgleader
+    global imgleader_buffer
+    if(FLAGS==1):
+        return
+
+    # img が更新されていない場合はエラーメッセージを返す
+    if imgleader is None or imgleader_buffer is None:
+        await ctx.send("画像が正しく描画されていません。")
+        return
+
+    # バッファに画像を保存
+    imgleader_buffer = io.BytesIO()
+    imgleader.save(imgleader_buffer, format="PNG")
+    imgleader_buffer.seek(0)  # バッファを最初に戻す
+
+    # Discord に送信
+    await ctx.author.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
+
+@bot.command()
 async def display(ctx):
     global FLAG,FLAGS
-    if(FLAG==1 or FLAGS==0):
-        return
     global img
     global img_buffer
+    if(FLAGS==1):
+        return
 
     # img が更新されていない場合はエラーメッセージを返す
     if img is None or img_buffer is None:
@@ -577,7 +608,7 @@ async def display(ctx):
 
     # Discord に送信
     await ctx.send(file=discord.File(img_buffer, "output.png"))
-    FLAGS=0
+    FLAGS=1
 
 @bot.command()
 async def codename(ctx):
@@ -594,7 +625,7 @@ async def codename(ctx):
 
     # フォント設定
     try:
-        font = ImageFont.truetype("meiryo.ttc", 40)
+        font = ImageFont.truetype("meiryo.ttc", 20)
     except:
         font = ImageFont.load_default()
 
