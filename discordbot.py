@@ -349,7 +349,12 @@ FLAGS=0
 allowed_numbers=[]
 
 @bot.command()
-async def blue(ctx, x:int,y:int):
+async def blue(ctx, target:str):
+    global position,color
+    for i, row in enumerate(position):
+        for j, value in enumerate(row):
+            if value == target:
+                x,y= i,j  # (x, y) のタプルで返す
     global FLAG,FLAGS
     FLAGS=0
     if(FLAG==1):
@@ -358,7 +363,6 @@ async def blue(ctx, x:int,y:int):
     global rootnum
     global bluecount,redcount
     global turn
-    global position,color
     if(x<1 or x>rootnum or y<1 or y>rootnum):
         await ctx.send("座標は1~"+str(rootnum)+"の値を入力してください")
         return
@@ -428,7 +432,12 @@ async def blue(ctx, x:int,y:int):
         await ctx.invoke(command)
 
 @bot.command()
-async def red(ctx, y:int,x:int):
+async def red(ctx, target:str):
+    global position,color
+    for i, row in enumerate(position):
+        for j, value in enumerate(row):
+            if value == target:
+                x,y= i,j  # (x, y) のタプルで返す
     global FLAG,FLAGS
     FLAGS=0
     if(FLAG==1):
@@ -580,6 +589,8 @@ async def leaderdisplay(ctx):
     global FLAG,FLAGS
     global imgleader
     global imgleader_buffer
+    if(FLAG==1):
+        return
     if(FLAGS==1):
         return
 
@@ -601,6 +612,8 @@ async def display(ctx):
     global FLAG,FLAGS
     global img
     global img_buffer
+    if(FLAG==1):
+        return
     if(FLAGS==1):
         return
 
