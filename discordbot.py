@@ -647,16 +647,8 @@ async def display(ctx):
     
 @bot.command()
 async def codename_help(ctx):
-    await ctx.send("このゲームは、青チームと赤チームに分かれ、リーダーのヒントをもとに自チームの単語と思うものを当てていくゲームです。")
-    await ctx.send("!codename:ゲーム開始")
-    await ctx.send("!display:現在の状況を表示")
-    await ctx.send("!ldisplay:リーダー用の画像をDMにて表示")
-    await ctx.send("!set [ヒントの単語] [数]:リーダーがヒントの単語と数をセット")
-    await ctx.send("!blue [単語]:青チームが青色だと思う単語を宣言")
-    await ctx.send("!red [単語]:赤チームが赤色だと思う単語を宣言")
-    await ctx.send("!next:ターンをスキップ")
-    await ctx.send("!finish:ゲームを終了")
-
+    await ctx.send("このゲームは、青チームと赤チームに分かれ、リーダーのヒントをもとに自チームの単語と思うものを当てていくゲームです。\n!codename:ゲーム開始\n!display:現在の状況を表示\n!ldisplay:リーダー用の画像をDMにて表示\n!set [ヒントの単語] [数]:リーダーがヒントの単語と数をセット\n!blue [単語]:青チームが青色だと思う単語を宣言\n!red [単語]:赤チームが赤色だと思う単語を宣言\n!next:ターンをスキップ\n!finish:ゲームを終了")
+    
 @bot.command()
 async def codename(ctx):
     global position
