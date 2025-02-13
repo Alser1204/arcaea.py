@@ -555,6 +555,9 @@ async def finish(ctx):
     global imgleader
     global img_buffer
     global imgleader_buffer
+    global once
+    if(once==1):
+        return
     if(FLAG==1):
         return
     global bluecount,redcount
@@ -580,6 +583,7 @@ async def finish(ctx):
     if imgleader is None or imgleader_buffer is None:
         await ctx.send("画像が正しく描画されていません。")
         return
+    once=1
 
     # バッファに画像を保存
     imgleader_buffer = io.BytesIO()
@@ -598,9 +602,6 @@ async def ldisplay(ctx):
     global FLAG,FLAGS
     global imgleader
     global imgleader_buffer
-    global once
-    if(once==1):
-        return
     if(FLAG==1):
         return
     if(FLAGS==1):
@@ -619,7 +620,6 @@ async def ldisplay(ctx):
     # Discord に送信
     await ctx.author.send("あなたはリーダーです。\nキーワードを考えチームを勝利へと導きましょう！")
     await ctx.author.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
-    once=1
 
 @bot.command()
 async def display(ctx):
