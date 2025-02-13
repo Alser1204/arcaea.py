@@ -351,10 +351,16 @@ allowed_numbers=[]
 @bot.command()
 async def blue(ctx, target:str):
     global position,color
+    x, y = None, None
     for i, row in enumerate(position):
         for j, value in enumerate(row):
             if value == target:
-                x,y= i,j  # (x, y) のタプルで返す
+                y, x = i, j  # (x, y) のタプルで返す
+
+    # `target` が見つからなかった場合
+    if x is None or y is None:
+        await ctx.send(f"{target} は見つかりませんでした。")
+        return
     global FLAG,FLAGS
     FLAGS=0
     if(FLAG==1):
@@ -366,8 +372,6 @@ async def blue(ctx, target:str):
     if(x<1 or x>rootnum or y<1 or y>rootnum):
         await ctx.send("座標は1~"+str(rootnum)+"の値を入力してください")
         return
-    x-=1
-    y-=1
     global chance
     global img
     draw = ImageDraw.Draw(img)
@@ -434,10 +438,16 @@ async def blue(ctx, target:str):
 @bot.command()
 async def red(ctx, target:str):
     global position,color
+    x, y = None, None
     for i, row in enumerate(position):
         for j, value in enumerate(row):
             if value == target:
-                x,y= i,j  # (x, y) のタプルで返す
+                y, x = i, j  # (x, y) のタプルで返す
+
+    # `target` が見つからなかった場合
+    if x is None or y is None:
+        await ctx.send(f"{target} は見つかりませんでした。")
+        return
     global FLAG,FLAGS
     FLAGS=0
     if(FLAG==1):
@@ -447,8 +457,6 @@ async def red(ctx, target:str):
     if(x<1 or x>rootnum or y<1 or y>rootnum):
         await ctx.send("座標は1~"+str(rootnum)+"の値を入力してください")
         return
-    x-=1
-    y-=1
     global bluecount,redcount
     global chance
     global img
