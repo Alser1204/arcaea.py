@@ -647,7 +647,7 @@ async def display(ctx):
     
 @bot.command()
 async def help(ctx):
-    await ctx.send("このゲームは、青チームと赤チームに分かれ、リーダーのヒントをもとに自チームの単語と思うものを当てていくゲームです。)
+    await ctx.send("このゲームは、青チームと赤チームに分かれ、リーダーのヒントをもとに自チームの単語と思うものを当てていくゲームです。")
     await ctx.send("!codename:ゲーム開始")
     await ctx.send("!display:現在の状況を表示")
     await ctx.send("!ldisplay:リーダー用の画像をDMにて表示")
