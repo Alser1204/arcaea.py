@@ -550,6 +550,7 @@ async def finish(ctx):
     global img_buffer
     global imgleader_buffer
     global once
+    FLAG=1
     if(once==1):
         return
     if(FLAG==1):
@@ -652,7 +653,18 @@ async def codename(ctx):
     global rootnum
     global num
     global once
+    global turn,chance,chancenum,redcount,bluecount,allowed_numbers
     once=0
+    rootnum = 5
+    num = rootnum ** 2
+    position = [["" for _ in range(rootnum)] for _ in range(rootnum)]
+    color = [["" for _ in range(rootnum)] for _ in range(rootnum)]
+    turn=0
+    chance=0
+    chancenum=0
+    redcount=0
+    bluecount=0
+    allowed_numbers=[]
     imgleader = Image.new("RGB", (800, 600), "white")
     img = Image.new("RGB", (800, 600), "white")
     drawleader = ImageDraw.Draw(imgleader)
