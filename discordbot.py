@@ -6,8 +6,10 @@ import random
 import secrets
 from dotenv import load_dotenv
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import asyncio
+import io
+import math
 
 # サーバーごとのデフォルト設定を保持する辞書
 server_settings = {}
@@ -328,6 +330,344 @@ async def guessc(ctx, n: float = 6):
 
     except Exception as e:
         await ctx.send(f"エラーが発生しました: {e}")
+
+rootnum = 5
+num = rootnum ** 2
+position = [["" for _ in range(rootnum)] for _ in range(rootnum)]
+color = [["" for _ in range(rootnum)] for _ in range(rootnum)]
+turn=0
+img = None
+img_buffer = None
+imgleader = None
+imgleader_buffer = None
+chance=0
+chancenum=0
+redcount=0
+bluecount=0
+FLAG=1
+FLAGS=0
+allowed_numbers=[]
+
+@bot.command()
+async def blue(ctx, x:int,y:int):
+    global FLAG,FLAGS
+    FLAGS=0
+    if(FLAG==1):
+        return
+    global allowed_numbers
+    global rootnum
+    global bluecount,redcount
+    global turn
+    global position,color
+    if(x<1 or x>rootnum or y<1 or y>rootnum):
+        await ctx.send("座標は1~"+str(rootnum)+"の値を入力してください")
+        return
+    x-=1
+    y-=1
+    global chance
+    global img
+    draw = ImageDraw.Draw(img)
+    if 10*x+y in allowed_numbers:
+        await ctx.send("すでに選ばれました。")
+        return
+    #await ctx.send("チャンスは"+str(chance)+"回あります。")
+    if(turn==1):
+        await ctx.send("今は赤のターンです。")
+        return
+    try:
+        font = ImageFont.truetype("meiryo.ttc", 40)
+    except:
+        font = ImageFont.load_default()
+    await ctx.send(position[y][x]+"は……？")
+    await asyncio.sleep(0.3)
+    x0, y0 = 20 + x * 160, 20 + y * 120
+    x1, y1 = x0 + 120, y0 + 80
+    if(color[y][x]=="blue"):
+        draw.rectangle([x0, y0, x1, y1], fill="blue", outline="black", width=1)
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        await ctx.send("正解！"+position[y][x]+"は青色です。")
+        if(chance-1!=0):
+            await ctx.send("チャンスはあと"+str(chance-1)+"回あります。")
+        allowed_numbers.append(10*x+y)
+        bluecount+=1
+    elif(color[y][x]=="red"):
+        draw.rectangle([x0, y0, x1, y1], fill="red", outline="black", width=1)
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        turn=1
+        await ctx.send("はずれ！"+position[y][x]+"は赤色です。")
+        await ctx.send("次は赤のターンです。")
+        allowed_numbers.append(10*x+y)
+        redcount+=1
+    elif(color[y][x]=="gray"):
+        draw.rectangle([x0, y0, x1, y1], fill="gray", outline="black", width=1)
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        await ctx.send("はずれ！"+position[y][x]+"は灰色です。")
+        await ctx.send("次は赤のターンです。")
+        turn=1
+        allowed_numbers.append(10*x+y)
+    elif(color[y][x]=="black"):
+        draw.rectangle([x0, y0, x1, y1], fill="black", outline="black", width=1)
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        await ctx.send("残念！"+position[y][x]+"は黒色です！")
+        turn=2
+    chance-=1
+    if(chance==0 and turn==0):
+        await ctx.send("チャンスを使い切りました。")
+        await ctx.send("次は赤のターンです。")
+        turn=1
+        return
+    if(redcount==8 or bluecount==9 or turn==2 or turn==3):
+        command = bot.get_command("finish")
+        await ctx.invoke(command)
+
+@bot.command()
+async def red(ctx, y:int,x:int):
+    global FLAG,FLAGS
+    FLAGS=0
+    if(FLAG==1):
+        return
+    global allowed_numbers
+    global rootnum
+    if(x<1 or x>rootnum or y<1 or y>rootnum):
+        await ctx.send("座標は1~"+str(rootnum)+"の値を入力してください")
+        return
+    x-=1
+    y-=1
+    global bluecount,redcount
+    global chance
+    global img
+    global turn
+    global position,color
+    draw = ImageDraw.Draw(img)
+    if 10*x+y in allowed_numbers:
+        await ctx.send("すでに選ばれました。")
+        return
+    #await ctx.send("チャンスは"+str(chance)+"回あります。")
+    if(turn==0):
+        await ctx.send("今は青のターンです。")
+        return
+    try:
+        font = ImageFont.truetype("meiryo.ttc", 40)
+    except:
+        font = ImageFont.load_default()
+    await ctx.send(position[y][x]+"は……？")
+    await asyncio.sleep(0.3)
+    x0, y0 = 20 + x * 160, 20 + y * 120
+    x1, y1 = x0 + 120, y0 + 80
+    if(color[y][x]=="blue"):
+        draw.rectangle([x0, y0, x1, y1], fill="blue", outline="black", width=1)
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        turn=0
+        await ctx.send("はずれ！"+position[y][x]+"は青色です。")
+        await ctx.send("次は青のターンです。")
+        allowed_numbers.append(10*x+y)
+        bluecount+=1
+    elif(color[y][x]=="red"):
+        draw.rectangle([x0, y0, x1, y1], fill="red", outline="black", width=1)
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        await ctx.send("正解！"+position[y][x]+"は赤色です。")
+        if(chance-1!=0):
+            await ctx.send("チャンスはあと"+str(chance-1)+"回あります。")
+        allowed_numbers.append(10*x+y)
+        redcount+=1
+    elif(color[y][x]=="gray"):
+        draw.rectangle([x0, y0, x1, y1], fill="gray", outline="black", width=1)
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        await ctx.send("はずれ！"+position[y][x]+"は灰色です。")
+        await ctx.send("次は青のターンです。")
+        turn=1
+        allowed_numbers.append(10*x+y)
+    elif(color[y][x]=="black"):
+        draw.rectangle([x0, y0, x1, y1], fill="black", outline="black", width=1)
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        await ctx.send("残念！"+position[y][x]+"は黒色です！")
+        turn=3
+    chance-=1
+    if(chance==0 and turn==1):
+        await ctx.send("チャンスを使い切りました。")
+        await ctx.send("次は青のターンです。")
+        return
+    if(redcount==8 or bluecount==9 or turn==2 or turn==3):
+        command = bot.get_command("finish")
+        await ctx.invoke(command)
+
+@bot.command()
+async def next(ctx):
+    global FLAG,turn
+    if(FLAG==1):
+        return
+    if(turn==0):
+        turn=1
+        await ctx.send("次は赤のターンです。")
+    elif(turn==1):
+        turn=0
+        await ctx.send("次は青のターンです。")
+
+@bot.command()
+async def set(ctx, vain:str, n:int):
+    global FLAG
+    if(FLAG==1):
+        return
+    global chance,chancenum
+    chance = n+1
+    chancenum = n+1
+    await ctx.send("チャンスは"+str(chance)+"回あります。")
+
+@bot.command()
+async def finish(ctx):
+    global FLAG,FLAGS
+    global img
+    global imgleader
+    global img_buffer
+    global imgleader_buffer
+    if(FLAG==1):
+        return
+    global bluecount,redcount
+    if(turn==2):
+        await ctx.send("青が黒カードを選択したので、赤の勝利です！")
+    elif(turn==3):
+        await ctx.send("赤が黒カードを選択したので、青の勝利です！")
+    elif(redcount<bluecount):
+        await ctx.send("青が取った枚数:"+str(bluecount))
+        await ctx.send("赤が取った枚数:"+str(redcount))
+        await ctx.send("青の勝利です！")
+    elif(redcount>bluecount):
+        await ctx.send("青が取った枚数:"+str(bluecount))
+        await ctx.send("赤が取った枚数:"+str(redcount))
+        await ctx.send("赤の勝利です！")
+    else:
+        await ctx.send("強制終了")
+    FLAGS=1
+    FLAG=0
+    global imgleader
+    global imgleader_buffer
+
+    # img が更新されていない場合はエラーメッセージを返す
+    if imgleader is None or imgleader_buffer is None:
+        await ctx.send("画像が正しく描画されていません。")
+        return
+
+    # バッファに画像を保存
+    imgleader_buffer = io.BytesIO()
+    imgleader.save(imgleader_buffer, format="PNG")
+    imgleader_buffer.seek(0)  # バッファを最初に戻す
+
+    # Discord に送信
+    await ctx.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
+    command = bot.get_command("display")
+    await ctx.invoke(command)
+
+@bot.command()
+async def display(ctx):
+    global FLAG,FLAGS
+    if(FLAG==1 or FLAGS==0):
+        return
+    global img
+    global img_buffer
+
+    # img が更新されていない場合はエラーメッセージを返す
+    if img is None or img_buffer is None:
+        await ctx.send("画像が正しく描画されていません。")
+        return
+
+    # バッファに画像を保存
+    img_buffer = io.BytesIO()
+    img.save(img_buffer, format="PNG")
+    img_buffer.seek(0)  # バッファを最初に戻す
+
+    # Discord に送信
+    await ctx.send(file=discord.File(img_buffer, "output.png"))
+    FLAGS=0
+
+@bot.command()
+async def codename(ctx):
+    global position
+    global color
+    global img
+    global imgleader
+    global rootnum
+    global num
+    imgleader = Image.new("RGB", (800, 600), "white")
+    img = Image.new("RGB", (800, 600), "white")
+    drawleader = ImageDraw.Draw(imgleader)
+    draw = ImageDraw.Draw(img)
+
+    # フォント設定
+    try:
+        font = ImageFont.truetype("meiryo.ttc", 40)
+    except:
+        font = ImageFont.load_default()
+
+    num_list = list(range(num))  # 0 から num-1 までのリスト
+
+    # 文字データの読み込み
+    try:
+        with open("data.txt", "r", encoding="utf-8") as file:
+            char_list = file.read().strip().split('\n')
+            print(char_list)
+    except FileNotFoundError:
+        char_list = ["文字"] * num  # ファイルがない場合、"文字" のリストを用意
+
+    def choose(lst):
+        chosen = random.choice(lst)
+        lst.remove(chosen)
+        return chosen
+
+    # マスを描画
+    for j in range(rootnum):
+        for i in range(rootnum):
+            randnum = choose(num_list)
+            randchar = random.choice(char_list)
+
+            x0, y0 = 20 + i * 160, 20 + j * 120
+            x1, y1 = x0 + 120, y0 + 80  # 幅120, 高さ80の矩形
+
+            # 色の割り当て
+            if randnum <= 8:
+                color[j][i] = "blue"
+            elif randnum <= 16:
+                color[j][i] = "red"
+            elif randnum <= 23:
+                color[j][i] = "gray"
+            elif randnum == 24:
+                color[j][i] = "black"
+            else:
+                color[j][i] = "white"
+
+            # 矩形を描画
+            drawleader.rectangle([x0, y0, x1, y1], fill=color[j][i], outline="black", width=1)
+            draw.rectangle([x0, y0, x1, y1], "white", outline="black", width=1)
+            # 文字を描画
+            drawleader.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="white" if color[j][i] != "white" else "black", font=font, anchor="mm")
+            draw.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="black" if color[j][i] != "white" else "black", font=font, anchor="mm")
+            position[j][i]=randchar
+    
+
+    global FLAG
+    global FLAGS
+    FLAG=0
+    FLAGS=0
+
+
+    # 画像をバッファに保存
+    global img_buffer
+    global imgleader_buffer
+    imgleader_buffer = io.BytesIO()
+    imgleader.save(imgleader_buffer, format="PNG")
+    imgleader_buffer.seek(0)
+    img_buffer = io.BytesIO()
+    img.save(img_buffer, format="PNG")
+    img_buffer.seek(0)
+
+    # Discord に送信
+    await ctx.send("最初は青のターンからです！")
+    #await ctx.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
+    try:
+        await ctx.author.send("あなたはリーダーです。\nキーワードを考えチームを勝利へと導きましょう！")
+        await ctx.author.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
+    except discord.Forbidden:
+        await ctx.send("ユーザーにDMを送信できませんでした。DMがブロックされている可能性があります。")
+    await ctx.send(file=discord.File(img_buffer, "output.png"))
 
 
 bot.run(TOKEN)
