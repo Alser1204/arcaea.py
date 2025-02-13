@@ -378,17 +378,18 @@ async def blue(ctx, x:int,y:int):
         await ctx.send("まずは値をセットしてください")
         return
     try:
-        font = ImageFont.truetype("meiryo.ttc", 40)
+        font = ImageFont.truetype("meiryo.ttc", 18)
     except:
         font = ImageFont.load_default()
     await ctx.send(position[y][x]+"は……？")
-    await asyncio.sleep(0.3)
+    await asyncio.sleep(0.8)
     x0, y0 = 20 + x * 160, 20 + y * 120
     x1, y1 = x0 + 120, y0 + 80
     if(color[y][x]=="blue"):
         draw.rectangle([x0, y0, x1, y1], fill="blue", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("正解！"+position[y][x]+"は青色です。")
+        await asyncio.sleep(0.8)
         if(chance-1!=0):
             await ctx.send("チャンスはあと"+str(chance-1)+"回あります。")
         allowed_numbers.append(10*x+y)
@@ -398,6 +399,7 @@ async def blue(ctx, x:int,y:int):
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         turn=1
         await ctx.send("はずれ！"+position[y][x]+"は赤色です。")
+        await asyncio.sleep(0.8)
         await ctx.send("次は赤のターンです。")
         allowed_numbers.append(10*x+y)
         redcount+=1
@@ -405,6 +407,7 @@ async def blue(ctx, x:int,y:int):
         draw.rectangle([x0, y0, x1, y1], fill="gray", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("はずれ！"+position[y][x]+"は灰色です。")
+        await asyncio.sleep(0.8)
         await ctx.send("次は赤のターンです。")
         turn=1
         allowed_numbers.append(10*x+y)
@@ -412,6 +415,7 @@ async def blue(ctx, x:int,y:int):
         draw.rectangle([x0, y0, x1, y1], fill="black", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("残念！"+position[y][x]+"は黒色です！")
+        await asyncio.sleep(0.8)
         turn=2
     chance-=1
     if(chance==0 and turn==0):
@@ -453,11 +457,11 @@ async def red(ctx, y:int,x:int):
         await ctx.send("まずは値をセットしてください")
         return
     try:
-        font = ImageFont.truetype("meiryo.ttc", 40)
+        font = ImageFont.truetype("meiryo.ttc", 18)
     except:
         font = ImageFont.load_default()
     await ctx.send(position[y][x]+"は……？")
-    await asyncio.sleep(0.3)
+    await asyncio.sleep(0.8)
     x0, y0 = 20 + x * 160, 20 + y * 120
     x1, y1 = x0 + 120, y0 + 80
     if(color[y][x]=="blue"):
@@ -465,6 +469,7 @@ async def red(ctx, y:int,x:int):
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         turn=0
         await ctx.send("はずれ！"+position[y][x]+"は青色です。")
+        await asyncio.sleep(0.8)
         await ctx.send("次は青のターンです。")
         allowed_numbers.append(10*x+y)
         bluecount+=1
@@ -472,6 +477,7 @@ async def red(ctx, y:int,x:int):
         draw.rectangle([x0, y0, x1, y1], fill="red", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("正解！"+position[y][x]+"は赤色です。")
+        await asyncio.sleep(0.8)
         if(chance-1!=0):
             await ctx.send("チャンスはあと"+str(chance-1)+"回あります。")
         allowed_numbers.append(10*x+y)
@@ -480,6 +486,7 @@ async def red(ctx, y:int,x:int):
         draw.rectangle([x0, y0, x1, y1], fill="gray", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("はずれ！"+position[y][x]+"は灰色です。")
+        await asyncio.sleep(0.8)
         await ctx.send("次は青のターンです。")
         turn=1
         allowed_numbers.append(10*x+y)
@@ -487,6 +494,7 @@ async def red(ctx, y:int,x:int):
         draw.rectangle([x0, y0, x1, y1], fill="black", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("残念！"+position[y][x]+"は黒色です！")
+        await asyncio.sleep(0.8)
         turn=3
     chance-=1
     if(chance==0 and turn==1):
@@ -625,7 +633,7 @@ async def codename(ctx):
 
     # フォント設定
     try:
-        font = ImageFont.truetype("meiryo.ttc", 20)
+        font = ImageFont.truetype("meiryo.ttc", 18)
     except:
         font = ImageFont.load_default()
 
