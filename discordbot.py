@@ -676,7 +676,7 @@ async def codename(ctx):
     for j in range(rootnum):
         for i in range(rootnum):
             randnum = choose(num_list)
-            randchar = random.choice(char_list)
+            randchar = choose(char_list)
 
             x0, y0 = 20 + i * 160, 20 + j * 120
             x1, y1 = x0 + 120, y0 + 80  # 幅120, 高さ80の矩形
