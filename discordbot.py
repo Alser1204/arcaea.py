@@ -550,7 +550,6 @@ async def finish(ctx):
     global img_buffer
     global imgleader_buffer
     global once
-    FLAG=1
     if(once==1):
         return
     if(FLAG==1):
