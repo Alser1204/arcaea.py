@@ -453,7 +453,6 @@ async def red(ctx, target:str):
     global chance
     global img
     global turn
-    global position,color
     draw = ImageDraw.Draw(img)
     if 10*x+y in allowed_numbers:
         await ctx.send("すでに選ばれました。")
