@@ -591,11 +591,16 @@ async def finish(ctx):
     command = bot.get_command("display")
     await ctx.invoke(command)
 
+once=0
+
 @bot.command()
-async def leaderdisplay(ctx):
+async def ldisplay(ctx):
     global FLAG,FLAGS
     global imgleader
     global imgleader_buffer
+    global once
+    if(once==1):
+        return
     if(FLAG==1):
         return
     if(FLAGS==1):
@@ -612,7 +617,9 @@ async def leaderdisplay(ctx):
     imgleader_buffer.seek(0)  # バッファを最初に戻す
 
     # Discord に送信
+    await ctx.author.send("あなたはリーダーです。\nキーワードを考えチームを勝利へと導きましょう！")
     await ctx.author.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
+    once=1
 
 @bot.command()
 async def display(ctx):
@@ -646,6 +653,8 @@ async def codename(ctx):
     global imgleader
     global rootnum
     global num
+    global once
+    once=0
     imgleader = Image.new("RGB", (800, 600), "white")
     img = Image.new("RGB", (800, 600), "white")
     drawleader = ImageDraw.Draw(imgleader)
@@ -721,11 +730,6 @@ async def codename(ctx):
     # Discord に送信
     await ctx.send("最初は青のターンからです！")
     #await ctx.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
-    try:
-        await ctx.author.send("あなたはリーダーです。\nキーワードを考えチームを勝利へと導きましょう！")
-        await ctx.author.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
-    except discord.Forbidden:
-        await ctx.send("ユーザーにDMを送信できませんでした。DMがブロックされている可能性があります。")
     await ctx.send(file=discord.File(img_buffer, "output.png"))
 
 
