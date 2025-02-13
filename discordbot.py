@@ -369,9 +369,6 @@ async def blue(ctx, target:str):
     global rootnum
     global bluecount,redcount
     global turn
-    if(x<1 or x>rootnum or y<1 or y>rootnum):
-        await ctx.send("座標は1~"+str(rootnum)+"の値を入力してください")
-        return
     global chance
     global img
     draw = ImageDraw.Draw(img)
@@ -454,9 +451,6 @@ async def red(ctx, target:str):
         return
     global allowed_numbers
     global rootnum
-    if(x<1 or x>rootnum or y<1 or y>rootnum):
-        await ctx.send("座標は1~"+str(rootnum)+"の値を入力してください")
-        return
     global bluecount,redcount
     global chance
     global img
