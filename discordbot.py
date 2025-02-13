@@ -644,6 +644,18 @@ async def display(ctx):
     # Discord に送信
     await ctx.send(file=discord.File(img_buffer, "output.png"))
     FLAGS=1
+    
+@bot.command()
+async def help(ctx):
+    await ctx.send("このゲームは、青チームと赤チームに分かれ、リーダーのヒントをもとに自チームの単語と思うものを当てていくゲームです。)
+    await ctx.send("!codename:ゲーム開始")
+    await ctx.send("!display:現在の状況を表示")
+    await ctx.send("!ldisplay:リーダー用の画像をDMにて表示")
+    await ctx.send("!set [ヒントの単語] [数]:リーダーがヒントの単語と数をセット")
+    await ctx.send("!blue [単語]:青チームが青色だと思う単語を宣言")
+    await ctx.send("!red [単語]:赤チームが赤色だと思う単語を宣言")
+    await ctx.send("!next:ターンをスキップ")
+    await ctx.send("!finish:ゲームを終了")
 
 @bot.command()
 async def codename(ctx):
