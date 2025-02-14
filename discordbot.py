@@ -498,7 +498,7 @@ async def red(ctx, target:str):
         await ctx.send("はずれ！"+position[y][x]+"は灰色です。")
         await asyncio.sleep(0.8)
         await ctx.send("次は青のターンです。")
-        turn=1
+        turn=0
         allowed_numbers.append(10*x+y)
     elif(color[y][x]=="black"):
         draw.rectangle([x0, y0, x1, y1], fill="black", outline="black", width=1)
@@ -621,8 +621,6 @@ async def display(ctx):
     global img
     global img_buffer
     if(FLAG==1):
-        return
-    if(FLAGS==1):
         return
 
     # img が更新されていない場合はエラーメッセージを返す
