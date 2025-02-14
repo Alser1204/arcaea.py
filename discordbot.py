@@ -639,8 +639,91 @@ async def display(ctx):
     
 @bot.command()
 async def codename_help(ctx):
-    await ctx.send("このゲームは、青チームと赤チームに分かれ、リーダーのヒントをもとに自チームの単語と思うものを当てていくゲームです。\n!codename:ゲーム開始\n!display:現在の状況を表示\n!ldisplay:リーダー用の画像をDMにて表示\n!set [ヒントの単語] [数]:リーダーがヒントの単語と数をセット\n!blue [単語]:青チームが青色だと思う単語を宣言\n!red [単語]:赤チームが赤色だと思う単語を宣言\n!next:ターンをスキップ\n!finish:ゲームを終了")
+    await ctx.send("このゲームは、青チームと赤チームに分かれ、リーダーのヒントをもとに自チームの単語だと思うものを当てていくゲームです。\n!codename:ゲーム開始\n!bmember(もしくはrmember) [任意の数の名前] (-l or -d):チームへのメンバーの追加。引数-lをつけると先頭の引数をリーダーに、-dをつけると引数のメンバーを削除。特にゲーム内容に関係は無い。\n!display:現在の状況を表示\n!ldisplay:リーダー用の画像をDMにて表示\n!set [ヒントの単語] [数]:リーダーがヒントの単語と数をセット\n!blue [単語]:青チームが青色だと思う単語を宣言\n!red [単語]:赤チームが赤色だと思う単語を宣言\n!next:ターンをスキップ\n!finish:ゲームを終了")
     
+rmember_list=[]
+bmember_list=[]
+
+@bot.command()
+async def bmember(ctx, *args):
+    global FLAG
+    if(FLAG==1):
+        return
+    global bmember_list
+    deleted_list=[]
+    added_list=[]
+
+    args = list(args)
+    if(args[-1]=="-l"):
+        args.remove("-l")
+        if(args[0] in bmember_list):
+            bmember_list.remove(args[0])
+        if args:  # argsが空でないかを確認
+            bmember_list.insert(0, args[0])  # args[0]をbmember_listの最初に追加
+        else:
+            await ctx.send("エラー: -lオプションの前にメンバー名が必要です。")
+            return
+        await ctx.send("青チームのリーダーは"+args[0]+"さんです。")
+    elif(args[-1]=="-d"):
+        args.remove("-d")
+        if not args:  # argsが空の場合、削除対象がないためエラーメッセージを返す
+            await ctx.send("エラー: -dオプションの前に削除するメンバー名が必要です。")
+            return
+        for name in args:
+            if name in bmember_list:
+                bmember_list.remove(name)
+                deleted_list.append(name)
+        await ctx.send("青チーム削除メンバー:"+",".join(deleted_list))
+    else:
+        for name in args:
+            bmember_list.append(name)
+            added_list.append(name)
+        await ctx.send("青チーム追加メンバー:"+",".join(added_list))
+
+@bot.command()
+async def rmember(ctx, *args):
+    global FLAG
+    if(FLAG==1):
+        return
+    global bmember_list
+    deleted_list=[]
+    added_list=[]
+
+    args = list(args)
+    if(args[-1]=="-l"):
+        args.remove("-l")
+        if(args[0] in rmember_list):
+            rmember_list.remove(args[0])
+        if args:  # argsが空でないかを確認
+            rmember_list.insert(0, args[0])  # args[0]をrmember_listの最初に追加
+        else:
+            await ctx.send("エラー: -lオプションの前にメンバー名が必要です。")
+            return
+        await ctx.send("赤チームのリーダーは"+args[0]+"さんです。")
+    elif(args[-1]=="-d"):
+        args.remove("-d")
+        if not args:  # argsが空の場合、削除対象がないためエラーメッセージを返す
+            await ctx.send("エラー: -dオプションの前に削除するメンバー名が必要です。")
+            return
+        for name in args:
+            if name in bmember_list:
+                rmember_list.remove(name)
+                deleted_list.append(name)
+        await ctx.send("赤チーム削除メンバー:"+",".join(deleted_list))
+    else:
+        for name in args:
+            rmember_list.append(name)
+            added_list.append(name)
+        await ctx.send("赤チーム追加メンバー:"+",".join(added_list))
+
+@bot.command()
+async def member(ctx):
+    global rmember_list,bmember_list
+    if rmember_list or bmember_list:
+        await ctx.send("**青チームメンバーリスト:**\nLeader:" + "\n".join(bmember_list)+"\n\n**赤チームメンバーリスト:**\nLeader:" + "\n".join(rmember_list))
+    else:
+        await ctx.send("リストは空です！")
+
 @bot.command()
 async def codename(ctx):
     global position
@@ -651,6 +734,9 @@ async def codename(ctx):
     global num
     global once
     global turn,chance,chancenum,redcount,bluecount,allowed_numbers
+    global rmember_list,bmember_list
+    rmember_list=[]
+    bmember_list=[]
     once=0
     rootnum = 5
     num = rootnum ** 2
