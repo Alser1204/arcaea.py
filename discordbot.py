@@ -347,6 +347,7 @@ bluecount=0
 FLAG=1
 FLAGS=0
 allowed_numbers=[]
+log_list=[]
 
 @bot.command()
 async def blue(ctx, target:str):
@@ -371,6 +372,7 @@ async def blue(ctx, target:str):
     global turn
     global chance
     global img
+    global log_list
     draw = ImageDraw.Draw(img)
     if 10*x+y in allowed_numbers:
         await ctx.send("すでに選ばれました。")
@@ -394,6 +396,7 @@ async def blue(ctx, target:str):
         draw.rectangle([x0, y0, x1, y1], fill="blue", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("正解！"+position[y][x]+"は青色です。")
+        log_list.append("  !blue "+target+" 青")
         await asyncio.sleep(0.8)
         if(chance-1!=0):
             await ctx.send("チャンスはあと"+str(chance-1)+"回あります。")
@@ -404,6 +407,7 @@ async def blue(ctx, target:str):
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         turn=1
         await ctx.send("はずれ！"+position[y][x]+"は赤色です。")
+        log_list.append("  !blue "+target+" 赤")
         await asyncio.sleep(0.8)
         await ctx.send("次は赤のターンです。")
         allowed_numbers.append(10*x+y)
@@ -412,6 +416,7 @@ async def blue(ctx, target:str):
         draw.rectangle([x0, y0, x1, y1], fill="gray", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("はずれ！"+position[y][x]+"は灰色です。")
+        log_list.append("  !blue "+target+" 灰")
         await asyncio.sleep(0.8)
         await ctx.send("次は赤のターンです。")
         turn=1
@@ -420,6 +425,7 @@ async def blue(ctx, target:str):
         draw.rectangle([x0, y0, x1, y1], fill="black", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("残念！"+position[y][x]+"は黒色です！")
+        log_list.append("  !blue "+target+" 黒")
         await asyncio.sleep(0.8)
         turn=2
     chance-=1
@@ -455,6 +461,7 @@ async def red(ctx, target:str):
     global chance
     global img
     global turn
+    global log_list
     draw = ImageDraw.Draw(img)
     if 10*x+y in allowed_numbers:
         await ctx.send("すでに選ばれました。")
@@ -470,6 +477,7 @@ async def red(ctx, target:str):
         font = ImageFont.truetype("meiryo.ttc", 18)
     except:
         font = ImageFont.load_default()
+    log_list.append("  !red"+target)
     await ctx.send(position[y][x]+"は……？")
     await asyncio.sleep(0.8)
     x0, y0 = 20 + x * 160, 20 + y * 120
@@ -479,6 +487,7 @@ async def red(ctx, target:str):
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         turn=0
         await ctx.send("はずれ！"+position[y][x]+"は青色です。")
+        log_list.append("  !red "+target+" 青")
         await asyncio.sleep(0.8)
         await ctx.send("次は青のターンです。")
         allowed_numbers.append(10*x+y)
@@ -487,6 +496,7 @@ async def red(ctx, target:str):
         draw.rectangle([x0, y0, x1, y1], fill="red", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("正解！"+position[y][x]+"は赤色です。")
+        log_list.append("  !red "+target+" 赤")
         await asyncio.sleep(0.8)
         if(chance-1!=0):
             await ctx.send("チャンスはあと"+str(chance-1)+"回あります。")
@@ -496,6 +506,7 @@ async def red(ctx, target:str):
         draw.rectangle([x0, y0, x1, y1], fill="gray", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("はずれ！"+position[y][x]+"は灰色です。")
+        log_list.append("  !red "+target+" 灰")
         await asyncio.sleep(0.8)
         await ctx.send("次は青のターンです。")
         turn=0
@@ -504,6 +515,7 @@ async def red(ctx, target:str):
         draw.rectangle([x0, y0, x1, y1], fill="black", outline="black", width=1)
         draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
         await ctx.send("残念！"+position[y][x]+"は黒色です！")
+        log_list.append("  !red "+target+" 黒")
         await asyncio.sleep(0.8)
         turn=3
     chance-=1
@@ -515,6 +527,11 @@ async def red(ctx, target:str):
     if(redcount==8 or bluecount==9 or turn==2 or turn==3):
         command = bot.get_command("finish")
         await ctx.invoke(command)
+
+@bot.command()
+async def logs(ctx):
+    global log_list
+    await ctx.send("\n".join(log_list))
 
 @bot.command()
 async def next(ctx):
@@ -537,6 +554,7 @@ async def set(ctx, vain:str, n:int):
     FLAGS=0
     if(FLAG==1):
         return
+    log_list.append("!set "+vain+" "+str(n))
     global chance,chancenum
     chance = n+1
     chancenum = n+1
@@ -639,7 +657,7 @@ async def display(ctx):
     
 @bot.command()
 async def codename_help(ctx):
-    await ctx.send("このゲームは、青チームと赤チームに分かれ、リーダーのヒントをもとに自チームの単語だと思うものを当てていくゲームです。\n!codename:ゲーム開始\n!bmember(もしくはrmember) [任意の数の名前] (-l or -d):チームへのメンバーの追加。引数-lをつけると先頭の引数をリーダーに、-dをつけると引数のメンバーを削除。特にゲーム内容に関係は無い。\n!display:現在の状況を表示\n!ldisplay:リーダー用の画像をDMにて表示\n!set [ヒントの単語] [数]:リーダーがヒントの単語と数をセット\n!blue [単語]:青チームが青色だと思う単語を宣言\n!red [単語]:赤チームが赤色だと思う単語を宣言\n!next:ターンをスキップ\n!finish:ゲームを終了")
+    await ctx.send("このゲームは、青チームと赤チームに分かれ、リーダーのヒントをもとに自チームの単語だと思うものを当てていくゲームです。\n!codename:ゲーム開始\n!bmember(もしくはrmember) [任意の数の名前] (-l or -d):チームへのメンバーの追加。引数-lをつけると先頭の引数をリーダーに、-dをつけると引数のメンバーを削除。特にゲーム内容に関係は無い。\n!member:現在のメンバーを表示\n!display:現在の状況を表示\n!ldisplay:リーダー用の画像をDMにて表示\n!set [ヒントの単語] [数]:リーダーがヒントの単語と数をセット\n!blue [単語]:青チームが青色だと思う単語を宣言\n!red [単語]:赤チームが赤色だと思う単語を宣言\n!next:ターンをスキップ\n!finish:ゲームを終了")
     
 rmember_list=[]
 bmember_list=[]
@@ -734,9 +752,10 @@ async def codename(ctx):
     global num
     global once
     global turn,chance,chancenum,redcount,bluecount,allowed_numbers
-    global rmember_list,bmember_list
+    global rmember_list,bmember_list,log_list
     rmember_list=[]
     bmember_list=[]
+    log_list=[]
     once=0
     rootnum = 5
     num = rootnum ** 2
