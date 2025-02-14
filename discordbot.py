@@ -559,11 +559,11 @@ async def finish(ctx):
         await ctx.send("青が黒カードを選択したので、赤の勝利です！")
     elif(turn==3):
         await ctx.send("赤が黒カードを選択したので、青の勝利です！")
-    elif(redcount<bluecount):
+    elif(bluecount==9):
         await ctx.send("青が取った枚数:"+str(bluecount))
         await ctx.send("赤が取った枚数:"+str(redcount))
         await ctx.send("青の勝利です！")
-    elif(redcount>bluecount):
+    elif(redcount==8):
         await ctx.send("青が取った枚数:"+str(bluecount))
         await ctx.send("赤が取った枚数:"+str(redcount))
         await ctx.send("赤の勝利です！")
