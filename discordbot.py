@@ -742,7 +742,7 @@ async def member(ctx):
         await ctx.send("リストは空です！")
 
 @bot.command()
-async def codename(ctx):
+async def codename(ctx, genre:str="原神"):
     global position
     global color
     global img
@@ -779,9 +779,13 @@ async def codename(ctx):
 
     num_list = list(range(num))  # 0 から num-1 までのリスト
 
+    if(genre="原神"):
+        text_file="Genshin.txt"
+    elif(genre="学マス" or genre="学園アイドルマスター"):
+        text_file="GakuenIMAS.txt"
     # 文字データの読み込み
     try:
-        with open("data.txt", "r", encoding="utf-8") as file:
+        with open(text_file, "r", encoding="utf-8") as file:
             char_list = file.read().strip().split('\n')
             print(char_list)
     except FileNotFoundError:
