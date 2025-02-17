@@ -348,6 +348,7 @@ FLAG=1
 FLAGS=0
 allowed_numbers=[]
 log_list=[]
+font=[["" for _ in range(rootnum)] for _ in range(rootnum)]
 
 @bot.command()
 async def blue(ctx, target:str):
@@ -373,6 +374,7 @@ async def blue(ctx, target:str):
     global chance
     global img
     global log_list
+    global font
     draw = ImageDraw.Draw(img)
     if 10*x+y in allowed_numbers:
         await ctx.send("すでに選ばれました。")
@@ -384,17 +386,13 @@ async def blue(ctx, target:str):
     if(chance==0):
         await ctx.send("まずは値をセットしてください")
         return
-    try:
-        font = ImageFont.truetype("meiryo.ttc", 18)
-    except:
-        font = ImageFont.load_default()
     await ctx.send(position[y][x]+"は……？")
     await asyncio.sleep(0.8)
     x0, y0 = 20 + x * 160, 20 + y * 120
     x1, y1 = x0 + 120, y0 + 80
     if(color[y][x]=="blue"):
         draw.rectangle([x0, y0, x1, y1], fill="blue", outline="black", width=1)
-        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font[j][i], anchor="mm")
         await ctx.send("正解！"+position[y][x]+"は青色です。")
         log_list.append("  !blue "+target+" 青")
         await asyncio.sleep(0.8)
@@ -404,7 +402,7 @@ async def blue(ctx, target:str):
         bluecount+=1
     elif(color[y][x]=="red"):
         draw.rectangle([x0, y0, x1, y1], fill="red", outline="black", width=1)
-        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font[j][i], anchor="mm")
         turn=1
         await ctx.send("はずれ！"+position[y][x]+"は赤色です。")
         log_list.append("  !blue "+target+" 赤")
@@ -414,7 +412,7 @@ async def blue(ctx, target:str):
         redcount+=1
     elif(color[y][x]=="gray"):
         draw.rectangle([x0, y0, x1, y1], fill="gray", outline="black", width=1)
-        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font[j][i], anchor="mm")
         await ctx.send("はずれ！"+position[y][x]+"は灰色です。")
         log_list.append("  !blue "+target+" 灰")
         await asyncio.sleep(0.8)
@@ -423,7 +421,7 @@ async def blue(ctx, target:str):
         allowed_numbers.append(10*x+y)
     elif(color[y][x]=="black"):
         draw.rectangle([x0, y0, x1, y1], fill="black", outline="black", width=1)
-        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font[j][i], anchor="mm")
         await ctx.send("残念！"+position[y][x]+"は黒色です！")
         log_list.append("  !blue "+target+" 黒")
         await asyncio.sleep(0.8)
@@ -462,6 +460,7 @@ async def red(ctx, target:str):
     global img
     global turn
     global log_list
+    global font
     draw = ImageDraw.Draw(img)
     if 10*x+y in allowed_numbers:
         await ctx.send("すでに選ばれました。")
@@ -473,17 +472,13 @@ async def red(ctx, target:str):
     if(chance==0):
         await ctx.send("まずは値をセットしてください")
         return
-    try:
-        font = ImageFont.truetype("meiryo.ttc", 18)
-    except:
-        font = ImageFont.load_default()
     await ctx.send(position[y][x]+"は……？")
     await asyncio.sleep(0.8)
     x0, y0 = 20 + x * 160, 20 + y * 120
     x1, y1 = x0 + 120, y0 + 80
     if(color[y][x]=="blue"):
         draw.rectangle([x0, y0, x1, y1], fill="blue", outline="black", width=1)
-        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font[j][i], anchor="mm")
         turn=0
         await ctx.send("はずれ！"+position[y][x]+"は青色です。")
         log_list.append("  !red "+target+" 青")
@@ -493,7 +488,7 @@ async def red(ctx, target:str):
         bluecount+=1
     elif(color[y][x]=="red"):
         draw.rectangle([x0, y0, x1, y1], fill="red", outline="black", width=1)
-        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font[j][i], anchor="mm")
         await ctx.send("正解！"+position[y][x]+"は赤色です。")
         log_list.append("  !red "+target+" 赤")
         await asyncio.sleep(0.8)
@@ -503,7 +498,7 @@ async def red(ctx, target:str):
         redcount+=1
     elif(color[y][x]=="gray"):
         draw.rectangle([x0, y0, x1, y1], fill="gray", outline="black", width=1)
-        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font[j][i], anchor="mm")
         await ctx.send("はずれ！"+position[y][x]+"は灰色です。")
         log_list.append("  !red "+target+" 灰")
         await asyncio.sleep(0.8)
@@ -512,7 +507,7 @@ async def red(ctx, target:str):
         allowed_numbers.append(10*x+y)
     elif(color[y][x]=="black"):
         draw.rectangle([x0, y0, x1, y1], fill="black", outline="black", width=1)
-        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font, anchor="mm")
+        draw.text(((x0 + x1) / 2, (y0 + y1) / 2), position[y][x], fill="white" if color[y][x] != "white" else "black", font=font[j][i], anchor="mm")
         await ctx.send("残念！"+position[y][x]+"は黒色です！")
         log_list.append("  !red "+target+" 黒")
         await asyncio.sleep(0.8)
@@ -752,6 +747,7 @@ async def codename(ctx, genre:str="原神"):
     global once
     global turn,chance,chancenum,redcount,bluecount,allowed_numbers
     global rmember_list,bmember_list,log_list
+    global font
     rmember_list=[]
     bmember_list=[]
     log_list=[]
@@ -760,6 +756,7 @@ async def codename(ctx, genre:str="原神"):
     num = rootnum ** 2
     position = [["" for _ in range(rootnum)] for _ in range(rootnum)]
     color = [["" for _ in range(rootnum)] for _ in range(rootnum)]
+    font=[["" for _ in range(rootnum)] for _ in range(rootnum)]
     turn=0
     chance=0
     chancenum=0
@@ -770,12 +767,7 @@ async def codename(ctx, genre:str="原神"):
     img = Image.new("RGB", (800, 600), "white")
     drawleader = ImageDraw.Draw(imgleader)
     draw = ImageDraw.Draw(img)
-
-    # フォント設定
-    try:
-        font = ImageFont.truetype("meiryo.ttc", 18)
-    except:
-        font = ImageFont.load_default()
+    
 
     num_list = list(range(num))  # 0 から num-1 までのリスト
 
@@ -783,6 +775,8 @@ async def codename(ctx, genre:str="原神"):
         text_file="Genshin.txt"
     elif(genre=="学マス" or genre=="学園アイドルマスター"):
         text_file="GakuenIMAS.txt"
+    elif(genre=="ブルアカ" or genre=="ブルーアーカイブ"):
+        text_file="BlueArchive.txt"
     # 文字データの読み込み
     try:
         with open(text_file, "r", encoding="utf-8") as file:
@@ -821,8 +815,9 @@ async def codename(ctx, genre:str="原神"):
             drawleader.rectangle([x0, y0, x1, y1], fill=color[j][i], outline="black", width=1)
             draw.rectangle([x0, y0, x1, y1], "white", outline="black", width=1)
             # 文字を描画
-            drawleader.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="white" if color[j][i] != "white" else "black", font=font, anchor="mm")
-            draw.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="black" if color[j][i] != "white" else "black", font=font, anchor="mm")
+            font[j][i] = ImageFont.truetype("meiryo.ttc", int(90/len(randchar)))
+            drawleader.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="white" if color[j][i] != "white" else "black", font=font[j][i], anchor="mm")
+            draw.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="black" if color[j][i] != "white" else "black", font=font[j][i], anchor="mm")
             position[j][i]=randchar
     
 
