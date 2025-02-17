@@ -779,9 +779,9 @@ async def codename(ctx, genre:str="原神"):
 
     num_list = list(range(num))  # 0 から num-1 までのリスト
 
-    if(genre="原神"):
+    if(genre=="原神"):
         text_file="Genshin.txt"
-    elif(genre="学マス" or genre="学園アイドルマスター"):
+    elif(genre=="学マス" or genre=="学園アイドルマスター"):
         text_file="GakuenIMAS.txt"
     # 文字データの読み込み
     try:
