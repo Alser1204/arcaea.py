@@ -477,7 +477,6 @@ async def red(ctx, target:str):
         font = ImageFont.truetype("meiryo.ttc", 18)
     except:
         font = ImageFont.load_default()
-    log_list.append("  !red"+target)
     await ctx.send(position[y][x]+"は……？")
     await asyncio.sleep(0.8)
     x0, y0 = 20 + x * 160, 20 + y * 120
