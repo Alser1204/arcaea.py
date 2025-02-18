@@ -841,6 +841,31 @@ async def codename(ctx, genre:str="原神"):
     await ctx.send("最初は青のターンからです！")
     #await ctx.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
     await ctx.send(file=discord.File(img_buffer, "output.png"))
+    
+    
+@bot.command()
+async def wordwole(ctx, text_file:str="原神", num:int):
+    if(genre=="原神"):
+        text_file="Genshin.txt"
+    elif(genre=="学マス" or genre=="学園アイドルマスター"):
+        text_file="GakuenIMAS.txt"
+    elif(genre=="ブルアカ" or genre=="ブルーアーカイブ"):
+        text_file="BlueArchive.txt"
+    with open(text_file, "r", encoding="utf-8") as file:
+        char_list = file.read().strip().split('\n')
+        print(char_list)
+    def choose(lst):
+        chosen = random.choice(lst)
+        lst.remove(chosen)
+        return chosen
+    num_list = list(range(num))
+    majority=choose(char_list)
+    minority=choose(char_list)
+    if(choose(num_list)<n-1):
+        await ctx.author.send("あなたのワードは"+majority+"です。")
+    else:
+        await ctx.author.send("あなたのワードは"+minority+"です。")
+
 
 
 bot.run(TOKEN)
