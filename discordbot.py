@@ -844,28 +844,50 @@ async def codename(ctx, genre:str="原神"):
     
     
 @bot.command()
-async def wordwole(ctx, text_file:str, num:int):
-    if(genre=="原神"):
-        text_file="Genshin.txt"
-    elif(genre=="学マス" or genre=="学園アイドルマスター"):
-        text_file="GakuenIMAS.txt"
-    elif(genre=="ブルアカ" or genre=="ブルーアーカイブ"):
-        text_file="BlueArchive.txt"
+async def wordwolf(ctx, text_file: str, num: int):
+    # テキストファイルの選択
+    if text_file == "原神":
+        text_file = "Genshin.txt"
+    elif text_file in ["学マス", "学園アイドルマスター"]:
+        text_file = "GakuenIMAS.txt"
+    elif text_file in ["ブルアカ", "ブルーアーカイブ"]:
+        text_file = "BlueArchive.txt"
+
+    # ファイルを読み込む
     with open(text_file, "r", encoding="utf-8") as file:
-        char_list = file.read().strip().split('\n')
-        print(char_list)
+        char_list = file.read().strip().split("\n")
+
+    # 2つのワードを選ぶ
     def choose(lst):
         chosen = random.choice(lst)
         lst.remove(chosen)
         return chosen
-    num_list = list(range(num))
-    majority=choose(char_list)
-    minority=choose(char_list)
-    if(choose(num_list)<n-1):
-        await ctx.author.send("あなたのワードは"+majority+"です。")
-    else:
-        await ctx.author.send("あなたのワードは"+minority+"です。")
 
+    majority = choose(char_list)
+    minority = choose(char_list)
+
+    # 参加者を集める
+    participants = []
+
+    await ctx.send(f"{num} 人が `join` と送信するとゲームが開始されます！")
+
+    def check(m):
+        return m.content.lower() == "join" and m.channel == ctx.channel and m.author not in participants
+
+    while len(participants) < num:
+        msg = await bot.wait_for("message", check=check)
+        participants.append(msg.author)
+        await ctx.send(f"{msg.author.mention} が参加しました！ ({len(participants)}/{num})")
+
+    # 参加者リストをシャッフル
+    random.shuffle(participants)
+
+    # ワードを配布
+    for i, player in enumerate(participants):
+        word = majority if i < num - 1 else minority
+        await player.send(f"あなたのワードは {word} です。")
+
+    await ctx.send("全員にワードを送信しました！ゲームを開始してください！")
 
 
 bot.run(TOKEN)
