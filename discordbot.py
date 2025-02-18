@@ -844,7 +844,7 @@ async def codename(ctx, genre:str="原神"):
     
     
 @bot.command()
-async def wordwole(ctx, text_file:str="原神", num:int):
+async def wordwole(ctx, text_file:str, num:int):
     if(genre=="原神"):
         text_file="Genshin.txt"
     elif(genre=="学マス" or genre=="学園アイドルマスター"):
