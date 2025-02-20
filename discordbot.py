@@ -440,15 +440,29 @@ async def blue(ctx, target:str):
 async def red(ctx, target:str):
     global position,color
     x, y = None, None
+    found=False
     for i, row in enumerate(position):
         for j, value in enumerate(row):
             if value == target:
                 y, x = i, j  # (x, y) のタプルで返す
+                found=True
+
+    if not found:
+        found_count = 0
+        for i, row in enumerate(position):
+            for j, value in enumerate(row):
+                if target in value:  # 部分一致
+                    y, x = i, j
+                    found_count+=1
+    if found_count > 1:
+        await ctx.send(f"{target} という文字列は複数の場所にあります。もう一度選択してください。")
+        return
 
     # `target` が見つからなかった場合
     if x is None or y is None:
         await ctx.send(f"{target} は見つかりませんでした。")
         return
+        
     global FLAG,FLAGS
     FLAGS=0
     if(FLAG==1):
