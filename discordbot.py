@@ -819,7 +819,7 @@ async def codename(ctx, genre:str="原神"):
             drawleader.rectangle([x0, y0, x1, y1], fill=color[j][i], outline="black", width=1)
             draw.rectangle([x0, y0, x1, y1], "white", outline="black", width=1)
             # 文字を描画
-            font[j][i] = ImageFont.truetype("meiryo.ttc", int(120/(double*len(randchar))))
+            font[j][i] = ImageFont.truetype("meiryo.ttc", int(double*120/len(randchar)))
             drawleader.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="white" if color[j][i] != "white" else "black", font=font[j][i], anchor="mm")
             draw.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="black" if color[j][i] != "white" else "black", font=font[j][i], anchor="mm")
             position[j][i]=randchar
