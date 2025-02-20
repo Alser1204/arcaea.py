@@ -763,6 +763,7 @@ async def codename(ctx, genre:str="原神"):
     redcount=0
     bluecount=0
     allowed_numbers=[]
+    i=1
     imgleader = Image.new("RGB", (800, 600), "white")
     img = Image.new("RGB", (800, 600), "white")
     drawleader = ImageDraw.Draw(imgleader)
@@ -779,6 +780,7 @@ async def codename(ctx, genre:str="原神"):
         text_file="BlueArchive.txt"
     elif(genre=="Arcaea" or genre=="アーケア"):
         text_file="Arcaea.txt"
+        i=2
     # 文字データの読み込み
     try:
         with open(text_file, "r", encoding="utf-8") as file:
@@ -817,7 +819,7 @@ async def codename(ctx, genre:str="原神"):
             drawleader.rectangle([x0, y0, x1, y1], fill=color[j][i], outline="black", width=1)
             draw.rectangle([x0, y0, x1, y1], "white", outline="black", width=1)
             # 文字を描画
-            font[j][i] = ImageFont.truetype("meiryo.ttc", int(90/len(randchar)))
+            font[j][i] = ImageFont.truetype("meiryo.ttc", int(90/(i*math.sqrt(len(randchar)))))
             drawleader.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="white" if color[j][i] != "white" else "black", font=font[j][i], anchor="mm")
             draw.text(((x0 + x1) / 2, (y0 + y1) / 2), randchar, fill="black" if color[j][i] != "white" else "black", font=font[j][i], anchor="mm")
             position[j][i]=randchar
