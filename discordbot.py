@@ -777,6 +777,8 @@ async def codename(ctx, genre:str="原神"):
         text_file="GakuenIMAS.txt"
     elif(genre=="ブルアカ" or genre=="ブルーアーカイブ"):
         text_file="BlueArchive.txt"
+    elif(genre=="Arcaea" or genre=="アーケア"):
+        text_file="Arcaea.txt"
     # 文字データの読み込み
     try:
         with open(text_file, "r", encoding="utf-8") as file:
@@ -852,6 +854,8 @@ async def wordwolf(ctx, text_file: str, num: int):
         text_file = "GakuenIMAS.txt"
     elif text_file in ["ブルアカ", "ブルーアーカイブ"]:
         text_file = "BlueArchive.txt"
+    elif text_file in ["Arcaea", "アーケア"]:
+        text_file = "Arcaea.txt"
 
     # ファイルを読み込む
     with open(text_file, "r", encoding="utf-8") as file:
