@@ -780,7 +780,7 @@ async def codename(ctx, genre:str="原神"):
         text_file="BlueArchive.txt"
     elif(genre=="Arcaea" or genre=="アーケア"):
         text_file="Arcaea.txt"
-        double=2
+        double=1.8
     # 文字データの読み込み
     try:
         with open(text_file, "r", encoding="utf-8") as file:
