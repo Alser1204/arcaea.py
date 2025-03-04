@@ -250,7 +250,7 @@ async def mosaic(ctx, block_size: int = None ,yaju: str='null'):
 
 
 @bot.command(aliases=["g"])
-async def guessc(ctx, n: float = 6):
+async def guessc(ctx, n: float = None):
     server_id = str(ctx.guild.id)
     
     # サーバーのデフォルト設定を参照
