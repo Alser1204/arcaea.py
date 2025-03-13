@@ -102,6 +102,20 @@ async def setDefaultGuessc(ctx, DefaultDivision: float):
     await ctx.send(f"サーバーのデフォルト分割数を {DefaultDivision} に設定しました。")
 
 @bot.command()
+async def getDefaultGuessc(ctx):
+    """サーバーごとのDefaultGを取得"""
+    server_id = str(ctx.guild.id)
+
+    # サーバーがまだ設定されていない場合、デフォルト値を返す
+    if server_id not in server_settings:
+        await ctx.send("このサーバーにはまだデフォルト分割数が設定されていません。デフォルト値は 6 です。")
+        return
+
+    # 現在のデフォルト分割数設定を取得
+    default_guessc = server_settings[server_id].get('DefaultG', 6)
+    await ctx.send(f"このサーバーのデフォルト分割数は {default_guessc} です。")
+
+@bot.command()
 async def setDefaultMosaic(ctx, DefaultMosaic: int):
     """サーバーごとにDefaultMを設定"""
     server_id = str(ctx.guild.id)
@@ -118,6 +132,21 @@ async def setDefaultMosaic(ctx, DefaultMosaic: int):
     # サーバーごとの設定を更新
     server_settings[server_id]['DefaultM'] = DefaultMosaic
     await ctx.send(f"サーバーのデフォルトモザイク分割数を {DefaultMosaic} に設定しました。")
+
+@bot.command()
+async def getDefaultMosaic(ctx):
+    """サーバーごとのDefaultMを取得"""
+    server_id = str(ctx.guild.id)
+
+    # サーバーがまだ設定されていない場合、デフォルト値を返す
+    if server_id not in server_settings:
+        await ctx.send("このサーバーにはまだデフォルトモザイクが設定されていません。デフォルト値は 6 です。")
+        return
+
+    # 現在のデフォルトモザイク設定を取得
+    default_mosaic = server_settings[server_id].get('DefaultM', 6)
+    await ctx.send(f"このサーバーのデフォルトモザイク分割数は {default_mosaic} です。")
+    
 
 @bot.command(aliases=["p"])
 async def potential(ctx: commands.context, const: float, score: float) -> None:
