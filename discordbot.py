@@ -90,7 +90,7 @@ async def setDefaultGuessc(ctx, DefaultDivision: float):
     
     # サーバーがまだ設定されていない場合、初期設定を追加
     if server_id not in server_settings:
-        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
+        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 80}
     
     # 入力値を検証
     if DefaultDivision < 1 or DefaultDivision > 20:
@@ -122,7 +122,7 @@ async def setDefaultMosaic(ctx, DefaultMosaic: int):
     
     # サーバーがまだ設定されていない場合、初期設定を追加
     if server_id not in server_settings:
-        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
+        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 80}
     
     # 入力値を検証
     if DefaultMosaic < 5 or DefaultMosaic > 500:
@@ -140,11 +140,11 @@ async def getDefaultMosaic(ctx):
 
     # サーバーがまだ設定されていない場合、デフォルト値を返す
     if server_id not in server_settings:
-        await ctx.send("このサーバーにはまだデフォルトモザイクが設定されていません。デフォルト値は 6 です。")
+        await ctx.send("このサーバーにはまだデフォルトモザイクが設定されていません。デフォルト値は 100 です。")
         return
 
     # 現在のデフォルトモザイク設定を取得
-    default_mosaic = server_settings[server_id].get('DefaultM', 6)
+    default_mosaic = server_settings[server_id].get('DefaultM', 80)
     await ctx.send(f"このサーバーのデフォルトモザイク分割数は {default_mosaic} です。")
     
 
@@ -194,7 +194,7 @@ async def mosaic(ctx, block_size: int = None ,yaju: str='null'):
     
     # サーバーのデフォルト設定を参照
     if server_id not in server_settings:
-        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
+        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 80}
     DefaultM = server_settings[server_id]['DefaultM']
     # block_sizeが指定されていなければデフォルト値を使用
     if block_size is None:
@@ -284,7 +284,7 @@ async def guessc(ctx, n: float = None):
     
     # サーバーのデフォルト設定を参照
     if server_id not in server_settings:
-        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 6}
+        server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 80}
     DefaultG = server_settings[server_id]['DefaultG']
     # block_sizeが指定されていなければデフォルト値を使用
     if n is None:
