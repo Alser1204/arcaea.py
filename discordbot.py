@@ -69,6 +69,28 @@ async def dmeigen(ctx):
     responses = ["共用の…強要！", "アルターエゴ楽しすぎる", "末代まで祟ってやる", "生きててごめんなさい…", "今キンタマに篭城してます", "ピュピュピュピュピュピュ ピュ〜〜〜〜〜〜〜〜", "おじさんを、持参！", "イクーーーーッ！！！", "おやふら","おまんこ壊れちゃう〜(><)","いちごパンツで抜くと濃いのでる","ボルテ19以上3時間触るよりアーケア1時間やるほうが疲れる", "初めまして、ドけんた食堂です\n\n今日はたこ焼きを食べていきたいと思います\n\nドピュビュルル(たこ焼きを食べる音)\n\nビュボボ…(たこ焼きを食べる音)\n\nドガーンガシャガシャ(たこ焼きを食べる音)\n\nウィーンピポピポドドドドドドガッシャンガッシャン(たこ焼きを食べる音)\n\n……\n\n粋スギィ！(満面の笑み)","おふろ",str(emoji) + "<お前を殺す。","デカいウンコの恐竜、デカウンコザウルス","死んでてありがとう"]
     response = random.choice(responses)
     await ctx.send(response)
+    
+N = ["アナニー", "チクニー"]
+R = ["熟女陵辱プレイ"]
+SR = ["アルマジロのケツマンコ", "梅沢富美男のTSマン屁"]
+SSR = ["ジジイの顔面騎乗下痢噴射", "陰毛着火"]
+
+# 確率に応じた選択
+def random_choice():
+    roll = random.random()
+    if roll < 0.50:
+        return random.choice(N)
+    elif roll < 0.80:
+        return random.choice(R)
+    elif roll < 0.95:
+        return random.choice(SR)
+    else:
+        return random.choice(SSR)
+
+@bot.command()
+async def dgacha(ctx, n: int = 10):
+    results = [random_choice() for _ in range(n)]
+    await ctx.send("\n".join(results))
 
 @bot.command()
 async def debug(ctx, directory: str, query: str):
