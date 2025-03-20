@@ -146,6 +146,8 @@ async def dgacha_check(ctx):
         f"{rarity}: {user_counts[user_id][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
     )
 
+    total_count = user_counts[user_id]["total"]
+
     await ctx.send(f"{ctx.author.name} さんの累計ガチャ結果:\n"
                    f"ガチャ回数: {total_count}\n"
                    f"カウント詳細:\n{count_details}")
