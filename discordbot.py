@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 import asyncio
 import io
 import math
+from collections import defaultdict
 
 # サーバーごとのデフォルト設定を保持する辞書
 server_settings = {}
@@ -74,9 +75,10 @@ async def dmeigen(ctx):
 def load_data():
     try:
         with open("counts.json", "r") as file:
-            return defaultdict(lambda: defaultdict(int), json.load(file))
+            return json.load(file)
     except FileNotFoundError:
-        return defaultdict(lambda: defaultdict(int))
+        return defaultdict(lambda: defaultdict(int))  # ファイルがないときは新規辞書作成
+
 
 # データの保存
 def save_data():
