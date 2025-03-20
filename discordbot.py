@@ -69,16 +69,32 @@ async def dmeigen(ctx):
     responses = ["共用の…強要！", "アルターエゴ楽しすぎる", "末代まで祟ってやる", "生きててごめんなさい…", "今キンタマに篭城してます", "ピュピュピュピュピュピュ ピュ〜〜〜〜〜〜〜〜", "おじさんを、持参！", "イクーーーーッ！！！", "おやふら","おまんこ壊れちゃう〜(><)","いちごパンツで抜くと濃いのでる","ボルテ19以上3時間触るよりアーケア1時間やるほうが疲れる", "初めまして、ドけんた食堂です\n\n今日はたこ焼きを食べていきたいと思います\n\nドピュビュルル(たこ焼きを食べる音)\n\nビュボボ…(たこ焼きを食べる音)\n\nドガーンガシャガシャ(たこ焼きを食べる音)\n\nウィーンピポピポドドドドドドガッシャンガッシャン(たこ焼きを食べる音)\n\n……\n\n粋スギィ！(満面の笑み)","おふろ",str(emoji) + "<お前を殺す。","デカいウンコの恐竜、デカウンコザウルス","死んでてありがとう"]
     response = random.choice(responses)
     await ctx.send(response)
+
+# データの読み込み
+def load_data():
+    try:
+        with open("counts.json", "r") as file:
+            return defaultdict(lambda: defaultdict(int), json.load(file))
+    except FileNotFoundError:
+        return defaultdict(lambda: defaultdict(int))
+
+# データの保存
+def save_data():
+    with open("counts.json", "w") as file:
+        json.dump(user_counts, file)
+
+# ユーザーごとのカウントを管理
+user_counts = load_data()
     
 SECRET = ["マン屁ラップバトル"]
 
-N = ["アナニー","チクニー","レイプ","放尿","フェラ","露出プレイ","催眠","時間停止","睡眠姦","ソフトSM","おもらし","逆レイプ","手コキ","足コキ","匂い","お姉さん","巨乳","レイプ目","目隠し","貧乳","無乳","授乳手コキ","触手","壁尻","腋コキ","あまあま","ヤンデレ","ツンデレ","クーデレ","サキュバス","唾液","パイズリ","素股","ペド","ロりババア","口内射精","ぶっかけ"]
+N = ["アナニー","チクニー","レイプ","放尿","フェラ","露出プレイ","催眠","時間停止","睡眠姦","ソフトSM","おもらし","逆レイプ","手コキ","足コキ","匂い","お姉さん","巨乳","レイプ目","目隠し","貧乳","無乳","授乳手コキ","触手","壁尻","腋コキ","あまあま","ヤンデレ","ツンデレ","クーデレ","サキュバス","唾液","パイズリ","素股","ペド","ロリババア","口内射精","ぶっかけ"]
 
 R = ["排便","ロリレイプ","男の娘","ふたなり","ケモ","アナルヒクヒク","オホ声","アヘ顔","緊縛","球体関節","常識改変","ボテ腹","近親相姦","キメセク","首絞め","髪コキ","人外","人形","メカ"]
 
-SR = ["アルマジロのケツマンコ", "梅沢富美男のTSマン屁","小笠原祐子","熟女陵辱プレイ","フィギュアぶっかけ","四肢欠損","リョナ","獣姦"]
+SR = ["アルマジロのケツマンコ","小笠原祐子","熟女陵辱プレイ","フィギュアぶっかけ","四肢欠損","リョナ","獣姦"]
 
-SSR = ["陰毛着火","ゲロモンスター","淫夢","ドラゴンカーセックス","ガナニー","ガンダム","首ちんこ","蟲姦"]
+SSR = ["陰毛着火","ゲロモンスター","淫夢","ドラゴンカーセックス","ガナニー","ガンダム","首ちんこ","蟲姦", "梅沢富美男のTSマン屁"]
 
 UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ"]
 
@@ -100,8 +116,34 @@ def random_choice():
 
 @bot.command()
 async def dgacha(ctx, n: int = 10):
-    results = [random_choice() for _ in range(n)]
-    await ctx.send("\n".join(results))
+    user_id = str(ctx.author.id)
+
+    results = []
+    for _ in range(n):
+        item, rarity = random_choice()
+        results.append(item)
+        user_counts[user_id][rarity] += 1  # 各レアリティのカウント
+
+    save_data()  # データ保存
+
+    # カウントの詳細を表示
+    count_details = "\n".join(
+        f"{rarity}: {user_counts[user_id][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
+    )
+
+    await ctx.send(f"{ctx.author.name} さんが {n}回 ガチャを引きました。\n"
+                   f"結果:\n{'\n'.join(results)}\n\n"
+                   f"【累計ガチャ結果】\n{count_details}")
+
+# カウント確認コマンド
+@bot.command()
+async def dgacha_check(ctx):
+    user_id = str(ctx.author.id)
+    count_details = "\n".join(
+        f"{rarity}: {user_counts[user_id][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
+    )
+
+    await ctx.send(f"{ctx.author.name} さんの累計ガチャ結果:\n{count_details}")
 
 @bot.command()
 async def debug(ctx, directory: str, query: str):
