@@ -135,7 +135,7 @@ async def dgacha(ctx, n: int = 10):
     )
     
     await ctx.send(f"{ctx.author.name} さんが {n}回 ガチャを引きました。\n"
-                   f"結果:\n{'\n'.join(results)}\n\n"
+                   f"結果:\n{'\n'.join(results)}\n\n")
 
 # カウント確認コマンド
 @bot.command()
