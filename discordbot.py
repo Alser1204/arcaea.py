@@ -104,17 +104,17 @@ UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ"]
 def random_choice():
     roll = random.random()
     if roll < 0.50:
-        return "N "+random.choice(N)
+        return "N " + random.choice(N), "N"
     elif roll < 0.80:
-        return "R "+random.choice(R)
+        return "R " + random.choice(R), "R"
     elif roll < 0.96:
-        return "SR "+random.choice(SR)
+        return "SR " + random.choice(SR), "SR"
     elif roll < 0.99:
-        return "SSR "+random.choice(SSR)
+        return "SSR " + random.choice(SSR), "SSR"
     elif roll < 0.998:
-        return "UR "+random.choice(UR)
+        return "UR " + random.choice(UR), "UR"
     else:
-        return "!!!SECRET!!! "+random.choice(SECRET)
+        return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
 
 @bot.command()
 async def dgacha(ctx, n: int = 10):
