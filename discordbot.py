@@ -73,7 +73,8 @@ async def dmeigen(ctx):
 N = ["アナニー","チクニー","レイプ","放尿","フェラ","露出プレイ","催眠","時間停止","睡眠姦","ソフトSM","おもらし","逆レイプ"]
 R = ["排便","ロリレイプ","男の娘","ふたなり","ケモ","アナルヒクヒク","オホ声","アヘ顔","緊縛"]
 SR = ["アルマジロのケツマンコ", "梅沢富美男のTSマン屁","小笠原祐子","熟女陵辱プレイ","フィギュアぶっかけ","四肢欠損"]
-SSR = ["ジジイの顔面騎乗下痢噴射", "陰毛着火","ゲロモンスター","淫夢"]
+SSR = ["陰毛着火","ゲロモンスター","淫夢"]
+UR = ["ジジイの顔面騎乗下痢噴射"]
 
 # 確率に応じた選択
 def random_choice():
@@ -84,8 +85,10 @@ def random_choice():
         return "R "+random.choice(R)
     elif roll < 0.95:
         return "SR "+random.choice(SR)
-    else:
+    elif roll < 0.99:
         return "SSR "+random.choice(SSR)
+    else:
+        return "UR "+random.choice(UR)
 
 @bot.command()
 async def dgacha(ctx, n: int = 10):
