@@ -121,6 +121,9 @@ def random_choice():
 async def dgacha(ctx, n: int = 10):
     user_id = str(ctx.author.id)
 
+    if user_id not in user_counts:
+        user_counts[user_id] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0}
+
     results = []
     for _ in range(n):
         item, rarity = random_choice()
