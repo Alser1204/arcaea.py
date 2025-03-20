@@ -128,6 +128,8 @@ async def dgacha(ctx, n: int = 10):
     for _ in range(n):
         item, rarity = random_choice()
         results.append(item)
+        if rarity not in user_counts[user_id]:
+            user_counts[user_id][rarity] = 0
         user_counts[user_id][rarity] += 1  # 各レアリティのカウント
         user_counts[user_id]["total"] += 1  # 総引き回数をカウント
 
