@@ -121,6 +121,7 @@ def random_choice():
 async def dgacha(ctx, n: int = 10):
     user_id = str(ctx.author.id)
 
+    # ユーザーのデータがなければ初期化
     if user_id not in user_counts:
         user_counts[user_id] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0}
 
@@ -128,8 +129,11 @@ async def dgacha(ctx, n: int = 10):
     for _ in range(n):
         item, rarity = random_choice()
         results.append(item)
+        
+        # レアリティがまだ登録されていなければ初期化
         if rarity not in user_counts[user_id]:
             user_counts[user_id][rarity] = 0
+            
         user_counts[user_id][rarity] += 1  # 各レアリティのカウント
         user_counts[user_id]["total"] += 1  # 総引き回数をカウント
 
