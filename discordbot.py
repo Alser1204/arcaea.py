@@ -134,10 +134,6 @@ async def dgacha(ctx, n: int = 10):
         f"{rarity}: {user_counts[user_id][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
     )
 
-    await ctx.send(f"{ctx.author.name} さんが {n}回 ガチャを引きました。\n"
-                   f"結果:\n{'\n'.join(results)}\n\n"
-                   f"【累計ガチャ結果】\n{count_details}")
-
 # カウント確認コマンド
 @bot.command()
 async def dgacha_check(ctx):
