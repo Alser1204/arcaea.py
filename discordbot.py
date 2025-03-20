@@ -126,6 +126,7 @@ async def dgacha(ctx, n: int = 10):
         item, rarity = random_choice()
         results.append(item)
         user_counts[user_id][rarity] += 1  # 各レアリティのカウント
+        user_counts[user_id]["total"] += 1  # 総引き回数をカウント
 
     save_data()  # データ保存
 
@@ -145,7 +146,9 @@ async def dgacha_check(ctx):
         f"{rarity}: {user_counts[user_id][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
     )
 
-    await ctx.send(f"{ctx.author.name} さんの累計ガチャ結果:\n{count_details}")
+    await ctx.send(f"{ctx.author.name} さんの累計ガチャ結果:\n"
+                   f"ガチャ回数: {total_count}\n"
+                   f"カウント詳細:\n{count_details}")
 
 @bot.command()
 async def debug(ctx, directory: str, query: str):
