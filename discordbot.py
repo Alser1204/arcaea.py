@@ -125,29 +125,29 @@ battle_i = 0
 @bot.command()
 async def dgacha(ctx, n: int = 10):
     global battle_member, battle_score, in_battle, battle_i
-    user_id = str(ctx.author.id)
+    user_name = ctx.author.name  # user_name に変更
 
     # ユーザーのデータがなければ初期化
-    if user_id not in user_counts:
-        user_counts[user_id] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0}
+    if user_name not in user_counts:
+        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0}
 
     results = []
     for _ in range(n):
         item, rarity = random_choice()
         results.append(item)
 
-        if rarity not in user_counts[user_id]:
-            user_counts[user_id][rarity] = 0
+        if rarity not in user_counts[user_name]:
+            user_counts[user_name][rarity] = 0
             
-        user_counts[user_id][rarity] += 1
-        user_counts[user_id]["total"] += 1
+        user_counts[user_name][rarity] += 1
+        user_counts[user_name]["total"] += 1
 
         if in_battle:
-            if user_id not in battle_member:
-                battle_member.append(user_id)
+            if user_name not in battle_member:
+                battle_member.append(user_name)  # user_name を格納
                 battle_score.append(0)
-            
-            idx = battle_member.index(user_id)
+
+            idx = battle_member.index(user_name)
 
             # レアリティごとのスコア加算
             score = {
@@ -164,23 +164,23 @@ async def dgacha(ctx, n: int = 10):
     save_data()  # データ保存
 
     count_details = "\n".join(
-        f"{rarity}: {user_counts[user_id][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
+        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
     )
 
-    await ctx.send(f"{ctx.author.name} さんが {n}回 ガチャを引きました。\n"
+    await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
                    f"結果:\n{'\n'.join(results)}\n\n")
     
     battle_i += 1
 
 @bot.command()
 async def dgacha_check(ctx):
-    user_id = str(ctx.author.id)
-    total_count = user_counts[user_id]["total"]
+    user_name = ctx.author.name  # user_name に変更
+    total_count = user_counts[user_name]["total"]
     count_details = "\n".join(
-        f"{rarity}: {user_counts[user_id][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
+        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
     )
 
-    await ctx.send(f"{ctx.author.name} さんの累計ガチャ結果:\n"
+    await ctx.send(f"{user_name} さんの累計ガチャ結果:\n"
                    f"ガチャ回数: {total_count}\n"
                    f"カウント詳細:\n{count_details}")
 
@@ -188,20 +188,23 @@ async def dgacha_check(ctx):
 async def dgacha_battle(ctx):
     global in_battle, battle_member, battle_score, battle_i
     if in_battle:
+        await ctx.send("dgacha_battleが始まりました！")
         in_battle = False
         max_score = 0
         max_member = ""
         for i in range(len(battle_member)):
+            await ctx.send("dgacha_battleが終わりました！\n結果:")
             await ctx.send(f"{battle_member[i]}さんのスコア: {battle_score[i]}")
             if battle_score[i] > max_score:
                 max_score = battle_score[i]
                 max_member = battle_member[i]
         
-        await ctx.send(f"{max_member}さんがスコア{max_score}で勝利です！")
+        await ctx.send(f"\n{max_member}さんがスコア{max_score}で勝利です！")
         return
     
     in_battle = True
     battle_i = 0
+
 
 
 @bot.command()
