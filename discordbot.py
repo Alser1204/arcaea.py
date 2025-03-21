@@ -188,12 +188,11 @@ async def dgacha_check(ctx):
 async def dgacha_battle(ctx):
     global in_battle, battle_member, battle_score, battle_i
     if in_battle:
-        await ctx.send("dgacha_battleが始まりました！")
         in_battle = False
         max_score = 0
         max_member = ""
+        await ctx.send("dgacha_battleが終わりました！\n結果:")
         for i in range(len(battle_member)):
-            await ctx.send("dgacha_battleが終わりました！\n結果:")
             await ctx.send(f"{battle_member[i]}さんのスコア: {battle_score[i]}")
             if battle_score[i] > max_score:
                 max_score = battle_score[i]
@@ -201,7 +200,7 @@ async def dgacha_battle(ctx):
         
         await ctx.send(f"\n{max_member}さんがスコア{max_score}で勝利です！")
         return
-    
+    await ctx.send("dgacha_battleが始まりました！")
     in_battle = True
     battle_i = 0
 
