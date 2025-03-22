@@ -171,7 +171,7 @@ async def dgacha(ctx, n: int = 10):
 
     await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
                    f"結果:\n{'\n'.join(results)}\n\n")
-    if battle_score[idx] == n　and in_battle:
+    if battle_score[idx] == n and in_battle:
         await ctx.send("Nが一致です！10のボーナス！")
         battle_score[idx]+=10
         
