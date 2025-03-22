@@ -182,8 +182,12 @@ async def dgacha(ctx, n: int = 10):
 async def dgacha_check(ctx):
     user_name = ctx.author.name  # user_name に変更
     total_count = user_counts[user_name]["total"]
+
+    # 各レアリティのカウントとパーセンテージを取得
     count_details = "\n".join(
-        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
+        f"{rarity}: {user_counts[user_name][rarity]} "
+        f"({(user_counts[user_name][rarity] / total_count * 100):.2f}%)"
+        for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
     )
 
     await ctx.send(f"{user_name} さんの累計ガチャ結果:\n"
