@@ -187,24 +187,34 @@ async def dgacha_check(ctx):
 @bot.command()
 async def dgacha_battle(ctx):
     global in_battle, battle_member, battle_score, battle_i
+    
     if in_battle:
         in_battle = False
         max_score = 0
-        max_member = ""
+        max_member = []  # 複数の勝者を保持するリスト
+
         await ctx.send("dgacha_battleが終わりました！\n結果:")
+
         for i in range(len(battle_member)):
             await ctx.send(f"{battle_member[i]}さんのスコア: {battle_score[i]}")
-            if battle_score[i] > max_score:
+
+            # 同点の場合も含めたい場合はこの条件で良い
+            if battle_score[i] > max_score:  # 新たに最大スコアが見つかった場合
                 max_score = battle_score[i]
-                max_member = battle_member[i]
-        
-        await ctx.send(f"\n{max_member}さんがスコア{max_score}で勝利です！")
+                max_member = [battle_member[i]]  # 勝者をリセットして新たに追加
+            elif battle_score[i] == max_score:  # 同点の場合、勝者リストに追加
+                max_member.append(battle_member[i])
+
+        # 最大スコアの持ち主を発表
+        await ctx.send(f"\n{'、'.join(max_member)}さんがスコア{max_score}で勝利です！")
         return
+    
+    # バトルが始まる場合
     await ctx.send("dgacha_battleが始まりました！")
     in_battle = True
     battle_i = 0
-    battle_member = []
-    battle_score = []
+    battle_member = []  # 新しいバトルのためにリセット
+    battle_score = []  # 新しいバトルのためにリセット
 
 
 
