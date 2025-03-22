@@ -126,7 +126,6 @@ battle_i = 0
 async def dgacha(ctx, n: int = 10):
     global battle_member, battle_score, in_battle, battle_i
     user_name = ctx.author.name  # user_name に変更
-    score=0
 
     # ユーザーのデータがなければ初期化
     if user_name not in user_counts:
@@ -204,6 +203,8 @@ async def dgacha_battle(ctx):
     await ctx.send("dgacha_battleが始まりました！")
     in_battle = True
     battle_i = 0
+    battle_member = []
+    battle_score = []
 
 
 
