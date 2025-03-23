@@ -158,7 +158,7 @@ async def dgacha(ctx, n: int = 10):
                 "SR": 3,
                 "SSR": 5,
                 "UR": 10,
-                "SECRET": 15
+                "SECRET": 15,
                 "deeman": 100
             }.get(rarity, 0)
 
