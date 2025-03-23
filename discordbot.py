@@ -117,7 +117,7 @@ def random_choice():
     elif roll < 0.9999:
         return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
     else:
-        return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!"
+        return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "deeman"
 
 in_battle = False
 battle_member = []
@@ -159,6 +159,7 @@ async def dgacha(ctx, n: int = 10):
                 "SSR": 5,
                 "UR": 10,
                 "SECRET": 15
+                "deeman": 100
             }.get(rarity, 0)
 
             battle_score[idx] += score
