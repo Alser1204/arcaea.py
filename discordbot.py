@@ -291,7 +291,6 @@ async def dgacha_battle(ctx):
         await ctx.send("参加者のレートが変動しました！")
 
         for i in range(len(sorted_member)):
-            # 修正: sorted_member[i]を正しくインデックス化
             await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} (+{battle_value[i]})")
         
         return
@@ -310,7 +309,7 @@ async def dgacha_battle2(ctx, n: int=10):
     if in_battle_2:
         battle_value = []
         in_battle_2 = False
-        expected_value = 1.84 * n  # 期待値を計算
+        expected_value = round(1.84 * n, 2)  # 小数第2位まで四捨五入
 
         # 最も期待値に近いスコアを探す
         closest_score = float('inf')
@@ -335,16 +334,24 @@ async def dgacha_battle2(ctx, n: int=10):
         await ctx.send("参加者のレートが変動しました！")
 
         # 参加者のレート更新
+        # スコアの差を計算
+        score_diffs = [abs(score - expected_value) for score in battle_score_2]
+        
+        # スコアの差が小さいほど高評価（大きいほど低評価）になる相対的な値を算出
+        inverse_diffs = [1 / (diff + 1) for diff in score_diffs]
+        
+        # 正規化して合計を0に調整
+        total_value = sum(inverse_diffs)
+        average_value = total_value / len(battle_member_2)
+        
+        # レート変動の計算
+        battle_value = [(value - average_value) * 10 for value in inverse_diffs]
+        
+        # レートの更新
         for i in range(len(battle_member_2)):
-            # スコアの差を基にレートの変動を計算
-            score_diff = abs(battle_score_2[i] - expected_value)
-            # 期待値に近いほどレートを増加させ、遠いほど減少させる
-            value = max(0, (1 / (score_diff + 1)) * 10)  # 差が小さいほどレート増加 (最大10の変動)
-            user_counts[battle_member_2[i]]["Rate"] += value
-            battle_value.append(value)
+            user_counts[battle_member_2[i]]["Rate"] += battle_value[i]
+            await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
 
-        for i in range(len(battle_member_2)):
-            await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} (+{battle_value[i]})")
 
         return
 
