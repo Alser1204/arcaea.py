@@ -131,7 +131,7 @@ async def dgacha(ctx, n: int = 10):
 
     # ユーザーのデータがなければ初期化
     if user_name not in user_counts:
-        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0}
+        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0, "Rate":1000}
 
     results = []
     for _ in range(n):
@@ -193,11 +193,15 @@ async def dgacha_check(ctx):
         await ctx.send(f"{user_name} さんのデータはすべて0です。")
         return
 
+    # カウント詳細の作成
     count_details = "\n".join(
         f"{rarity}: {user_counts[user_name][rarity]} "
         f"({(user_counts[user_name][rarity] / total_count * 100):.2f}%)"
         for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
     )
+
+    # レート情報の追加
+    count_details += f"\nレート: {user_counts[user_name]['Rate']}"
 
     await ctx.send(f"{user_name} さんの累計ガチャ結果:\n"
                    f"ガチャ回数: {total_count}\n"
@@ -237,15 +241,26 @@ async def dgacha_battle(ctx):
         for i in range(len(battle_member)):
             await ctx.send(f"{battle_member[i]}さんのスコア: {battle_score[i]}")
 
-            # 同点の場合も含めたい場合はこの条件で良い
             if battle_score[i] > max_score:  # 新たに最大スコアが見つかった場合
                 max_score = battle_score[i]
                 max_member = [battle_member[i]]  # 勝者をリセットして新たに追加
             elif battle_score[i] == max_score:  # 同点の場合、勝者リストに追加
                 max_member.append(battle_member[i])
 
+        # スコア順にソート
+        sorted_member, sorted_score = zip(*sorted(zip(battle_member, battle_score), key=lambda x: x[1]))
+        
+        # リストに戻す
+        sorted_member = list(sorted_member)
+        sorted_score = list(sorted_score)
+        average=sum(sorted_score)/len(sorted_score)
+        for i in range(len(sorted_member)):
+            value=sorted_score[i]-average+2*(i-len(sorted_score))
+            user_counts[sorted_member[i]]["Rate"] += value
+
         # 最大スコアの持ち主を発表
         await ctx.send(f"\n{'、'.join(max_member)}さんがスコア{max_score}で勝利です！")
+        await ctx.send("参加者のレートが変動しました！")
         return
     
     # バトルが始まる場合
