@@ -255,7 +255,7 @@ async def dgacha_battle(ctx):
         sorted_score = list(sorted_score)
         average=sum(sorted_score)/len(sorted_score)
         for i in range(len(sorted_member)):
-            value=sorted_score[i]-average+2*(i-len(sorted_score))
+            value=sorted_score[i]-average+2*(i+0.5-len(sorted_score)/2)
             user_counts[sorted_member[i]]["Rate"] += value
 
         # 最大スコアの持ち主を発表
