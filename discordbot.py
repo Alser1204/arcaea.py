@@ -149,6 +149,12 @@ async def dgacha(ctx, n: int = 10):
                 battle_member.append(user_name)  # user_name を格納
                 battle_score.append(0)
 
+        if in_battle2:
+            if user_name not in battle_member2:
+                battle_member2.append(user_name)  # user_name を格納
+                battle_score2.append(0)
+            
+
             idx = battle_member.index(user_name)
 
             # レアリティごとのスコア加算
