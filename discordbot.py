@@ -120,6 +120,7 @@ def random_choice():
         return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "deeman"
 
 in_battle = False
+in_battle2 = False
 battle_member = []
 battle_score = []
 battle_i = 0
