@@ -182,9 +182,17 @@ async def dgacha(ctx, n: int = 10):
 @bot.command()
 async def dgacha_check(ctx):
     user_name = ctx.author.name  # user_name に変更
+    
+    if user_name not in user_counts:
+        await ctx.send(f"{user_name} さんのデータが見つかりませんでした。")
+        return
+
     total_count = user_counts[user_name]["total"]
 
-    # 各レアリティのカウントとパーセンテージを取得
+    if total_count == 0:
+        await ctx.send(f"{user_name} さんのデータはすべて0です。")
+        return
+
     count_details = "\n".join(
         f"{rarity}: {user_counts[user_name][rarity]} "
         f"({(user_counts[user_name][rarity] / total_count * 100):.2f}%)"
@@ -194,8 +202,7 @@ async def dgacha_check(ctx):
     await ctx.send(f"{user_name} さんの累計ガチャ結果:\n"
                    f"ガチャ回数: {total_count}\n"
                    f"カウント詳細:\n{count_details}")
-    if user_name not in user_counts:
-        await ctx.send(f"{user_name} さんのデータが見つかりませんでした。")
+
 
 @bot.command()
 async def dgacha_reset(ctx):
