@@ -120,7 +120,7 @@ def random_choice():
         return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "deeman"
 
 in_battle = False
-in_battle2 = False
+in_battle_2 = False
 battle_member = []
 battle_score = []
 battle_i = 0
@@ -150,7 +150,7 @@ async def dgacha(ctx, n: int = 10):
                 battle_member.append(user_name)  # user_name を格納
                 battle_score.append(0)
 
-        if in_battle2:
+        if in_battle_2:
             if user_name not in battle_member2:
                 battle_member2.append(user_name)  # user_name を格納
                 battle_score2.append(0)
