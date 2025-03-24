@@ -293,7 +293,7 @@ async def dgacha_battle(ctx):
         await ctx.send("参加者のレートが変動しました！")
 
         for i in range(len(sorted_member)):
-            await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} (+{battle_value[i]})")
+            await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} ({battle_value[i]:+.2f})")
         
         return
     
@@ -338,16 +338,18 @@ async def dgacha_battle2(ctx, n: int=10):
         # 参加者のレート更新
         # スコアの差を計算
         score_diffs = [abs(score - expected_value) for score in battle_score_2]
+
+        sorted_member_2, sorted_score_2 = zip(*sorted(zip(battle_member_2, score_diffs), key=lambda x: x[1]))
         
-        # スコアの差が小さいほど高評価（大きいほど低評価）になる相対的な値を算出
-        inverse_diffs = [1 / (diff + 1) for diff in score_diffs]
+        # リストに戻す
+        sorted_member_2 = list(sorted_member_2)
+        sorted_score_2 = list(sorted_score_2)
         
-        # 正規化して合計を0に調整
-        total_value = sum(inverse_diffs)
-        average_value = total_value / len(battle_member_2)
-        
-        # レート変動の計算
-        battle_value = [round((value - average_value) * 10, 2) for value in inverse_diffs]
+        average = sum(sorted_score_2) / len(sorted_score_2)
+        for i in range(len(sorted_member_2)):
+            value = sorted_score_2[i] - average + 2 * (i + 0.5 - len(sorted_score_2) / 2)
+            user_counts[sorted_member_2[i]]["Rate"] += value*10
+            battle_value.append(value)
         
         # レートの更新
         for i in range(len(battle_member_2)):
