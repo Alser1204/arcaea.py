@@ -131,6 +131,7 @@ battle_i_2 = 0
 @bot.command()
 async def dgacha(ctx, n: int = 10):
     global battle_member, battle_score, in_battle, battle_i
+    global battle_member_2, battle_score_2, in_battle_2, battle_i_2
     user_name = ctx.author.name  # user_name に変更
 
     # ユーザーのデータがなければ初期化
@@ -153,12 +154,6 @@ async def dgacha(ctx, n: int = 10):
                 battle_member.append(user_name)  # user_name を格納
                 battle_score.append(0)
 
-        if in_battle_2:
-            if user_name not in battle_member2:
-                battle_member2.append(user_name)  # user_name を格納
-                battle_score2.append(0)
-            
-
             idx = battle_member.index(user_name)
 
             # レアリティごとのスコア加算
@@ -173,6 +168,26 @@ async def dgacha(ctx, n: int = 10):
             }.get(rarity, 0)
 
             battle_score[idx] += score
+            
+        if in_battle_2:
+            if user_name not in battle_member_2:
+                battle_member_2.append(user_name)  # user_name を格納
+                battle_score_2.append(0)
+                
+            idx_2 = battle_member_2.index(user_name)
+
+            # レアリティごとのスコア加算
+            score = {
+                "N": 1,
+                "R": 2,
+                "SR": 3,
+                "SSR": 5,
+                "UR": 10,
+                "SECRET": 15,
+                "deeman": 100
+            }.get(rarity, 0)
+
+            battle_score_2[idx] += score
 
     save_data()  # データ保存
 
@@ -188,6 +203,7 @@ async def dgacha(ctx, n: int = 10):
         
     
     battle_i += 1
+    battle_i_2 += 1
 
 @bot.command()
 async def dgacha_check(ctx):
