@@ -124,6 +124,9 @@ in_battle_2 = False
 battle_member = []
 battle_score = []
 battle_i = 0
+battle_member_2 = []
+battle_score_2 = []
+battle_i_2 = 0
 
 @bot.command()
 async def dgacha(ctx, n: int = 10):
