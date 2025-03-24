@@ -187,7 +187,7 @@ async def dgacha(ctx, n: int = 10):
                 "deeman": 100
             }.get(rarity, 0)
 
-            battle_score_2[idx] += score
+            battle_score_2[idx_2] += score
 
     save_data()  # データ保存
 
@@ -304,7 +304,7 @@ async def dgacha_battle(ctx):
     battle_score = []  # 新しいバトルのためにリセット
 
 @bot.command()
-async def dgacha_battle2(ctx, n: int):
+async def dgacha_battle2(ctx, n: int=10):
     global in_battle_2, battle_member_2, battle_score_2, battle_i_2
     
     if in_battle_2:
