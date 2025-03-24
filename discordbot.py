@@ -194,6 +194,27 @@ async def dgacha_check(ctx):
     await ctx.send(f"{user_name} さんの累計ガチャ結果:\n"
                    f"ガチャ回数: {total_count}\n"
                    f"カウント詳細:\n{count_details}")
+    if user_name not in user_counts:
+        await ctx.send(f"{user_name} さんのデータが見つかりませんでした。")
+
+@bot.command()
+async def dgacha_reset(ctx):
+    user_name = ctx.author.name
+
+    if user_name in user_counts:
+        # 初期化データを作成
+        user_counts[user_name] = {
+            "total": 0,
+            "N": 0,
+            "R": 0,
+            "SR": 0,
+            "SSR": 0,
+            "UR": 0,
+            "SECRET": 0
+        }
+        await ctx.send(f"{user_name} さんのガチャ記録をリセットしました。")
+    else:
+        await ctx.send(f"{user_name} さんのデータが見つかりませんでした。")
 
 @bot.command()
 async def dgacha_battle(ctx):
