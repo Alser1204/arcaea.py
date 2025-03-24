@@ -232,6 +232,7 @@ async def dgacha_battle(ctx):
     global in_battle, battle_member, battle_score, battle_i
     
     if in_battle:
+        battle_value = []
         in_battle = False
         max_score = 0
         max_member = []  # 複数の勝者を保持するリスト
@@ -253,14 +254,20 @@ async def dgacha_battle(ctx):
         # リストに戻す
         sorted_member = list(sorted_member)
         sorted_score = list(sorted_score)
-        average=sum(sorted_score)/len(sorted_score)
+        average = sum(sorted_score) / len(sorted_score)
         for i in range(len(sorted_member)):
-            value=sorted_score[i]-average+2*(i+0.5-len(sorted_score)/2)
+            value = sorted_score[i] - average + 2 * (i + 0.5 - len(sorted_score) / 2)
             user_counts[sorted_member[i]]["Rate"] += value
+            battle_value.append(value)
 
         # 最大スコアの持ち主を発表
         await ctx.send(f"\n{'、'.join(max_member)}さんがスコア{max_score}で勝利です！")
         await ctx.send("参加者のレートが変動しました！")
+
+        for i in range(len(sorted_member)):
+            # 修正: sorted_member[i]を正しくインデックス化
+            await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} (+{battle_value[i]})")
+        
         return
     
     # バトルが始まる場合
@@ -270,6 +277,57 @@ async def dgacha_battle(ctx):
     battle_member = []  # 新しいバトルのためにリセット
     battle_score = []  # 新しいバトルのためにリセット
 
+@bot.command()
+async def dgacha_battle2(ctx, n: int):
+    global in_battle_2, battle_member_2, battle_score_2, battle_i_2
+    
+    if in_battle_2:
+        battle_value = []
+        in_battle_2 = False
+        expected_value = 1.84 * n  # 期待値を計算
+
+        # 最も期待値に近いスコアを探す
+        closest_score = float('inf')
+        closest_member = []
+
+        await ctx.send(f"dgacha_battle2が終わりました！\n結果: 期待値: {expected_value}")
+
+        for i in range(len(battle_member_2)):
+            await ctx.send(f"{battle_member_2[i]}さんのスコア: {battle_score_2[i]}")
+
+            # スコアと期待値の差を計算
+            score_diff = abs(battle_score_2[i] - expected_value)
+
+            if score_diff < closest_score:  # より近いスコアが見つかった場合
+                closest_score = score_diff
+                closest_member = [battle_member_2[i]]  # 最も近いスコアのメンバーをリセットして新たに追加
+            elif score_diff == closest_score:  # 同じ差の場合、複数の勝者をリストに追加
+                closest_member.append(battle_member_2[i])
+
+        # 期待値に一番近いメンバーを発表
+        await ctx.send(f"\n{'、'.join(closest_member)}さんが期待値{expected_value}に最も近いスコアで勝利です！")
+        await ctx.send("参加者のレートが変動しました！")
+
+        # 参加者のレート更新
+        for i in range(len(battle_member_2)):
+            # スコアの差を基にレートの変動を計算
+            score_diff = abs(battle_score_2[i] - expected_value)
+            # 期待値に近いほどレートを増加させ、遠いほど減少させる
+            value = max(0, (1 / (score_diff + 1)) * 10)  # 差が小さいほどレート増加 (最大10の変動)
+            user_counts[battle_member_2[i]]["Rate"] += value
+            battle_value.append(value)
+
+        for i in range(len(battle_member_2)):
+            await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} (+{battle_value[i]})")
+
+        return
+
+    # バトルが始まる場合
+    await ctx.send("dgacha_battle2が始まりました！")
+    in_battle_2 = True
+    battle_i_2 = 0
+    battle_member_2 = []  # 新しいバトルのためにリセット
+    battle_score_2 = []  # 新しいバトルのためにリセット
 
 
 @bot.command()
