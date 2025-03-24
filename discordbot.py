@@ -347,7 +347,7 @@ async def dgacha_battle2(ctx, n: int=10):
         average_value = total_value / len(battle_member_2)
         
         # レート変動の計算
-        battle_value = [(value - average_value) * 10 for value in inverse_diffs]
+        battle_value = [round((value - average_value) * 10, 2) for value in inverse_diffs]
         
         # レートの更新
         for i in range(len(battle_member_2)):
