@@ -136,7 +136,7 @@ async def dgacha(ctx, n: int = 10):
 
     # ユーザーのデータがなければ初期化
     if user_name not in user_counts:
-        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0,"???":0 "Rate":1000}
+        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0,"???":0, "Rate":1000}
 
     results = []
     for _ in range(n):
@@ -192,7 +192,7 @@ async def dgacha(ctx, n: int = 10):
     save_data()  # データ保存
 
     count_details = "\n".join(
-        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
+        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
     )
 
     await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
