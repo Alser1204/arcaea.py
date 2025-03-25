@@ -300,7 +300,7 @@ async def dgacha_battle(ctx):
             # グループ内で同じレート変動を計算
             value = score - average + 2 * (rank + (len(members) / 2) - len(sorted_score) / 2)
             for member in members:
-                user_counts[member]["Rate"] += value
+                user_counts[member]["Rate"] += round(value)
                 battle_value.append(value)
                 rank += 1  # 次の順位へ
 
