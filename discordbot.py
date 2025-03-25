@@ -255,6 +255,8 @@ async def dgacha_reset(ctx):
     else:
         await ctx.send(f"{user_name} さんのデータが見つかりませんでした。")
 
+from collections import defaultdict
+
 @bot.command()
 async def dgacha_battle(ctx):
     global in_battle, battle_member, battle_score, battle_i
@@ -278,15 +280,26 @@ async def dgacha_battle(ctx):
 
         # スコア順にソート
         sorted_member, sorted_score = zip(*sorted(zip(battle_member, battle_score), key=lambda x: x[1]))
-        
+
+        # グループ化して同点者をまとめる
+        score_groups = defaultdict(list)
+        for i in range(len(sorted_member)):
+            score_groups[sorted_score[i]].append(sorted_member[i])
+
         # リストに戻す
         sorted_member = list(sorted_member)
         sorted_score = list(sorted_score)
         average = sum(sorted_score) / len(sorted_score)
-        for i in range(len(sorted_member)):
-            value = sorted_score[i] - average + 2 * (i + 0.5 - len(sorted_score) / 2)
-            user_counts[sorted_member[i]]["Rate"] += value
-            battle_value.append(value)
+
+        # 各グループごとにレート変動を計算
+        rank = 0  # 順位カウント
+        for score, members in score_groups.items():
+            # グループ内で同じレート変動を計算
+            value = score - average + 2 * (rank + (len(members) / 2) - len(sorted_score) / 2)
+            for member in members:
+                user_counts[member]["Rate"] += value
+                battle_value.append(value)
+                rank += 1  # 次の順位へ
 
         # 最大スコアの持ち主を発表
         await ctx.send(f"\n{'、'.join(max_member)}さんがスコア{max_score}で勝利です！")
@@ -303,6 +316,9 @@ async def dgacha_battle(ctx):
     battle_i = 0
     battle_member = []  # 新しいバトルのためにリセット
     battle_score = []  # 新しいバトルのためにリセット
+
+
+from collections import defaultdict
 
 @bot.command()
 async def dgacha_battle2(ctx, n: int=10):
@@ -335,31 +351,34 @@ async def dgacha_battle2(ctx, n: int=10):
         await ctx.send(f"\n{'、'.join(closest_member)}さんが期待値{expected_value}に最も近いスコアで勝利です！")
         await ctx.send("参加者のレートが変動しました！")
 
-        # 参加者のレート更新
         # スコアの差を計算
         score_diffs = [abs(score - expected_value) for score in battle_score_2]
 
-        sorted_member_2, sorted_score_2 = zip(*sorted(zip(battle_member_2, score_diffs), key=lambda x: x[1]))
-        
-        # リストに戻す
-        sorted_member_2 = list(sorted_member_2)
-        sorted_score_2 = list(sorted_score_2)
-        sorted_member_2 = sorted(sorted_member_2, reverse=True)
-        
-        average = sum(sorted_score_2) / len(sorted_score_2)
-        for i in range(len(sorted_member_2)):
-            value = sorted_score_2[i] - average + 2 * (i + 0.5 - len(sorted_score_2) / 2)
-            user_counts[sorted_member_2[i]]["Rate"] += value
-            battle_value.append(value)
-        
-        # レートの更新
-        for i in range(len(sorted_member_2)):
-            user_counts[sorted_member_2[i]]["Rate"] += battle_value[i]
-            await ctx.send(f"{sorted_member_2[i]}さん {user_counts[sorted_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
-            println(f"{sorted_member_2[i]}さん {user_counts[sorted_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
+        # グループ化して同点者をまとめる
+        score_groups = defaultdict(list)
+        for i in range(len(battle_member_2)):
+            score_groups[score_diffs[i]].append(battle_member_2[i])
 
+        # スコア差をソートしてレート変動計算
+        sorted_score_diffs = sorted(score_groups.keys())
+        average = sum(score_diffs) / len(score_diffs)
+
+        # 各グループごとにレート変動を計算
+        rank = 0
+        for score_diff in sorted_score_diffs:
+            members = score_groups[score_diff]
+            value = score_diff - average + 2 * (rank + (len(members) / 2) - len(score_diffs) / 2)
+            for member in members:
+                user_counts[member]["Rate"] += value
+                battle_value.append(value)
+                rank += 1
+
+        # レートの更新結果を表示
+        for i in range(len(battle_member_2)):
+            await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
 
         return
+
 
     # バトルが始まる場合
     await ctx.send("dgacha_battle2が始まりました！")
