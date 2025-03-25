@@ -164,7 +164,7 @@ async def dgacha(ctx, n: int = 10):
                 "SSR": 5,
                 "UR": 10,
                 "SECRET": 15,
-                "???": 100
+                "???": 100,
             }.get(rarity, 0)
 
             battle_score[idx] += score
@@ -184,7 +184,7 @@ async def dgacha(ctx, n: int = 10):
                 "SSR": 5,
                 "UR": 10,
                 "SECRET": 15,
-                "???": 100
+                "???": 100,
             }.get(rarity, 0)
 
             battle_score_2[idx_2] += score
