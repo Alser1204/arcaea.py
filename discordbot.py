@@ -241,6 +241,7 @@ async def dgacha_reset(ctx):
     user_name = ctx.author.name
 
     if user_name in user_counts:
+        Rate = user_counts[user_name]['Rate']
         # 初期化データを作成
         user_counts[user_name] = {
             "total": 0,
@@ -249,7 +250,9 @@ async def dgacha_reset(ctx):
             "SR": 0,
             "SSR": 0,
             "UR": 0,
-            "SECRET": 0
+            "SECRET": 0,
+            "Rate": Rate
+            
         }
         await ctx.send(f"{user_name} さんのガチャ記録をリセットしました。")
     else:
