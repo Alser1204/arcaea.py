@@ -363,13 +363,13 @@ async def dgacha_battle2(ctx, n: int = 10):
         average = sum(score_diffs) / len(score_diffs)
 
         # battle_member_2をscore_diffsの降順に並べ替え
-        sorted_member_2 = [member for _, member in sorted(zip(score_diffs, battle_member_2), reverse=True)]
+        sorted_member_2 = [member for _, member in sorted(zip(score_diffs, battle_member_2))]
 
         # 各グループごとにレート変動を計算
         rank = 0
         for score_diff in sorted_score_diffs:
             members = score_groups[score_diff]
-            value = score_diff - average + 2 * (rank + (len(members) / 2) - len(score_diffs) / 2)
+            value = round(score_diff - average + 2 * (rank + (len(members) / 2) - len(score_diffs) / 2)
 
             for i in range(len(members)):
                 member = members[i]
