@@ -369,7 +369,7 @@ async def dgacha_battle2(ctx, n: int = 10):
         rank = 0
         for score_diff in sorted_score_diffs:
             members = score_groups[score_diff]
-            value = round(score_diff - average + 2 * (rank + (len(members) / 2) - len(score_diffs) / 2)
+            value = round(score_diff - average + 2 * (rank + (len(members) / 2) - len(score_diffs) / 2))
 
             for i in range(len(members)):
                 member = members[i]
