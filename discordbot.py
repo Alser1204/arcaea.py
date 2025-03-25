@@ -325,7 +325,7 @@ async def dgacha_battle(ctx):
 from collections import defaultdict
 
 @bot.command()
-async def dgacha_battle2(ctx, n: int=10):
+async def dgacha_battle2(ctx, n: int = 10):
     global in_battle_2, battle_member_2, battle_score_2, battle_i_2
     
     if in_battle_2:
@@ -333,7 +333,6 @@ async def dgacha_battle2(ctx, n: int=10):
         in_battle_2 = False
         expected_value = round(1.84 * n, 2)  # 小数第2位まで四捨五入
 
-        # 最も期待値に近いスコアを探す
         closest_score = float('inf')
         closest_member = []
 
@@ -341,21 +340,17 @@ async def dgacha_battle2(ctx, n: int=10):
 
         for i in range(len(battle_member_2)):
             await ctx.send(f"{battle_member_2[i]}さんのスコア: {battle_score_2[i]}")
-
-            # スコアと期待値の差を計算
             score_diff = abs(battle_score_2[i] - expected_value)
 
-            if score_diff < closest_score:  # より近いスコアが見つかった場合
+            if score_diff < closest_score:
                 closest_score = score_diff
-                closest_member = [battle_member_2[i]]  # 最も近いスコアのメンバーをリセットして新たに追加
-            elif score_diff == closest_score:  # 同じ差の場合、複数の勝者をリストに追加
+                closest_member = [battle_member_2[i]]
+            elif score_diff == closest_score:
                 closest_member.append(battle_member_2[i])
 
-        # 期待値に一番近いメンバーを発表
         await ctx.send(f"\n{'、'.join(closest_member)}さんが期待値{expected_value}に最も近いスコアで勝利です！")
         await ctx.send("参加者のレートが変動しました！")
 
-        # スコアの差を計算
         score_diffs = [abs(score - expected_value) for score in battle_score_2]
 
         # グループ化して同点者をまとめる
@@ -367,21 +362,28 @@ async def dgacha_battle2(ctx, n: int=10):
         sorted_score_diffs = sorted(score_groups.keys())
         average = sum(score_diffs) / len(score_diffs)
 
+        # battle_member_2をscore_diffsの降順に並べ替え
+        sorted_member_2 = [member for _, member in sorted(zip(score_diffs, battle_member_2), reverse=True)]
+
         # 各グループごとにレート変動を計算
         rank = 0
         for score_diff in sorted_score_diffs:
             members = score_groups[score_diff]
             value = score_diff - average + 2 * (rank + (len(members) / 2) - len(score_diffs) / 2)
-            for member in members:
+
+            for i in range(len(members)):
+                member = members[i]
                 user_counts[member]["Rate"] += value
                 battle_value.append(value)
-                rank += 1
+
+            rank += len(members)  # グループごとにrankを増加
 
         # レートの更新結果を表示
         for i in range(len(battle_member_2)):
             await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
 
         return
+
 
 
     # バトルが始まる場合
