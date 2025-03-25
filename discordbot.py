@@ -68,7 +68,7 @@ async def fmeigen(ctx):
 @bot.command()
 async def dmeigen(ctx):
     emoji = discord.utils.get(ctx.guild.emojis, name="hiroyuki_narita")
-    responses = ["共用の…強要！", "アルターエゴ楽しすぎる", "末代まで祟ってやる", "生きててごめんなさい…", "今キンタマに篭城してます", "ピュピュピュピュピュピュ ピュ〜〜〜〜〜〜〜〜", "おじさんを、持参！", "イクーーーーッ！！！", "おやふら","おまんこ壊れちゃう〜(><)","いちごパンツで抜くと濃いのでる","ボルテ19以上3時間触るよりアーケア1時間やるほうが疲れる", "初めまして、ドけんた食堂です\n\n今日はたこ焼きを食べていきたいと思います\n\nドピュビュルル(たこ焼きを食べる音)\n\nビュボボ…(たこ焼きを食べる音)\n\nドガーンガシャガシャ(たこ焼きを食べる音)\n\nウィーンピポピポドドドドドドガッシャンガッシャン(たこ焼きを食べる音)\n\n……\n\n粋スギィ！(満面の笑み)","おふろ",str(emoji) + "<お前を殺す。","デカいウンコの恐竜、デカウンコザウルス","死んでてありがとう"]
+    responses = ["共用の…強要！", "アルターエゴ楽しすぎる", "末代まで祟ってやる", "生きててごめんなさい…", "今キンタマに篭城してます", "ピュピュピュピュピュピュ ピュ〜〜〜〜〜〜〜〜", "おじさんを、持参！", "イクーーーーッ！！！", "おやふら","おまんこ壊れちゃう〜(><)","いちごパンツで抜くと濃いのでる","ボルテ19以上3時間触るよりアーケア1時間やるほうが疲れる", "初めまして、ドけんた食堂です\n\n今日はたこ焼きを食べていきたいと思います\n\nドピュビュルル(たこ焼きを食べる音)\n\nビュボボ…(たこ焼きを食べる音)\n\nドガーンガシャガシャ(たこ焼きを食べる音)\n\nウィーンピポピポドドドドドドガッシャンガッシャン(たこ焼きを食べる音)\n\n……\n\n粋スギィ！(満面の笑み)","おふろ",str(emoji) + "<お前を殺す。","デカいウンコの恐竜、デカウンコザウルス","死んでてありがとう","(トイレ…？ヒントか…？)"]
     response = random.choice(responses)
     await ctx.send(response)
 
@@ -117,7 +117,7 @@ def random_choice():
     elif roll < 0.9999:
         return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
     else:
-        return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "deeman"
+        return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "???"
 
 in_battle = False
 in_battle_2 = False
@@ -136,7 +136,7 @@ async def dgacha(ctx, n: int = 10):
 
     # ユーザーのデータがなければ初期化
     if user_name not in user_counts:
-        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0, "Rate":1000}
+        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0,"???":0 "Rate":1000}
 
     results = []
     for _ in range(n):
@@ -164,7 +164,7 @@ async def dgacha(ctx, n: int = 10):
                 "SSR": 5,
                 "UR": 10,
                 "SECRET": 15,
-                "deeman": 100
+                "???": 100
             }.get(rarity, 0)
 
             battle_score[idx] += score
@@ -184,7 +184,7 @@ async def dgacha(ctx, n: int = 10):
                 "SSR": 5,
                 "UR": 10,
                 "SECRET": 15,
-                "deeman": 100
+                "???": 100
             }.get(rarity, 0)
 
             battle_score_2[idx_2] += score
@@ -225,7 +225,7 @@ async def dgacha_check(ctx):
     count_details = "\n".join(
         f"{rarity}: {user_counts[user_name][rarity]} "
         f"({(user_counts[user_name][rarity] / total_count * 100):.2f}%)"
-        for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET"]
+        for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
     )
 
     # レート情報の追加
@@ -251,6 +251,7 @@ async def dgacha_reset(ctx):
             "SSR": 0,
             "UR": 0,
             "SECRET": 0,
+            "???":0,
             "Rate": Rate
             
         }
