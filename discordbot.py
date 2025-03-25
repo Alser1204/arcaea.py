@@ -372,8 +372,7 @@ async def dgacha_battle2(ctx, n: int = 10):
             value = round(score_diff - average + 2 * (rank + (len(members) / 2) - len(score_diffs) / 2))
 
             for i in range(len(members)):
-                member = members[i]
-                user_counts[member]["Rate"] += value
+                user_counts[sorted_member_2[i]]["Rate"] += value
                 battle_value.append(value)
 
             rank += len(members)  # グループごとにrankを増加
