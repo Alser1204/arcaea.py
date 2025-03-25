@@ -353,9 +353,10 @@ async def dgacha_battle2(ctx, n: int=10):
             battle_value.append(value)
         
         # レートの更新
-        for i in range(len(battle_member_2)):
-            user_counts[battle_member_2[i]]["Rate"] += battle_value[i]
-            await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
+        for i in range(len(sorted_member_2)):
+            user_counts[sorted_member_2[i]]["Rate"] += battle_value[i]
+            await ctx.send(f"{sorted_member_2[i]}さん {user_counts[sorted_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
+            println(f"{sorted_member_2[i]}さん {user_counts[sorted_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
 
 
         return
