@@ -348,7 +348,7 @@ async def dgacha_battle2(ctx, n: int=10):
         
         average = sum(sorted_score_2) / len(sorted_score_2)
         for i in range(len(sorted_member_2)):
-            value = sorted_score_2[i] - average + 2 * ((i + 0.5 - len(sorted_score_2) / 2)
+            value = sorted_score_2[i] - average + 2 * (i + 0.5 - len(sorted_score_2) / 2)
             user_counts[sorted_member_2[i]]["Rate"] += value
             battle_value.append(value)
         
