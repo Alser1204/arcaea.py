@@ -63,7 +63,7 @@ async def alser(ctx, bad:str="alser"):
 
 CHANNEL_ID = 1355100431105130527
 
-@tasks.loop(time=datetime.time(hour=16, minute=10))  # 毎日1時に実行
+@tasks.loop(time=datetime.time(hour=15, minute=0))  # 毎日1時に実行
 async def send_file():
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
