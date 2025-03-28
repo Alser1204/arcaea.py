@@ -12,6 +12,7 @@ import io
 import math
 from collections import defaultdict
 import json
+import datetime
 
 # サーバーごとのデフォルト設定を保持する辞書
 server_settings = {}
@@ -58,6 +59,14 @@ async def frtkshop(ctx, bad:str="frtkshop"):
 @bot.command()
 async def alser(ctx, bad:str="alser"):
     await ctx.send("Alserはカス")
+
+CHANNEL_ID =　1355100431105130527
+
+@tasks.loop(time=datetime.time(hour=0, minute=0))  # 毎日0時に実行
+async def send_file():
+    channel = bot.get_channel(CHANNEL_ID)
+    if channel:
+        await channel.send(file=discord.File('counts.json'))
 
 @bot.command()
 async def fmeigen(ctx):
