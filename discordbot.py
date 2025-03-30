@@ -63,12 +63,11 @@ async def alser(ctx, bad:str="alser"):
 
 CHANNEL_ID = 1355100431105130527
 
-@tasks.loop(time=datetime.time(hour=15, minute=0))  # 毎日1時に実行
+@tasks.loop(hours=1)  # 1時間ごとに実行
 async def send_file():
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
         await channel.send(file=discord.File('counts.json'))
-
 @bot.command()
 async def fmeigen(ctx):
     responses = ["ふらつきショップってそういう…", "Heavenly caress神譜面スギィ！！！", "13.2未満全員赤ポテ", "全部出していいよ","俺はテンペPMだぞ！！","うるせぇまんこまんこまんこ","13.2未満全員赤ポテ","でもお前赤ポテじゃん","風唄4回で鳥なのにガチ恋ラビリンスS","@つわ","俺は14歳","イキスギィ！","ニィロウの愛液つゆだくトッピング","ちんぽイクイクたろう","しゃわる","ウー"]
