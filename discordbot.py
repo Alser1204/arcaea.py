@@ -190,7 +190,6 @@ async def dgacha(ctx, n: int = 10):
             }.get(rarity, 0)
 
         gacha_score += score
-        user_counts[user_name]["coin"] += round(score/10)
             
         if in_battle_2:
             if user_name not in battle_member_2:
@@ -225,6 +224,7 @@ async def dgacha(ctx, n: int = 10):
     await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
                    f"結果:\n{'\n'.join(results)}\n"
                    f"スコア:{gacha_score}\n")
+    user_counts[user_name]["coin"] += round(gacha_score/10)
     if in_battle:
         idx = battle_member.index(user_name)
         if battle_score[idx] == n and n>=10:
