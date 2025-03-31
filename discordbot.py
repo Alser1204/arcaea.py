@@ -253,8 +253,7 @@ async def dgacha_check(ctx):
     )
 
     # レート情報の追加
-    count_details += f"\nレート: {user_counts[user_name]['Rate']}"
-    count_details += f"\nレート: {user_counts[user_name]['coin']}"
+    count_details += f"\nレート: {user_counts[user_name]['Rate']}\nコイン: {user_counts[user_name]['coin']}\n"
 
     await ctx.send(f"{user_name} さんの累計ガチャ結果:\n"
                    f"ガチャ回数: {total_count}\n"
