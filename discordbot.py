@@ -114,19 +114,14 @@ UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ"]
 def random_choice():
     roll = random.random()
     if roll < 0.50:
-        return "N " + random.choice(N), "N"
+        return "SSR " + random.choice(UR), "SSR"
     elif roll < 0.80:
-        return "R " + random.choice(R), "R"
-    elif roll < 0.96:
-        return "SR " + random.choice(SR), "SR"
-    elif roll < 0.99:
-        return "SSR " + random.choice(SSR), "SSR"
-    elif roll < 0.998:
         return "UR " + random.choice(UR), "UR"
-    elif roll < 0.9999:
-        return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
+    elif roll < 0.95:
+        return "SECRET " + random.choice(SECRET), "SECRET"
     else:
         return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "???"
+        
 
 in_battle = False
 in_battle_2 = False
@@ -156,8 +151,8 @@ async def dgacha(ctx, n: int = 10):
         if rarity not in user_counts[user_name]:
             user_counts[user_name][rarity] = 0
             
-        user_counts[user_name][rarity] += 1
-        user_counts[user_name]["total"] += 1
+        # user_counts[user_name][rarity] += 1
+        # user_counts[user_name]["total"] += 1
 
         if in_battle:
             if user_name not in battle_member:
@@ -210,8 +205,6 @@ async def dgacha(ctx, n: int = 10):
             }.get(rarity, 0)
 
             battle_score_2[idx_2] += score
-
-    save_data()  # データ保存
 
     count_details = "\n".join(
         f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
@@ -331,7 +324,7 @@ async def dgacha_battle(ctx):
             # グループ内で同じレート変動を計算
             value = score - average + 2 * (rank + (len(members) / 2) - len(sorted_score) / 2)
             for member in members:
-                user_counts[member]["Rate"] += round(value)
+                # user_counts[member]["Rate"] += round(value)
                 battle_value.append(value)
                 rank += 1  # 次の順位へ
 
@@ -339,8 +332,8 @@ async def dgacha_battle(ctx):
         await ctx.send(f"\n{'、'.join(max_member)}さんがスコア{max_score}で勝利です！")
         await ctx.send("参加者のレートが変動しました！")
 
-        for i in range(len(sorted_member)):
-            await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} ({battle_value[i]:+.2f})")
+        # for i in range(len(sorted_member)):
+            # await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} ({battle_value[i]:+.2f})")
         
         return
     
@@ -402,14 +395,14 @@ async def dgacha_battle2(ctx, n: int = 10):
             value = round(score_diff - average + 2 * (rank + (len(members) / 2) - len(score_diffs) / 2))
 
             for i in range(len(members)):
-                user_counts[sorted_member_2[i]]["Rate"] += value
+                # user_counts[sorted_member_2[i]]["Rate"] += value
                 battle_value.append(value)
 
             rank += len(members)  # グループごとにrankを増加
 
         # レートの更新結果を表示
-        for i in range(len(battle_member_2)):
-            await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
+        # for i in range(len(battle_member_2)):
+            # await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
 
         return
 
