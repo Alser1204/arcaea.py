@@ -278,7 +278,7 @@ async def dgacha_reset(ctx):
             "UR": 0,
             "SECRET": 0,
             "???":0,
-            "Rate": Rate
+            "Rate": Rate,
             "coin": coin
             
         }
