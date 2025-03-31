@@ -330,7 +330,7 @@ async def dgacha_battle(ctx):
 
         # 最大スコアの持ち主を発表
         await ctx.send(f"\n{'、'.join(max_member)}さんがスコア{max_score}で勝利です！")
-        await ctx.send("参加者のレートが変動しました！")
+        # await ctx.send("参加者のレートが変動しました！")
 
         # for i in range(len(sorted_member)):
             # await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} ({battle_value[i]:+.2f})")
@@ -372,7 +372,7 @@ async def dgacha_battle2(ctx, n: int = 10):
                 closest_member.append(battle_member_2[i])
 
         await ctx.send(f"\n{'、'.join(closest_member)}さんが期待値{expected_value}に最も近いスコアで勝利です！")
-        await ctx.send("参加者のレートが変動しました！")
+        # await ctx.send("参加者のレートが変動しました！")
 
         score_diffs = [abs(score - expected_value) for score in battle_score_2]
 
