@@ -254,6 +254,7 @@ async def dgacha_check(ctx):
 
     # レート情報の追加
     count_details += f"\nレート: {user_counts[user_name]['Rate']}"
+    count_details += f"\nレート: {user_counts[user_name]['coin']}"
 
     await ctx.send(f"{user_name} さんの累計ガチャ結果:\n"
                    f"ガチャ回数: {total_count}\n"
@@ -266,6 +267,7 @@ async def dgacha_reset(ctx):
 
     if user_name in user_counts:
         Rate = user_counts[user_name]['Rate']
+        coin = user_counts[user_name]['coin']
         # 初期化データを作成
         user_counts[user_name] = {
             "total": 0,
@@ -277,6 +279,7 @@ async def dgacha_reset(ctx):
             "SECRET": 0,
             "???":0,
             "Rate": Rate
+            "coin": coin
             
         }
         await ctx.send(f"{user_name} さんのガチャ記録をリセットしました。")
