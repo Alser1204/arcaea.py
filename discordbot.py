@@ -114,7 +114,7 @@ UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ"]
 def random_choice():
     roll = random.random()
     if roll < 0.50:
-        return "SSR " + random.choice(UR), "SSR"
+        return "SSR " + random.choice(SSR), "SSR"
     elif roll < 0.80:
         return "UR " + random.choice(UR), "UR"
     elif roll < 0.95:
