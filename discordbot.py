@@ -142,10 +142,11 @@ async def dgacha(ctx, n: int = 10):
     global battle_member, battle_score, in_battle, battle_i
     global battle_member_2, battle_score_2, in_battle_2, battle_i_2
     user_name = ctx.author.name  # user_name に変更
+    gacha_score = 0
 
     # ユーザーのデータがなければ初期化
     if user_name not in user_counts:
-        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0,"???":0, "Rate":1000}
+        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0,"???":0, "Rate":1000, "coin":0}
 
     results = []
     for _ in range(n):
@@ -177,6 +178,19 @@ async def dgacha(ctx, n: int = 10):
             }.get(rarity, 0)
 
             battle_score[idx] += score
+
+        score = {
+                "N": 1,
+                "R": 2,
+                "SR": 3,
+                "SSR": 5,
+                "UR": 10,
+                "SECRET": 15,
+                "???": 100,
+            }.get(rarity, 0)
+
+        gacha_score += score
+        user_counts[user_name]["coin"] += round(score/10)
             
         if in_battle_2:
             if user_name not in battle_member_2:
@@ -205,7 +219,8 @@ async def dgacha(ctx, n: int = 10):
     )
 
     await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
-                   f"結果:\n{'\n'.join(results)}\n\n")
+                   f"結果:\n{'\n'.join(results)}\n"
+                   f"スコア:{gacha_score}\n")
     if in_battle:
         idx = battle_member.index(user_name)
         if battle_score[idx] == n and n>=10:
