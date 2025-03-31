@@ -136,6 +136,9 @@ battle_i_2 = 0
 async def dgacha(ctx, n: int = 10):
     global battle_member, battle_score, in_battle, battle_i
     global battle_member_2, battle_score_2, in_battle_2, battle_i_2
+    if n > 200:
+        await ctx.send("数字が大きすぎます！200以下にしてください！")
+        return
     user_name = ctx.author.name  # user_name に変更
     gacha_score = 0
 
