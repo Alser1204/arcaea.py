@@ -218,6 +218,10 @@ async def dgacha(ctx, n: int = 10):
         f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
     )
 
+    if n>=10:
+            await ctx.send(f"Nが一致です！{round(n*2.5)}のボーナス！")
+            gacha_score += round(n*2.5)
+
     await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
                    f"結果:\n{'\n'.join(results)}\n"
                    f"スコア:{gacha_score}\n")
