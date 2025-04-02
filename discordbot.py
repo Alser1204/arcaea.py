@@ -114,14 +114,19 @@ UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ","夏井い�
 def random_choice():
     roll = random.random()
     if roll < 0.50:
-        return "SSR " + random.choice(SSR), "SSR"
+        return "N " + random.choice(N), "N"
     elif roll < 0.80:
+        return "R " + random.choice(R), "R"
+    elif roll < 0.96:
+        return "SR " + random.choice(SR), "SR"
+    elif roll < 0.99:
+        return "SSR " + random.choice(SSR), "SSR"
+    elif roll < 0.998:
         return "UR " + random.choice(UR), "UR"
-    elif roll < 0.95:
-        return "SECRET " + random.choice(SECRET), "SECRET"
+    elif roll < 0.9999:
+        return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
     else:
         return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "???"
-        
 
 in_battle = False
 in_battle_2 = False
@@ -132,13 +137,11 @@ battle_member_2 = []
 battle_score_2 = []
 battle_i_2 = 0
 
+
 @bot.command()
 async def dgacha(ctx, n: int = 10):
     global battle_member, battle_score, in_battle, battle_i
     global battle_member_2, battle_score_2, in_battle_2, battle_i_2
-    if n > 200:
-        await ctx.send("数字が大きすぎます！200以下にしてください！")
-        return
     user_name = ctx.author.name  # user_name に変更
     gacha_score = 0
 
@@ -154,8 +157,8 @@ async def dgacha(ctx, n: int = 10):
         if rarity not in user_counts[user_name]:
             user_counts[user_name][rarity] = 0
             
-        # user_counts[user_name][rarity] += 1
-        # user_counts[user_name]["total"] += 1
+        user_counts[user_name][rarity] += 1
+        user_counts[user_name]["total"] += 1
 
         if in_battle:
             if user_name not in battle_member:
@@ -209,6 +212,8 @@ async def dgacha(ctx, n: int = 10):
 
             battle_score_2[idx_2] += score
 
+    save_data()  # データ保存
+
     count_details = "\n".join(
         f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
     )
@@ -230,6 +235,8 @@ async def dgacha(ctx, n: int = 10):
     
     battle_i += 1
     battle_i_2 += 1
+
+
 
 @bot.command()
 async def dgacha_check(ctx):
@@ -327,16 +334,16 @@ async def dgacha_battle(ctx):
             # グループ内で同じレート変動を計算
             value = score - average + 2 * (rank + (len(members) / 2) - len(sorted_score) / 2)
             for member in members:
-                # user_counts[member]["Rate"] += round(value)
+                user_counts[member]["Rate"] += round(value)
                 battle_value.append(value)
                 rank += 1  # 次の順位へ
 
         # 最大スコアの持ち主を発表
         await ctx.send(f"\n{'、'.join(max_member)}さんがスコア{max_score}で勝利です！")
-        # await ctx.send("参加者のレートが変動しました！")
+        await ctx.send("参加者のレートが変動しました！")
 
-        # for i in range(len(sorted_member)):
-            # await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} ({battle_value[i]:+.2f})")
+        for i in range(len(sorted_member)):
+            await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} ({battle_value[i]:+.2f})")
         
         return
     
@@ -375,7 +382,7 @@ async def dgacha_battle2(ctx, n: int = 10):
                 closest_member.append(battle_member_2[i])
 
         await ctx.send(f"\n{'、'.join(closest_member)}さんが期待値{expected_value}に最も近いスコアで勝利です！")
-        # await ctx.send("参加者のレートが変動しました！")
+        await ctx.send("参加者のレートが変動しました！")
 
         score_diffs = [abs(score - expected_value) for score in battle_score_2]
 
@@ -398,14 +405,14 @@ async def dgacha_battle2(ctx, n: int = 10):
             value = round(score_diff - average + 2 * (rank + (len(members) / 2) - len(score_diffs) / 2))
 
             for i in range(len(members)):
-                # user_counts[sorted_member_2[i]]["Rate"] += value
+                user_counts[sorted_member_2[i]]["Rate"] += value
                 battle_value.append(value)
 
             rank += len(members)  # グループごとにrankを増加
 
         # レートの更新結果を表示
-        # for i in range(len(battle_member_2)):
-            # await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
+        for i in range(len(battle_member_2)):
+            await ctx.send(f"{battle_member_2[i]}さん {user_counts[battle_member_2[i]]['Rate']} ({battle_value[i]:+.2f})")
 
         return
 
