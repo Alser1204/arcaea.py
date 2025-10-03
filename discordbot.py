@@ -550,26 +550,24 @@ def is_acronym(input_str, answer_str):
     return input_str.lower() == acronym.lower()
 
 # モザイク処理の追加
+from PIL import ImageOps
+
 @bot.command(aliases=["m"])
-async def mosaic(ctx, block_size: int = None ,yaju: str='null'):
+async def mosaic(ctx, hard: str='null', block_size: int = None, yaju: str='null'):
     server_id = str(ctx.guild.id)
     
-    # サーバーのデフォルト設定を参照
     if server_id not in server_settings:
         server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 80}
     DefaultM = server_settings[server_id]['DefaultM']
-    # block_sizeが指定されていなければデフォルト値を使用
+    
     if block_size is None:
-        if DefaultM is not None:
-            block_size = DefaultM
-        else:
-            block_size = 80  # デフォルトの値をここに設定（もしデフォルト値がない場合）
+        block_size = DefaultM if DefaultM is not None else 80
+
     try:
         if block_size < 5 or block_size > 500:
             await ctx.send("分割数は5以上500以下の数にしてください。")
             return
 
-        # 画像の選択
         image_files = [f for f in os.listdir(IMAGE_DIR) if f.endswith(('png', 'jpg', 'jpeg', 'gif'))]
         if not image_files:
             await ctx.send("画像が見つかりません。")
@@ -578,7 +576,7 @@ async def mosaic(ctx, block_size: int = None ,yaju: str='null'):
         random_image = secrets.choice(image_files)
         image_path = os.path.join(IMAGE_DIR, random_image)
 
-        if(yaju=='yaju'):
+        if yaju == 'yaju':
             image_files = [f for f in os.listdir(YAJU_DIR) if f.endswith(('png', 'jpg', 'jpeg', 'gif'))]
             if not image_files:
                 await ctx.send("画像が見つかりません。")
@@ -586,27 +584,26 @@ async def mosaic(ctx, block_size: int = None ,yaju: str='null'):
             random_image = secrets.choice(image_files)
             image_path = os.path.join(YAJU_DIR, random_image)
 
-        # 画像の読み込み
         img = Image.open(image_path)
+
+        # hard が指定されていたらモノクロ化
+        if hard == 'hard':
+            img = img.convert("L").convert("RGB")
+
         img_width, img_height = img.size
         img_array = np.array(img)
 
-        # モザイク処理
         for y in range(0, img_height, block_size):
             for x in range(0, img_width, block_size):
                 block = img_array[y:y + block_size, x:x + block_size]
                 avg_color = np.mean(block, axis=(0, 1)).astype(int)
                 img_array[y:y + block_size, x:x + block_size] = avg_color
 
-        # モザイク画像を保存
         mosaic_img = Image.fromarray(img_array)
         temp_image_path = 'temp_image.png'
         mosaic_img.save(temp_image_path)
 
-        # モザイク画像を送信
         sent_message = await ctx.send(file=discord.File(temp_image_path))
-        
-        # ファイル削除前に送信したメッセージに関連するファイルパスを保持
         os.remove(temp_image_path)
 
         def check(m):
@@ -618,11 +615,13 @@ async def mosaic(ctx, block_size: int = None ,yaju: str='null'):
         while asyncio.get_event_loop().time() - start_time < 30:
             try:
                 response = await asyncio.wait_for(bot.wait_for('message', check=check), timeout=30.0)
-                if (response.content.lower() == os.path.splitext(random_image)[0].lower()) or (len(response.content) >= 3 and response.content.lower() in os.path.splitext(random_image)[0].lower()) or (len(response.content) >= 3 and is_acronym(response.content, os.path.splitext(random_image)[0])):
+                if (response.content.lower() == os.path.splitext(random_image)[0].lower()) or \
+                   (len(response.content) >= 3 and response.content.lower() in os.path.splitext(random_image)[0].lower()) or \
+                   (len(response.content) >= 3 and is_acronym(response.content, os.path.splitext(random_image)[0])):
                     await response.reply("正解です！")
                     FRAG = 0
                     break
-                elif (response.content.lower() == ("!s" or "!skip")):
+                elif response.content.lower() in ["!s", "!skip"]:
                     break
                 else:
                     await response.reply("残念！もう一度お試しください。")
@@ -638,29 +637,22 @@ async def mosaic(ctx, block_size: int = None ,yaju: str='null'):
         await ctx.send(f"エラーが発生しました: {e}")
 
 
-
-
 @bot.command(aliases=["g"])
-async def guessc(ctx, n: float = None):
+async def guessc(ctx, hard: str='null', n: float = None):
     server_id = str(ctx.guild.id)
     
-    # サーバーのデフォルト設定を参照
     if server_id not in server_settings:
         server_settings[server_id] = {'DefaultG': 6, 'DefaultM': 80}
     DefaultG = server_settings[server_id]['DefaultG']
-    # block_sizeが指定されていなければデフォルト値を使用
+    
     if n is None:
-        if DefaultG is not None:
-            n = DefaultG
-        else:
-            n = 6  # デフォルトの値をここに設定（もしデフォルト値がない場合）
+        n = DefaultG if DefaultG is not None else 6
+
     try:
-        # nが1以上の数であることを確認
         if n < 1 or n > 20:
             await ctx.send("分割数は1以上20以下の数にしてください。")
             return
 
-        # 画像の選択
         image_files = [f for f in os.listdir(IMAGE_DIR) if f.endswith(('png', 'jpg', 'jpeg', 'gif'))]
         if not image_files:
             await ctx.send("画像が見つかりません。")
@@ -669,8 +661,12 @@ async def guessc(ctx, n: float = None):
         random_image = secrets.choice(image_files)
         image_path = os.path.join(IMAGE_DIR, random_image)
 
-        # 画像の分割処理
         img = Image.open(image_path)
+
+        # hard が指定されていたらモノクロ化
+        if hard == 'hard':
+            img = img.convert("L").convert("RGB")
+
         img_width, img_height = img.size
         tile_width = int(img_width // n)
         tile_height = int(img_height // n)
@@ -684,10 +680,8 @@ async def guessc(ctx, n: float = None):
                 lower = upper + tile_height
                 tiles.append(img.crop((left, upper, right, lower)))
 
-        # ランダムなタイルを選択
         selected_tile = secrets.choice(tiles)
 
-        # 一時ファイルとして保存
         temp_path = 'temp_image.png'
         selected_tile.save(temp_path)
 
@@ -703,11 +697,13 @@ async def guessc(ctx, n: float = None):
         while asyncio.get_event_loop().time() - start_time < 30:
             try:
                 response = await asyncio.wait_for(bot.wait_for('message', check=check), timeout=30.0)
-                if (response.content.lower() == os.path.splitext(random_image)[0].lower()) or (len(response.content) >= 3 and response.content.lower() in os.path.splitext(random_image)[0].lower()) or (len(response.content) >= 3 and is_acronym(response.content, os.path.splitext(random_image)[0])):
+                if (response.content.lower() == os.path.splitext(random_image)[0].lower()) or \
+                   (len(response.content) >= 3 and response.content.lower() in os.path.splitext(random_image)[0].lower()) or \
+                   (len(response.content) >= 3 and is_acronym(response.content, os.path.splitext(random_image)[0])):
                     await response.reply("正解です！")
                     FRAG = 0
                     break
-                elif (response.content.lower() == ("!s" or "!skip")):
+                elif response.content.lower() in ["!s", "!skip"]:
                     break
                 else:
                     await response.reply("残念！もう一度お試しください。")
@@ -721,6 +717,7 @@ async def guessc(ctx, n: float = None):
 
     except Exception as e:
         await ctx.send(f"エラーが発生しました: {e}")
+
 
 rootnum = 5
 num = rootnum ** 2
