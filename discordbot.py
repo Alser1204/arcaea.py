@@ -843,7 +843,7 @@ async def blue(ctx, target:str):
 
 @bot.command()
 async def red(ctx, target:str):
-    global position,color
+    global position,color, found_count
     x, y = None, None
     found=False
     for i, row in enumerate(position):
