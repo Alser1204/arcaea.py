@@ -734,6 +734,7 @@ redcount=0
 bluecount=0
 FLAG=1
 FLAGS=0
+found_count = 0
 allowed_numbers=[]
 log_list=[]
 font=[["" for _ in range(rootnum)] for _ in range(rootnum)]
