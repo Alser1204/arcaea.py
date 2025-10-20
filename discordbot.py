@@ -140,6 +140,9 @@ battle_i_2 = 0
 
 @bot.command()
 async def dgacha(ctx, n: int = 10):
+    if n>100:
+        await ctx.send(ガチャの回数は100回以内にしてください。\n")
+        return
     global battle_member, battle_score, in_battle, battle_i
     global battle_member_2, battle_score_2, in_battle_2, battle_i_2
     user_name = ctx.author.name  # user_name に変更
