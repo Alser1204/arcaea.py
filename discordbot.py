@@ -744,7 +744,7 @@ font=[["" for _ in range(rootnum)] for _ in range(rootnum)]
 
 @bot.command()
 async def blue(ctx, target:str):
-    global position,color
+    global position,color, found_count
     x, y = None, None
     found=False
     for i, row in enumerate(position):
