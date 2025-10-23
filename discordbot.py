@@ -1350,7 +1350,14 @@ async def hangman(ctx):
         "guessed": []
     }
 
-    await ctx.send(f"🎯 ハングマン開始！\n"f"単語の長さ: {len(word)} 文字\n"単語: {' '.join(hidden)}\n残りミス: 6\n英字を一文字ずつ入力してください！")
+    msg = (
+        f"🎯 **ハングマン開始！**\n"
+        f"単語の長さ: {len(word)} 文字\n"
+        f"単語: {escape_markdown(' '.join(hidden))}\n"
+        f"残りミス: 6\n"
+        f"文字を1つずつ `!guess 文字` の形で入力してください！"
+    )
+    await ctx.send(msg)
 
 @bot.command()
 async def hangg(ctx, letter: str):
