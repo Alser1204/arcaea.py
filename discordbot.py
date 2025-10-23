@@ -1314,5 +1314,81 @@ async def wordwolf(ctx, text_file: str, num: int):
 
     await ctx.send("全員にワードを送信しました！ゲームを開始してください！")
 
+# --- Arcaea.txt から単語リストを読み込み ---
+def load_words(filename="Arcaea.txt"):
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            words = [line.strip() for line in f if line.strip()]
+        return words
+    except FileNotFoundError:
+        print("⚠️ Arcaea.txt が見つかりません。")
+        return []
+
+WORDS = load_words()
+
+# ゲームの状態を保存する辞書
+games = {}
+
+@bot.command()
+async def hangman(ctx):
+    """ハングマンを開始"""
+    if ctx.channel.id in games:
+        await ctx.send("すでにゲームが進行中です！")
+        return
+
+    if not WORDS:
+        await ctx.send("単語リストが空です。Arcaea.txt を確認してください。")
+        return
+
+    word = random.choice(WORDS).lower()
+    hidden = ["_" if c.isalpha() else c for c in word]  # 記号はそのまま表示
+
+    games[ctx.channel.id] = {
+        "word": word,
+        "hidden": hidden,
+        "tries": 6,
+        "guessed": []
+    }
+
+    await ctx.send(f"🎯 ハングマン開始！\n単語: {' '.join(hidden)}\n残りミス: 6\n英字を一文字ずつ入力してください！")
+
+@bot.command()
+async def hangg(ctx, letter: str):
+    """文字を推測"""
+    if ctx.channel.id not in games:
+        await ctx.send("まず `!hangman` でゲームを始めてください。")
+        return
+
+    game = games[ctx.channel.id]
+    word = game["word"]
+
+    if len(letter) != 1 or not letter.isalpha():
+        await ctx.send("アルファベット1文字で入力してください。")
+        return
+
+    letter = letter.lower()
+    if letter in game["guessed"]:
+        await ctx.send("その文字はもう使われています。")
+        return
+
+    game["guessed"].append(letter)
+
+    if letter in word:
+        for i, c in enumerate(word):
+            if c == letter:
+                game["hidden"][i] = letter
+        await ctx.send(f"✅ 正解！\n{' '.join(game['hidden'])}")
+    else:
+        game["tries"] -= 1
+        await ctx.send(f"❌ 不正解！残りミス: {game['tries']}\n{' '.join(game['hidden'])}")
+
+    # 勝敗判定
+    if "_" not in game["hidden"]:
+        await ctx.send(f"🎉 クリア！単語は `{word}` でした！")
+        del games[ctx.channel.id]
+    elif game["tries"] <= 0:
+        await ctx.send(f"💀 ゲームオーバー！正解は `{word}` でした。")
+        del games[ctx.channel.id]
+
 
 bot.run(TOKEN)
