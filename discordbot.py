@@ -13,6 +13,7 @@ import math
 from collections import defaultdict
 import json
 import datetime
+from discord.utils import escape_markdown
 
 # サーバーごとのデフォルト設定を保持する辞書
 server_settings = {}
