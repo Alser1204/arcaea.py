@@ -1356,9 +1356,18 @@ async def hangman(ctx):
         f"単語の長さ: {len(word)} 文字\n"
         f"単語: {escape_markdown(' '.join(hidden))}\n"
         f"残りミス: 6\n"
-        f"文字を1つずつ `!guess 文字` の形で入力してください！"
+        f"文字を1つずつ `!hangg アルファベット` の形で入力してください！"
     )
     await ctx.send(msg)
+    
+@bot.command()
+async def hangfinish(ctx):
+    """現在のハングマンゲームを強制終了"""
+    if ctx.channel.id in games:
+        del games[ctx.channel.id]
+        await ctx.send("🛑 ハングマンゲームを強制終了しました。")
+    else:
+        await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
 @bot.command()
 async def hangg(ctx, letter: str):
