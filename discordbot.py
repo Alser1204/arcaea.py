@@ -1331,7 +1331,7 @@ WORDS = load_words()
 games = {}
 
 @bot.command()
-async def hangman(ctx):
+async def hangman(ctx, num:int=6):
     """ハングマンを開始"""
     if ctx.channel.id in games:
         await ctx.send("すでにゲームが進行中です！")
@@ -1342,12 +1342,12 @@ async def hangman(ctx):
         return
 
     word = random.choice(WORDS).lower()
-    hidden = ["_" if c.isalpha() else c for c in word]  # 記号はそのまま表示
+    hidden = ["ˍ" if c.isalpha() else c for c in word]  # 記号はそのまま表示
 
     games[ctx.channel.id] = {
         "word": word,
         "hidden": hidden,
-        "tries": 6,
+        "tries": num,
         "guessed": []
     }
 
@@ -1394,7 +1394,7 @@ async def hangg(ctx, letter: str):
         for i, c in enumerate(word):
             if c == letter:
                 game["hidden"][i] = letter
-        await ctx.send(f"✅ 正解！\n{' '.join(game['hidden'])}")
+        await ctx.send(f"✅ 正解！\n{escape_markdown(' '.join(game['hidden']))}")
     else:
         game["tries"] -= 1
         await ctx.send(f"❌ 不正解！残りミス: {game['tries']}\n{' '.join(game['hidden'])}")
