@@ -1330,7 +1330,7 @@ WORDS = load_words()
 # ゲームの状態を保存する辞書
 games = {}
 
-@bot.command()
+@bot.command(aliases=["h"])
 async def hangman(ctx, num:int=6):
     """ハングマンを開始"""
     if ctx.channel.id in games:
@@ -1355,7 +1355,7 @@ async def hangman(ctx, num:int=6):
         f"🎯 **ハングマン開始！**\n"
         f"単語の長さ: {len(word)} 文字\n"
         f"単語: {escape_markdown(' '.join(hidden))}\n"
-        f"残りミス: 6\n"
+        f"残りミス: num\n"
         f"文字を1つずつ `!hangg アルファベット` の形で入力してください！"
     )
     await ctx.send(msg)
@@ -1370,7 +1370,7 @@ async def hangfinish(ctx):
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
 @bot.command()
-async def hangg(ctx, letter: str):
+async def hang(ctx, letter: str):
     """文字を推測"""
     if ctx.channel.id not in games:
         await ctx.send("まず `!hangman` でゲームを始めてください。")
@@ -1400,7 +1400,7 @@ async def hangg(ctx, letter: str):
         await ctx.send(f"❌ 不正解！残りミス: {game['tries']}\n{' '.join(game['hidden'])}")
 
     # 勝敗判定
-    if "_" not in game["hidden"]:
+    if "ˍ" not in game["hidden"]:
         await ctx.send(f"🎉 クリア！単語は `{word}` でした！")
         del games[ctx.channel.id]
     elif game["tries"] <= 0:
