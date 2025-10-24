@@ -1355,7 +1355,7 @@ async def hangman(ctx, num:int=6):
         f"🎯 **ハングマン開始！**\n"
         f"単語の長さ: {len(word)} 文字\n"
         f"単語: {escape_markdown(' '.join(hidden))}\n"
-        f"残りミス: num\n"
+        f"残りミス: {num}\n"
         f"文字を1つずつ `!hang(!h) アルファベット` の形で入力してください！"
     )
     await ctx.send(msg)
