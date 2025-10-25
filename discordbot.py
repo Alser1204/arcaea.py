@@ -1370,10 +1370,14 @@ async def hangfinish(ctx):
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
 @bot.command(aliases=["h"])
-async def hang(ctx, letter: str):
+async def hang(ctx, letter: str=None):
     """文字を推測"""
     if ctx.channel.id not in games:
         await ctx.send("まず `!hangman` でゲームを始めてください。")
+        return
+
+    if letter is None: 
+        await ctx.send("引数を入力してください。") 
         return
 
     game = games[ctx.channel.id]
@@ -1398,6 +1402,62 @@ async def hang(ctx, letter: str):
     else:
         game["tries"] -= 1
         await ctx.send(f"❌ 不正解！残りミス: {game['tries']}\n{' '.join(game['hidden'])}")
+
+    # 勝敗判定
+    if "ˍ" not in game["hidden"]:
+        await ctx.send(f"🎉 クリア！単語は `{word}` でした！")
+        del games[ctx.channel.id]
+    elif game["tries"] <= 0:
+        await ctx.send(f"💀 ゲームオーバー！正解は `{word}` でした。")
+        del games[ctx.channel.id]
+
+@bot.command()
+async def hangs(ctx, letters: str=None):
+    """文字を推測（1文字と複数文字で表示を変える）"""
+    if ctx.channel.id not in games:
+        await ctx.send("まず `!hangman` でゲームを始めてください。")
+        return
+
+    if letters is None:
+        await ctx.send("引数を入力してください。") 
+        return
+
+    game = games[ctx.channel.id]
+    word = game["word"]
+
+    letters = letters.lower()
+    if not letters.isalpha():
+        await ctx.send("アルファベットのみを入力してください。")
+        return
+
+    new_letters = [ch for ch in letters if ch not in game["guessed"]]
+    if not new_letters:
+        await ctx.send("すべての文字がすでに使われています。")
+        return
+
+    game["guessed"].extend(new_letters)
+
+    correct_letters = []
+    wrong_letters = []
+
+    for letter in new_letters:
+        if letter in word:
+            correct_letters.append(letter)
+            for i, c in enumerate(word):
+                if c == letter:
+                    game["hidden"][i] = letter
+        else:
+            wrong_letters.append(letter)
+            game["tries"] -= 1
+
+    # 表示処理
+    msg = ""
+    if correct_letters:
+        msg += f"✅ 正解の文字: {', '.join(correct_letters)}\n"
+    if wrong_letters:
+        msg += f"❌ ハズレの文字: {', '.join(wrong_letters)}\n"
+    msg += f"残りミス: {game['tries']}\n{' '.join(game['hidden'])}"
+    await ctx.send(msg)
 
     # 勝敗判定
     if "ˍ" not in game["hidden"]:
