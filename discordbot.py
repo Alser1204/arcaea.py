@@ -1330,7 +1330,7 @@ WORDS = load_words()
 # ゲームの状態を保存する辞書
 games = {}
 
-@bot.command(aliases=["h"])
+@bot.command()
 async def hangman(ctx, num:int=6):
     """ハングマンを開始"""
     if ctx.channel.id in games:
@@ -1369,7 +1369,7 @@ async def hangfinish(ctx):
     else:
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
-@bot.command()
+@bot.command(aliases=["h"])
 async def hang(ctx, letter: str):
     """文字を推測"""
     if ctx.channel.id not in games:
