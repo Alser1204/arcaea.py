@@ -1404,7 +1404,7 @@ async def hang(ctx, letter: str=None):
         await ctx.send(f"❌ 不正解！残りミス: {game['tries']}\n{' '.join(game['hidden'])}")
 
     # 勝敗判定
-    if "ˍ" not in game["hidden"]:
+    if "ˍ" not in game["hidden"] and game["tries"] >= 1:
         await ctx.send(f"🎉 クリア！単語は `{word}` でした！")
         del games[ctx.channel.id]
     elif game["tries"] <= 0:
