@@ -12,10 +12,10 @@ Ai Drew
 AI[UE]OON
 Aleph-0
 Alexandrite
-Alice a la mode
+Alice à la mode
 Alice's Suitcase
 Alone & Lorn
-Altair (feat. _spiLa_)
+Altair (feat. *spiLa*)
 Altale
 ALTER EGO
 AlterAle
@@ -69,9 +69,9 @@ BUCHiGiRE Berserker
 Bullet Waiting for Me (James Landino remix)
 Call My Name feat. Yukacco
 Callima Karma
-Can I Friend You On Bassbook_ Lol
+Can I Friend You On Bassbook? Lol
 Capella
-carmine_scythe
+carmine:scythe
 CHAOS
 Chelsea
 Chromafill
@@ -80,7 +80,7 @@ Chronostasis
 Climax
 Clotho and the stargazer
 Coastal Highway
-cocoro_cosmetic
+cocoro*cosmetic
 conflict
 corps-sans-organes
 Corruption
@@ -163,14 +163,13 @@ Galaxy Friends
 Garakuta Doll Play
 Gekka (Short Version)
 Genesis_Arcaea
-Genesis_Arcaea
 Genesis_CHUNITHM
 GENOCIDER
 Gensou no Satellite
 GIMME DA BLOOD
 GIMMICK
 Give Me a Nightmare
-GLORY_ROAD
+GLORY：ROAD
 Glow
 goldenslaughterer
 Good bye, Merry-Go-Round
@@ -234,8 +233,8 @@ Lapis
 Last Celebration
 Last
 lastendconductor
-Last_Eternity
-Last_Moment
+Last|Eternity
+Last|Moment
 Lawless Point
 Lazy Addiction
 Leave All Behind
@@ -360,7 +359,7 @@ Scarlet Cage
 Scarlet Lance
 Seclusion
 Senkyou
-Shades of Light in a Transcendent Realm-fixed
+Shades of Light in a Transcendent Realm
 Sheriruth (Laur Remix)
 Sheriruth
 shrink
@@ -435,7 +434,7 @@ with U
 World Ender
 World Fragments III(radio edit)
 World Vanquisher
-world-execute-me
+world.execute(me);
 Xanatos
 Xeraphinite
 XTREME
@@ -497,10 +496,11 @@ Syriana
 Tic! Tac! Toe!
 TRPNO
 U.A.D
-Undying Macula-fixed
+Undying Macula
 Vainspire
 Viola Illyria
 We're All Gonna Die
 Welcome, Queen of Fiction.
 Won't Back Down
 τ (tau)
+
