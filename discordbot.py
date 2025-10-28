@@ -1411,7 +1411,7 @@ async def hang(ctx, letter: str=None):
         await ctx.send(f"💀 ゲームオーバー！正解は `{word}` でした。")
         del games[ctx.channel.id]
 
-@bot.command()
+@bot.command(aliases=["hs"])
 async def hangs(ctx, letters: str=None):
     """文字を推測（1文字と複数文字で表示を変える）"""
     if ctx.channel.id not in games:
