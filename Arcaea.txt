@@ -256,8 +256,7 @@ Lost Desire
 Lost Emotion feat. nomico
 Lost in the Abyss
 Loveless Dress
-Lucid Traveler_FTR
-Lucid Traveler_PST_PRS
+Lucid Traveler
 Lucifer
 Lumia
 Luna Rossa
@@ -404,7 +403,7 @@ Tie me down gently
 Tiferet
 To the Furthest Dream
 To the Milky Way
-To_ Alice Liddell
+To: Alice Liddell
 Transient Space
 Trap Crow
 trappola bewitching
@@ -416,7 +415,7 @@ Ultimate taste
 ultradiaxon-N3
 UNKNOWN LEVELS
 Used to be
-Valhalla_0
+Valhalla:0
 Vandalism
 VECTOЯ
 Vexaria
@@ -482,7 +481,6 @@ list.txt
 Live Faster Die Younger
 Miles
 Mistempered Malignance
-Nhelv_BYD
 Nightmare
 No Way Back
 OBLIVION
@@ -503,4 +501,5 @@ We're All Gonna Die
 Welcome, Queen of Fiction.
 Won't Back Down
 τ (tau)
+
 
