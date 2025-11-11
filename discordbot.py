@@ -1333,7 +1333,7 @@ games = {}
 import re
 
 @bot.command()
-async def hangman(ctx, num:int=6, text_file:str="Arcaea"):
+async def hangman(ctx, text_file:str="Arcaea", num:int=6):
 
     if text_file == "原神":
         text_file = "Genshin.txt"
