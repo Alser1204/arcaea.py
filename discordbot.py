@@ -1331,6 +1331,50 @@ trash = load_words()
 games = {}
 
 import re
+import unicodedata
+
+# ひらがな⇄カタカナ変換テーブル
+HIRA_TO_KATA = str.maketrans(
+    {chr(i): chr(i + 0x60) for i in range(0x3041, 0x3097)}  # ひらがな→カタカナ
+)
+KATA_TO_HIRA = str.maketrans(
+    {chr(i): chr(i - 0x60) for i in range(0x30A1, 0x30F7)}  # カタカナ→ひらがな
+)
+
+def normalize_japanese(text: str):
+    """日本語を正規化（全角/半角・カタカナ→ひらがな変換）"""
+    text = unicodedata.normalize("NFKC", text)  # 全角→半角統一
+    text = text.translate(KATA_TO_HIRA)         # カタカナ→ひらがな
+    return text
+
+
+def analyze_word_characters(word: str) -> str:
+    """単語中の文字種の割合を返す"""
+    categories = {
+        "ひらがな": r"[ぁ-ん]",
+        "カタカナ": r"[ァ-ヶ]",
+        "漢字": r"[一-龯々]",
+        "英字": r"[A-Za-z]",
+        "数字": r"[0-9]",
+    }
+
+    total = len(word)
+    if total == 0:
+        return "（文字なし）"
+
+    counts = {name: len(re.findall(pattern, word)) for name, pattern in categories.items()}
+    matched = sum(counts.values())
+    counts["記号など"] = total - matched
+
+    result_parts = []
+    for name, count in counts.items():
+        if count > 0:
+            pct = (count / total) * 100
+            result_parts.append(f"{name} {pct:.0f}%")
+
+    return "、".join(result_parts)
+
+
 
 @bot.command()
 async def hangman(ctx, text_file:str="Arcaea", num:int=6):
@@ -1369,10 +1413,13 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         "guessed": []
     }
 
+    composition = analyze_word_characters(word)
+
     msg = (
         f"🎯 **ハングマン開始！**\n"
         f"単語の長さ: {len(word)} 文字\n"
         f"単語: {escape_markdown(' '.join(hidden))}\n"
+        f"文字構成: {composition}\n"  # 👈 ここで出す！
         f"残りミス: {num}\n"
         f"文字を `!hang(!h) 文字列` の形で入力してください！"
     )
@@ -1419,11 +1466,15 @@ async def hang(ctx, letters: str=None):
     wrong_letters = []
 
     for letter in new_letters:
-        if letter in word:
+        # ✅ ひらがな⇄カタカナを無視して比較
+        normalized_letter = normalize_japanese(letter)
+        normalized_word = normalize_japanese(word)
+    
+        if normalized_letter in normalized_word:
             correct_letters.append(letter)
             for i, c in enumerate(word):
-                if c == letter:
-                    game["hidden"][i] = letter
+                if normalize_japanese(c) == normalized_letter:
+                    game["hidden"][i] = c
         else:
             wrong_letters.append(letter)
             game["tries"] -= 1
