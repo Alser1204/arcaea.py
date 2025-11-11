@@ -1325,13 +1325,31 @@ def load_words(filename="Arcaea.txt"):
         print("⚠️ Arcaea.txt が見つかりません。")
         return []
 
-WORDS = load_words()
+trash = load_words()
 
 # ゲームの状態を保存する辞書
 games = {}
 
+import re
+
 @bot.command()
-async def hangman(ctx, num:int=6):
+async def hangman(ctx, num:int=6, text_file:str="Arcaea"):
+
+    if text_file == "原神":
+        text_file = "Genshin.txt"
+    elif text_file in ["学マス", "学園アイドルマスター"]:
+        text_file = "GakuenIMAS.txt"
+    elif text_file in ["ブルアカ", "ブルーアーカイブ"]:
+        text_file = "BlueArchive.txt"
+    elif text_file in ["Arcaea", "アーケア"]:
+        text_file = "Arcaea.txt"
+    elif text_file in ["プロセカ", "プロジェクトセカイ"]:
+        text_file = "proseka.txt"
+
+    # ファイルを読み込む
+    with open(text_file, "r", encoding="utf-8") as file:
+        WORDS = [line.strip() for line in file if line.strip()]
+    
     """ハングマンを開始"""
     if ctx.channel.id in games:
         await ctx.send("すでにゲームが進行中です！")
@@ -1342,7 +1360,7 @@ async def hangman(ctx, num:int=6):
         return
 
     word = random.choice(WORDS).lower()
-    hidden = ["ˍ" if c.isalpha() else c for c in word]  # 記号はそのまま表示
+    hidden = ["ˍ" if re.match(r"[A-Za-z0-9ぁ-んァ-ヶ一-龯々ー]", c) else c for c in word]  # 記号はそのまま表示
 
     games[ctx.channel.id] = {
         "word": word,
@@ -1356,7 +1374,7 @@ async def hangman(ctx, num:int=6):
         f"単語の長さ: {len(word)} 文字\n"
         f"単語: {escape_markdown(' '.join(hidden))}\n"
         f"残りミス: {num}\n"
-        f"文字を1つずつ `!hang(!h) アルファベット` の形で入力してください！"
+        f"文字を `!hang(!h) 文字列` の形で入力してください！"
     )
     await ctx.send(msg)
     
@@ -1370,50 +1388,7 @@ async def hangfinish(ctx):
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
 @bot.command(aliases=["h"])
-async def hang(ctx, letter: str=None):
-    """文字を推測"""
-    if ctx.channel.id not in games:
-        await ctx.send("まず `!hangman` でゲームを始めてください。")
-        return
-
-    if letter is None: 
-        await ctx.send("引数を入力してください。") 
-        return
-
-    game = games[ctx.channel.id]
-    word = game["word"]
-
-    if len(letter) != 1 or not letter.isalpha():
-        await ctx.send("アルファベット1文字で入力してください。")
-        return
-
-    letter = letter.lower()
-    if letter in game["guessed"]:
-        await ctx.send("その文字はもう使われています。")
-        return
-
-    game["guessed"].append(letter)
-
-    if letter in word:
-        for i, c in enumerate(word):
-            if c == letter:
-                game["hidden"][i] = letter
-        await ctx.send(f"✅ 正解！\n{escape_markdown(' '.join(game['hidden']))}")
-    else:
-        game["tries"] -= 1
-        await ctx.send(f"❌ 不正解！残りミス: {game['tries']}\n{' '.join(game['hidden'])}")
-
-    # 勝敗判定
-    if "ˍ" not in game["hidden"] and game["tries"] >= 1:
-        await ctx.send(f"🎉 クリア！単語は `{word}` でした！")
-        del games[ctx.channel.id]
-    elif game["tries"] <= 0:
-        await ctx.send(f"💀 ゲームオーバー！正解は `{word}` でした。")
-        del games[ctx.channel.id]
-
-@bot.command(aliases=["hs"])
-async def hangs(ctx, letters: str=None):
-    """文字を推測（1文字と複数文字で表示を変える）"""
+async def hang(ctx, letters: str=None):
     if ctx.channel.id not in games:
         await ctx.send("まず `!hangman` でゲームを始めてください。")
         return
@@ -1425,9 +1400,12 @@ async def hangs(ctx, letters: str=None):
     game = games[ctx.channel.id]
     word = game["word"]
 
-    letters = letters.lower()
-    if not letters.isalpha():
-        await ctx.send("アルファベットのみを入力してください。")
+    # ✅ 英字のみ小文字化（日本語はそのまま）
+    letters = "".join(ch.lower() if "A" <= ch <= "Z" else ch for ch in letters)
+
+    # ✅ 有効な文字判定（英数字・日本語のみ）
+    if not re.match(r"^[A-Za-z0-9ぁ-んァ-ヶ一-龯々ー]+$", letters):
+        await ctx.send("英字または日本語の文字を入力してください。")
         return
 
     new_letters = [ch for ch in letters if ch not in game["guessed"]]
