@@ -1404,7 +1404,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         return
 
     word = random.choice(WORDS).lower()
-    hidden = ["ˍ" if re.match(r"[A-Za-z0-9ぁ-んァ-ヶ一-龯々ー]", c) else c for c in word]  # 記号はそのまま表示
+    hidden = ["ˍ" if re.match(r"[A-Za-z0-9ぁ-んァ-ヶ一-龯々]", c) else c for c in word]  # 記号はそのまま表示
 
     games[ctx.channel.id] = {
         "word": word,
@@ -1489,7 +1489,7 @@ async def hang(ctx, letters: str=None):
     await ctx.send(msg)
 
     # 勝敗判定
-    if "ˍ" not in game["hidden"]:
+    if "ˍ" not in game["hidden"] and game["tries"] > 0:
         await ctx.send(f"🎉 クリア！単語は `{word}` でした！")
         del games[ctx.channel.id]
     elif game["tries"] <= 0:
