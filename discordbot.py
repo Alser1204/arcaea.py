@@ -1391,10 +1391,29 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         text_file = "proseka.txt"
     elif text_file in ["国", "国名"]:
         text_file = "country.txt"
+    elif text_file in ["英語", "english", "English"]:
+        text_file = "english.csv"
 
     # ファイルを読み込む
-    with open(text_file, "r", encoding="utf-8") as file:
-        WORDS = [line.strip() for line in file if line.strip()]
+    if text_file.endswith(".csv"):
+        import csv
+        WORDS = []
+        EXPLANATIONS = []
+        with open(text_file, "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            next(reader, None)  # ヘッダーがあれば読み飛ばす
+            for row in reader:
+                if len(row) >= 2:
+                    WORDS.append(row[0].strip())
+                    EXPLANATIONS.append(row[1].strip())
+                elif len(row) == 1:
+                    WORDS.append(row[0].strip())
+                    EXPLANATIONS.append(None)
+    else:
+        EXPLANATIONS = None
+        with open(text_file, "r", encoding="utf-8") as file:
+            WORDS = [line.strip() for line in file if line.strip()]
+
     
     """ハングマンを開始"""
     if ctx.channel.id in games:
@@ -1405,14 +1424,18 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         await ctx.send("単語リストが空です。Arcaea.txt を確認してください。")
         return
 
-    word = random.choice(WORDS).lower()
+    # CSV の場合は index を合わせて explanation を取得
+    idx = random.randrange(len(WORDS))
+    word = WORDS[idx].lower()
+    explanation = EXPLANATIONS[idx] if EXPLANATIONS else None
     hidden = ["ˍ" if re.match(r"[A-Za-z0-9ぁ-んァ-ヶ一-龯々]", c) else c for c in word]  # 記号はそのまま表示
 
     games[ctx.channel.id] = {
         "word": word,
         "hidden": hidden,
         "tries": num,
-        "guessed": []
+        "guessed": [],
+        "explanation": explanation   # ←追加！
     }
 
     composition = analyze_word_characters(word)
@@ -1493,9 +1516,13 @@ async def hang(ctx, letters: str=None):
     # 勝敗判定
     if "ˍ" not in game["hidden"] and game["tries"] > 0:
         await ctx.send(f"🎉 クリア！単語は `{word}` でした！")
+        if game["explanation"]:
+            await ctx.send(f"📘 **解説:** {game['explanation']}")
         del games[ctx.channel.id]
     elif game["tries"] <= 0:
         await ctx.send(f"💀 ゲームオーバー！正解は `{word}` でした。")
+        if game["explanation"]:
+            await ctx.send(f"📘 **解説:** {game['explanation']}")
         del games[ctx.channel.id]
 
 
