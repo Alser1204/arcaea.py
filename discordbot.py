@@ -1389,6 +1389,8 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         text_file = "Arcaea.txt"
     elif text_file in ["プロセカ", "プロジェクトセカイ"]:
         text_file = "proseka.txt"
+    elif text_file in ["国", "国名"]:
+        text_file = "country.txt"
 
     # ファイルを読み込む
     with open(text_file, "r", encoding="utf-8") as file:
