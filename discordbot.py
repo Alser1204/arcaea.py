@@ -1414,6 +1414,11 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         with open(text_file, "r", encoding="utf-8") as file:
             WORDS = [line.strip() for line in file if line.strip()]
 
+    await ctx.send(f"読み込もうとしているファイル: `{text_file}`")
+    import os
+    await ctx.send(f"存在確認: {os.path.exists(text_file)}")
+
+
     
     """ハングマンを開始"""
     if ctx.channel.id in games:
