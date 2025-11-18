@@ -1619,12 +1619,57 @@ async def hint(ctx, key: str = None):
         await ctx.send("そのヒントキーは存在しません。")
         return
 
+    if key in ["作曲者", "コンポーザー"]:
+        key = "composer"
+    if key in ["アートワーク", "絵師"]:
+        key = "artwork"
+    if key in ["譜面製作者", "譜面制作者", "チャーター"]:
+        key = "chart designer"
+    if key in ["難易度", "レベル", difficulty]:
+        key = "level"
+    if key in ["定数", "譜面定数"]:
+        key = "constants"
+    if key in ["長さ", "曲の長さ", "演奏時間"]:
+        key = "length"
+    if key in ["BPM"]:
+        key = "bpm"
+    if key in ["パック"]:
+        key = "pack"
+    if key in ["サイド", "属性"]:
+        key = "side"
+    if key in ["モバイル", "モバイル版"]:
+        key = "mobile"
+    if key in ["スイッチ", "スイッチ版"]:
+        key = "switch"
+
     # ヒントを返す
     value = info[key]
-    await ctx.send(f"ヒント ({key}): {value}")
-
     # 履歴に追加
     game_state['used_hints'].append((key, value))
+    if value == "composer":
+        value = "作曲者"
+    if value == "artwork":
+        value = "アートワーク"
+    if value == "chart designer":
+        value = "譜面製作者"
+    if value == "level":
+        value = "難易度"
+    if value == "constants":
+        value = "譜面定数"
+    if value == "length":
+        value = "演奏時間"
+    if value == "bpm":
+        value = "BPM"
+    if value == "pack":
+        value = "パック"
+    if value == "side":
+        value = "属性"
+    if value == "mobile":
+        value = "モバイル版リリース"
+    if value == "switch":
+        value = "Switch版リリース"
+
+    await ctx.send(f"ヒント ({key}): {value}")
 
 
 
