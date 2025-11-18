@@ -1613,19 +1613,13 @@ async def hint(ctx, key: str = None):
         )
         return
 
-    # キーが存在しない
-    info = game_state['hints']
-    if key not in info:
-        await ctx.send("そのヒントキーは存在しません。")
-        return
-
     if key in ["作曲者", "コンポーザー"]:
         key = "composer"
     if key in ["アートワーク", "絵師"]:
         key = "artwork"
     if key in ["譜面製作者", "譜面制作者", "チャーター"]:
         key = "chart designer"
-    if key in ["難易度", "レベル", difficulty]:
+    if key in ["難易度", "レベル", "difficulty"]:
         key = "level"
     if key in ["定数", "譜面定数"]:
         key = "constants"
@@ -1641,6 +1635,12 @@ async def hint(ctx, key: str = None):
         key = "mobile"
     if key in ["スイッチ", "スイッチ版"]:
         key = "switch"
+        
+    # キーが存在しない
+    info = game_state['hints']
+    if key not in info:
+        await ctx.send("そのヒントキーは存在しません。")
+        return
 
     # ヒントを返す
     value = info[key]
