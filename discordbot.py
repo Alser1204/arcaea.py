@@ -1528,30 +1528,13 @@ async def hang(ctx, letters: str=None):
 
 
 
-JSON_PATH = 'songs.json
+JSON_PATH = 'songs.json'
 
 # 現在出題中の問題保持
 game_state = {
 'answer': None,
 'hints': None,
 'used_hints': [] # 追加: 今まで出したヒントを保存
-}
-
-
-import discord
-from discord.ext import commands
-import json
-import random
-
-BOT_PREFIX = '!'
-JSON_PATH = 'songs.json'
-
-bot = commands.Bot(command_prefix=BOT_PREFIX, intents=discord.Intents.all())
-
-game_state = {
-    'answer': None,
-    'hints': None,
-    'used_hints': []
 }
 
 # ---- JSON 読み取り ----
