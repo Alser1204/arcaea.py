@@ -1585,6 +1585,11 @@ async def answer(ctx, *, user_answer: str = None):
         game_state['answer'] = None
         game_state['hints'] = None
         game_state['used_hints'] = []
+    elif ua == "giveup":
+        await ctx.send(f"ギブアップ！曲名は **{correct}** でした！")
+        game_state['answer'] = None
+        game_state['hints'] = None
+        game_state['used_hints'] = []
     else:
         await ctx.send("不正解！ もう一度どうぞ。")
 
@@ -1646,28 +1651,6 @@ async def hint(ctx, key: str = None):
     value = info[key]
     # 履歴に追加
     game_state['used_hints'].append((key, value))
-    if value == "composer":
-        value = "作曲者"
-    if value == "artwork":
-        value = "アートワーク"
-    if value == "chart designer":
-        value = "譜面製作者"
-    if value == "level":
-        value = "難易度"
-    if value == "constants":
-        value = "譜面定数"
-    if value == "length":
-        value = "演奏時間"
-    if value == "bpm":
-        value = "BPM"
-    if value == "pack":
-        value = "パック"
-    if value == "side":
-        value = "属性"
-    if value == "mobile":
-        value = "モバイル版リリース"
-    if value == "switch":
-        value = "Switch版リリース"
 
     await ctx.send(f"ヒント ({key}): {value}")
 
