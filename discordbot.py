@@ -1650,7 +1650,9 @@ async def hint(ctx, key: str = None):
     # ヒントを返す
     value = info[key]
     # 履歴に追加
-    game_state['used_hints'].append((key, value))
+    if (key, value) not in game_state['used_hints']:
+        game_state['used_hints'].append((key, value))
+
 
     await ctx.send(f"ヒント ({key}): {value}")
 
