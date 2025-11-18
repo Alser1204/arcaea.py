@@ -1538,109 +1538,99 @@ game_state = {
 }
 
 
-# ---- JSON 読み込み関数 ----
+import discord
+from discord.ext import commands
+import json
+import random
+
+BOT_PREFIX = '!'
+JSON_PATH = 'songs.json'
+
+bot = commands.Bot(command_prefix=BOT_PREFIX, intents=discord.Intents.all())
+
+game_state = {
+    'answer': None,
+    'hints': None,
+    'used_hints': []
+}
+
+# ---- JSON 読み取り ----
 def load_songs():
-with open(JSON_PATH, 'r', encoding='utf-8') as f:
-return json.load(f)
+    with open(JSON_PATH, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
-
-# ---- コマンド: !quiz または !q ----
+# ---- !quiz / !q ----
 @bot.command(name='quiz', aliases=['q'])
 async def quiz(ctx):
-songs = load_songs()
-title = random.choice(list(songs.keys())) # 曲名
-info = songs[title] # ヒント情報
+    songs = load_songs()
+    title = random.choice(list(songs.keys()))
+    info = songs[title]
 
+    game_state['answer'] = title
+    game_state['hints'] = info
+    game_state['used_hints'] = []
 
-game_state['answer'] = title
-game_state['hints'] = info
-game_state['used_hints'] = [] # 新しい問題開始時リセット
+    await ctx.send("クイズ！ この曲は何でしょう？\n回答は **!answer** または **!a**")
 
-
-await ctx.send(f"クイズ！ この曲は何でしょう？
-回答は **!answer** または **!a**")(f"クイズ！ この曲は何でしょう？\n回答は **!answer** または **!a**")
-
-
-# ---- コマンド: !answer または !a ----
+# ---- !answer / !a ----
 @bot.command(name='answer', aliases=['a'])
 async def answer(ctx, *, user_answer: str = None):
-if game_state['answer'] is None:
-await ctx.send("今は問題が出ていません。!quiz で開始してください。")
-return
 
+    if game_state['answer'] is None:
+        await ctx.send("今は問題が出ていません。!quiz で開始してください。")
+        return
 
-if user_answer is None:
-await ctx.send("回答を入力してください: 例) !a 曲名")
-return
+    if user_answer is None:
+        await ctx.send("回答を入力してください: 例) !a 曲名")
+        return
 
+    if user_answer.strip() == game_state['answer']:
+        await ctx.send(f"正解！🎉 曲名は **{game_state['answer']}** でした！")
+        game_state['answer'] = None
+        game_state['hints'] = None
+        game_state['used_hints'] = []
+    else:
+        await ctx.send("不正解！ もう一度どうぞ。")
 
-if user_answer.strip() == game_state['answer']:
-await ctx.send(f"正解！🎉 曲名は **{game_state['answer']}** でした！")
-game_state['answer'] = None
-game_state['hints'] = None
-else:
-await ctx.send("不正解！ もう一度どうぞ。")
-
-
-# ---- コマンド: !hint ----
+# ---- !hint ----
 @bot.command(name='hint')
 async def hint(ctx, key: str = None):
-if game_state['hints'] is None:
-await ctx.send("現在ヒントのある問題がありません。!quiz を実行してください。")
-return
+    if game_state['hints'] is None:
+        await ctx.send("現在ヒントのある問題がありません。!quiz を実行してください。")
+        return
+
+    # ---- !hint all → これまでのヒント ----
+    if key == 'all':
+        if not game_state['used_hints']:
+            await ctx.send("まだヒントは出ていません。")
+        else:
+            formatted = "\n".join([f"{k}: {v}" for k, v in game_state['used_hints']])
+            await ctx.send(f"今までに出したヒント：\n{formatted}")
+        return
+
+    # キー未指定 → ヒント一覧を見せる
+    if key is None:
+        available = ', '.join(game_state['hints'].keys())
+        await ctx.send(
+            f"利用可能なヒントキー: {available}\n"
+            f"`!hint all` で今までに出したヒント一覧を表示"
+        )
+        return
+
+    # キーが存在しない
+    info = game_state['hints']
+    if key not in info:
+        await ctx.send("そのヒントキーは存在しません。")
+        return
+
+    # ヒントを返す
+    value = info[key]
+    await ctx.send(f"ヒント ({key}): {value}")
+
+    # 履歴に追加
+    game_state['used_hints'].append((key, value))
 
 
-# 追加: 今までのヒント一覧表示
-if key == 'all':
-if not game_state['used_hints']:
-await ctx.send("まだヒントは出ていません。")
-else:
-formatted = "
-".join([f"{k}: {v}" for k, v in game_state['used_hints']])
-await ctx.send(f"今までに出したヒント:
-{formatted}")
-return
-
-
-if key is None:
-available = ', '.join(game_state['hints'].keys())
-await ctx.send(f"利用可能なヒントキー: {available}
-`!hint all` で今までに出したヒント一覧を表示")
-return
-
-
-info = game_state['hints']
-
-
-if key not in info:
-await ctx.send("そのヒントキーは存在しません。")
-return
-
-
-# ヒント出力
-value = info[key]
-await ctx.send(f"ヒント ({key}): {value}")
-
-
-# 追加: used_hints に保存
-game_state['used_hints'].append((key, value))
-
-
-if key is None:
-available = ', '.join(game_state['hints'].keys())
-await ctx.send(f"利用可能なヒントキー: {available}")
-return
-
-
-info = game_state['hints']
-
-
-if key not in info:
-await ctx.send("そのヒントキーは存在しません。")
-return
-
-
-await ctx.send(f"ヒント ({key}): {info[key]}")
 
 
 bot.run(TOKEN)
