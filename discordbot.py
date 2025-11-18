@@ -1559,16 +1559,29 @@ async def quiz(ctx):
 @bot.command(name='answer', aliases=['a'])
 async def answer(ctx, *, user_answer: str = None):
 
+
     if game_state['answer'] is None:
         await ctx.send("今は問題が出ていません。!quiz で開始してください。")
         return
-
+    
+    
     if user_answer is None:
         await ctx.send("回答を入力してください: 例) !a 曲名")
         return
-
-    if user_answer.strip() == game_state['answer']:
-        await ctx.send(f"正解！🎉 曲名は **{game_state['answer']}** でした！")
+    
+    correct = game_state['answer']
+    ua = user_answer.strip()
+    
+    def is_loose_match(a, b):
+        if a == b:
+            return True
+        for i in range(len(a) - 2):
+            if a[i:i+3] in b:
+                return True
+        return False
+    
+    if is_loose_match(ua, correct):
+        await ctx.send(f"正解！🎉 曲名は **{correct}** でした！")
         game_state['answer'] = None
         game_state['hints'] = None
         game_state['used_hints'] = []
