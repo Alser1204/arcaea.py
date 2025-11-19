@@ -1572,15 +1572,7 @@ async def answer(ctx, *, user_answer: str = None):
     correct = game_state['answer']
     ua = user_answer.strip()
     
-    def is_loose_match(a, b):
-        if a == b:
-            return True
-        for i in range(len(a) - 2):
-            if a[i:i+3] in b:
-                return True
-        return False
-    
-    if is_loose_match(ua, correct):
+    if ua.lower() in correct.lower() and len(ua)>=3 or ua.lower()==correct.lower():
         await ctx.send(f"正解！🎉 曲名は **{correct}** でした！")
         game_state['answer'] = None
         game_state['hints'] = None
@@ -1622,7 +1614,7 @@ async def hint(ctx, key: str = None):
         key = "composer"
     if key in ["アートワーク", "絵師"]:
         key = "artwork"
-    if key in ["譜面製作者", "譜面制作者", "チャーター"]:
+    if key in ["譜面製作者", "譜面制作者", "チャーター", "chart", "charter"]:
         key = "chart designer"
     if key in ["難易度", "レベル", "difficulty"]:
         key = "level"
