@@ -1381,23 +1381,34 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
 
     if text_file == "原神":
         text_file = "Genshin.txt"
+        name = "原神"
     elif text_file in ["学マス", "学園アイドルマスター"]:
         text_file = "GakuenIMAS.txt"
+        name = "学マス"
     elif text_file in ["ブルアカ", "ブルーアーカイブ"]:
         text_file = "BlueArchive.txt"
+        name = "ブルアカ"
     elif text_file in ["Arcaea", "アーケア"]:
         text_file = "Arcaea.txt"
-    elif text_file in ["プロセカ", "プロジェクトセカイ"]:
+        name = "Arcaea"
+    elif text_file in ["プロセカ", "プロジェクトセカイ", "プロジェクトセカイ カラフルステージ feat. 初音ミク"]:
         text_file = "proseka.txt"
+        name = "プロセカ"
     elif text_file in ["国", "国名"]:
         text_file = "country.txt"
+        name = "国名"
     elif text_file in ["バンドリ", "ガルパ"]:
+        text_file = "bangdream.csv"
+        name = "バンドリ"
+    elif text_file in ["バンドリhard", "ガルパhard"]:
         text_file = "bangdream.txt"
+        name = "バンドリ(詳細なし版)"
     elif text_file in ["英語", "english", "English"]:
         text_file = "english.csv"
+        name = "英語"
 
     # ファイルを読み込む
-    if text_file.endswith(".csv"):
+    if text_file == "english.csv":
         import csv
         WORDS = []
         EXPLANATIONS = []
@@ -1411,8 +1422,31 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
                 elif len(row) == 1:
                     WORDS.append(row[0].strip())
                     EXPLANATIONS.append(None)
+    elif text_file == "bangdream.csv":
+        import csv
+        WORDS = []
+        TYPE = []
+        BAND = []
+        with open(text_file, "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            next(reader, None)  # ヘッダーがあれば読み飛ばす
+            for row in reader:
+                if len(row) >= 3:
+                    WORDS.append(row[0].strip())
+                    TYPE.append(row[1].strip())
+                    BAND.append(row[2].strip())
+                elif len(row) == 2:
+                    WORDS.append(row[0].strip())
+                    TYPE.append(row[1].strip())
+                    BAND.append(None)
+                elif len(row) == 1:
+                    WORDS.append(row[0].strip())
+                    TYPE.append(None)
+                    BAND.append(None)
     else:
         EXPLANATIONS = None
+        TYPE = None
+        BAND = None
         with open(text_file, "r", encoding="utf-8") as file:
             WORDS = [line.strip() for line in file if line.strip()]
 
@@ -1431,6 +1465,8 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
     idx = random.randrange(len(WORDS))
     word = WORDS[idx].lower()
     explanation = EXPLANATIONS[idx] if EXPLANATIONS else None
+    song_type = TYPE[idx] if TYPE else None
+    band = BAND[idx] if BAND else None
     hidden = ["ˍ" if re.match(r"[A-Za-z0-9ぁ-んァ-ヶ一-龯々]", c) else c for c in word]  # 記号はそのまま表示
 
     games[ctx.channel.id] = {
@@ -1438,19 +1474,35 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         "hidden": hidden,
         "tries": num,
         "guessed": [],
-        "explanation": explanation   # ←追加！
+        "explanation": explanation,
+        "song_type": song_type,
+        "band": band
     }
 
     composition = analyze_word_characters(word)
+    if song_type and band:
+        msg = (
+            f"🎯 **ハングマン開始！**\n"
+            f"単語の長さ: {len(word)} 文字\n"
+            f"単語: {escape_markdown(' '.join(hidden))}\n"
+            f"文字構成: {composition}\n"
+            f"出題ジャンル: {name}\n"
+            f"楽曲タイプ: {song_type}\n"
+            f"演奏バンド: {band}\n"
+            f"残りミス: {num}\n"
+            f"文字を `!hang(!h) 文字列` の形で入力してください！"
+        )
 
-    msg = (
-        f"🎯 **ハングマン開始！**\n"
-        f"単語の長さ: {len(word)} 文字\n"
-        f"単語: {escape_markdown(' '.join(hidden))}\n"
-        f"文字構成: {composition}\n"  # 👈 ここで出す！
-        f"残りミス: {num}\n"
-        f"文字を `!hang(!h) 文字列` の形で入力してください！"
-    )
+    else:
+        msg = (
+            f"🎯 **ハングマン開始！**\n"
+            f"単語の長さ: {len(word)} 文字\n"
+            f"単語: {escape_markdown(' '.join(hidden))}\n"
+            f"文字構成: {composition}\n"
+            f"出題ジャンル: {name}\n"
+            f"残りミス: {num}\n"
+            f"文字を `!hang(!h) 文字列` の形で入力してください！"
+        )
     await ctx.send(msg)
     
 @bot.command()
