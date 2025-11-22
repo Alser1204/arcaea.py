@@ -1412,6 +1412,8 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         import csv
         WORDS = []
         EXPLANATIONS = []
+        TYPE = None
+        BAND = None
         with open(text_file, "r", encoding="utf-8") as f:
             reader = csv.reader(f)
             next(reader, None)  # ヘッダーがあれば読み飛ばす
@@ -1425,6 +1427,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
     elif text_file == "bangdream.csv":
         import csv
         WORDS = []
+        EXPLANATIONS = None
         TYPE = []
         BAND = []
         with open(text_file, "r", encoding="utf-8") as f:
