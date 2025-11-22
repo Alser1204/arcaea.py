@@ -1466,6 +1466,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
 
     # CSV の場合は index を合わせて explanation を取得
     idx = random.randrange(len(WORDS))
+    raw_word = WORDS[idx]
     word = WORDS[idx].lower()
     explanation = EXPLANATIONS[idx] if EXPLANATIONS else None
     song_type = TYPE[idx] if TYPE else None
@@ -1474,6 +1475,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
 
     games[ctx.channel.id] = {
         "word": word,
+        "raw_word":raw_word,
         "hidden": hidden,
         "tries": num,
         "guessed": [],
@@ -1573,12 +1575,12 @@ async def hang(ctx, letters: str=None):
 
     # 勝敗判定
     if "ˍ" not in game["hidden"] and game["tries"] > 0:
-        await ctx.send(f"🎉 クリア！単語は `{word}` でした！")
+        await ctx.send(f"🎉 クリア！単語は `{game["raw_word"]}` でした！")
         if game["explanation"]:
             await ctx.send(f"📘 **解説:** {game['explanation']}")
         del games[ctx.channel.id]
     elif game["tries"] <= 0:
-        await ctx.send(f"💀 ゲームオーバー！正解は `{word}` でした。")
+        await ctx.send(f"💀 ゲームオーバー！正解は `{game["raw_word"]}` でした。")
         if game["explanation"]:
             await ctx.send(f"📘 **解説:** {game['explanation']}")
         del games[ctx.channel.id]
