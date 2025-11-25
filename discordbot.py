@@ -1707,6 +1707,129 @@ async def hint(ctx, key: str = None):
 
     await ctx.send(f"ヒント ({key}): {value}")
 
+# ゲーム状態
+player_cards = {}
+player_index = {}
+participants = []
+game_active = False
+field_life = 3  # 初期場ライフ
+round_num = 1   # 現在のラウンド
+max_rounds = 10  # 最大ラウンド数
+
+async def start_round(ctx):
+    global player_cards, player_index, field_life, round_num
+    await ctx.send(f"--- ラウンド {round_num} 開始 ---")
+    available_numbers = list(range(1, 101))
+
+    # カード配布
+    for p in participants:
+        player_cards[p] = []
+        for _ in range(round_num):
+            n = random.choice(available_numbers)
+            available_numbers.remove(n)
+            player_cards[p].append(n)
+        player_cards[p].sort()  # 小さい順にソート
+        player_index[p] = 0
+        try:
+            await p.send(f"あなたに配られた数字は {player_cards[p]} です。順番に出してください。")
+        except:
+            await ctx.send(f"{p.mention} にDMを送れませんでした。")
+
+    await ctx.send(f"カードを配布しました。場のライフ: {field_life}。`!push <数字>` で数字を出してください！")
+
+#ito
+@bot.command()
+async def ito(ctx):
+    global game_active, participants, player_cards, player_index, field_life, round_num
+    participants = []
+    game_active = True
+    player_cards = {}
+    player_index = {}
+    field_life = 5
+    round_num = 1
+
+    await ctx.send("`join` と送信すると参加できます。")
+    await ctx.send("`start` と送信するとゲームが開始されます！")
+
+    def check(m):
+        return m.channel == ctx.channel and m.content.lower() in ["join", "start"]
+
+    # 参加者募集
+    while True:
+        msg = await bot.wait_for("message", check=check)
+        if msg.content.lower() == "join":
+            if msg.author not in participants:
+                participants.append(msg.author)
+                await ctx.send(f"{msg.author.mention} が参加しました！ (現在 {len(participants)} 人)")
+            else:
+                await ctx.send(f"{msg.author.mention} はすでに参加しています。")
+        elif msg.content.lower() == "start":
+            if len(participants) == 0:
+                await ctx.send("まだ参加者がいません！")
+            else:
+                await ctx.send("ゲームを開始します！")
+                break
+
+    # 最初のラウンド開始
+    await start_round(ctx)
+
+@bot.command()
+async def push(ctx, num_input: int):
+    global player_cards, player_index, field_life, game_active, round_num
+    if not game_active:
+        await ctx.send(f"{ctx.author.mention} ゲームは開始されていません。")
+        return
+
+    player = ctx.author
+    if player not in player_cards:
+        await ctx.send(f"{player.mention} はゲームに参加していません。")
+        return
+    if player_index[player] >= len(player_cards[player]):
+        await ctx.send(f"{player.mention} すでに全てのカードを出しています。")
+        return
+
+    expected_cards = player_cards[player][player_index[player]:]
+
+    if num_input == expected_cards[0]:
+        await ctx.send(f"{player.mention} 正解！")
+        player_index[player] += 1
+    else:
+        if num_input in expected_cards:
+            missed_count = expected_cards.index(num_input)
+        else:
+            missed_count = len(expected_cards)
+
+        if missed_count == 0:
+            missed_count = 1
+
+        field_life -= missed_count
+        await ctx.send(f"{player.mention} 間違い！ 出すべきカードを {missed_count} 枚飛ばしました。場のライフ -{missed_count} → {field_life}")
+
+        player_index[player] += missed_count
+
+    # 全員出し終わったかチェック
+    all_done = all(player_index[p] >= len(player_cards[p]) for p in player_cards)
+    if all_done:
+        if field_life <= 0:
+            await ctx.send("場のライフが0になりました。ゲーム終了！")
+            game_active = False
+        elif round_num >= max_rounds:
+            await ctx.send(f"ラウンド {round_num} をクリアしました！ 最大ラウンドに到達したためゲーム終了！")
+            game_active = False
+        else:
+            await ctx.send(f"ラウンド {round_num} クリア！ 次のラウンドに進みます。")
+            round_num += 1
+            field_life += 1
+            await start_round(ctx)
+
+    # ゲーム終了時のリセット
+    if not game_active:
+        player_cards.clear()
+        player_index.clear()
+        participants.clear()
+        round_num = 1
+        field_life = 3
+        await ctx.send("ゲーム状態をリセットしました。新しいゲームを開始できます。")
 
 
 
