@@ -1788,28 +1788,24 @@ async def push(ctx, num_input: int):
         await ctx.send(f"{player.mention} すでに全てのカードを出しています。")
         return
 
-    expected_cards = player_cards[player][player_index[player]:]
+    # まだ出していないカード
+    remaining_cards = player_cards[player][player_index[player]:]
 
-    # 手札にない数字なら無視してリターン
-    if num_input not in expected_card:
+    # 手札にない数字ならリターン
+    if num_input not in remaining_cards:
+        field_life -= 1
         await ctx.send(f"{player.mention} この数字は手札にありません。")
+        await ctx.send(f"場のライフが-1 → 現在のライフ:{field_life}")
         return
 
-    if num_input == expected_cards[0]:
+    # 正しい順番か判定
+    if num_input == remaining_cards[0]:
         await ctx.send(f"{player.mention} 正解！")
         player_index[player] += 1
     else:
-        if num_input in expected_cards:
-            missed_count = expected_cards.index(num_input)
-        else:
-            missed_count = len(expected_cards)
-
-        if missed_count == 0:
-            missed_count = 1
-
+        missed_count = remaining_cards.index(num_input)  # 飛ばした枚数
         field_life -= missed_count
         await ctx.send(f"{player.mention} 間違い！ 出すべきカードを {missed_count} 枚飛ばしました。場のライフが-{missed_count} → 現在のライフ:{field_life}")
-
         player_index[player] += missed_count
 
     # 全員出し終わったかチェック
@@ -1827,7 +1823,7 @@ async def push(ctx, num_input: int):
             field_life += 1
             await start_round(ctx)
 
-    # ゲーム終了時のリセット
+    # ゲーム終了時リセット
     if not game_active:
         player_cards.clear()
         player_index.clear()
@@ -1835,6 +1831,7 @@ async def push(ctx, num_input: int):
         round_num = 1
         field_life = 3
         await ctx.send("ゲーム状態をリセットしました。新しいゲームを開始できます。")
+
 
 
 
