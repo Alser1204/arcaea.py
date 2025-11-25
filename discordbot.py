@@ -1796,6 +1796,9 @@ async def push(ctx, num_input: int):
         field_life -= 1
         await ctx.send(f"{player.mention} この数字は手札にありません。")
         await ctx.send(f"場のライフが-1 → 現在のライフ:{field_life}")
+        if field_life <= 0:
+            await ctx.send("場のライフが0になりました。ゲーム終了！")
+            game_active = False
         return
 
     # 正しい順番か判定
@@ -1806,7 +1809,10 @@ async def push(ctx, num_input: int):
         missed_count = remaining_cards.index(num_input)  # 飛ばした枚数
         field_life -= missed_count
         await ctx.send(f"{player.mention} 間違い！ 出すべきカードを {missed_count} 枚飛ばしました。場のライフが-{missed_count} → 現在のライフ:{field_life}")
-        player_index[player] += missed_count
+        player_index[player] += (missed_count + 1)
+        if field_life <= 0:
+            await ctx.send("場のライフが0になりました。ゲーム終了！")
+            game_active = False
 
     # 全員出し終わったかチェック
     all_done = all(player_index[p] >= len(player_cards[p]) for p in player_cards)
