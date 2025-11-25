@@ -1735,7 +1735,7 @@ async def start_round(ctx):
         except:
             await ctx.send(f"{p.mention} にDMを送れませんでした。")
 
-    await ctx.send(f"カードを配布しました。場のライフ: {field_life}。`!push <数字>` で数字を出してください！")
+    await ctx.send(f"カードを配布しました。場のライフ: {field_life}\n`!push <数字>` で数字を出してください！")
 
 #ito
 @bot.command()
@@ -1790,6 +1790,11 @@ async def push(ctx, num_input: int):
 
     expected_cards = player_cards[player][player_index[player]:]
 
+    # 手札にない数字なら無視してリターン
+    if num_input not in expected_card:
+        await ctx.send(f"{player.mention} この数字は手札にありません。")
+        return
+
     if num_input == expected_cards[0]:
         await ctx.send(f"{player.mention} 正解！")
         player_index[player] += 1
@@ -1803,7 +1808,7 @@ async def push(ctx, num_input: int):
             missed_count = 1
 
         field_life -= missed_count
-        await ctx.send(f"{player.mention} 間違い！ 出すべきカードを {missed_count} 枚飛ばしました。場のライフ -{missed_count} → {field_life}")
+        await ctx.send(f"{player.mention} 間違い！ 出すべきカードを {missed_count} 枚飛ばしました。場のライフが-{missed_count} → 現在のライフ:{field_life}")
 
         player_index[player] += missed_count
 
