@@ -1745,7 +1745,7 @@ async def ito(ctx):
     game_active = True
     player_cards = {}
     player_index = {}
-    field_life = 5
+    field_life = 3
     round_num = 1
 
     await ctx.send("`join` と送信すると参加できます。")
@@ -1820,7 +1820,8 @@ async def push(ctx, num_input: int):
         else:
             await ctx.send(f"ラウンド {round_num} クリア！ 次のラウンドに進みます。")
             round_num += 1
-            field_life += 1
+            if field_life < 3:
+                field_life += 1
             await start_round(ctx)
 
     # ゲーム終了時リセット
