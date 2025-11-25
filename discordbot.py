@@ -1710,52 +1710,58 @@ async def hint(ctx, key: str = None):
 # ==================
 # ゲーム状態
 # ==================
-player_cards = {}
-player_index = {}
 participants = []
+player_cards = {}
 game_active = False
 field_life = 3
 round_num = 1
 max_rounds = 10
+
+# 全カードの正しい順
+sorted_all_cards = []
+
+# 出たカード
+used_numbers = []
 
 
 # ==================
 # ラウンド開始
 # ==================
 async def start_round(ctx):
-    global player_cards, player_index, field_life, round_num
+    global player_cards, participants, field_life, round_num
+    global sorted_all_cards, used_numbers
 
     await ctx.send(f"--- ラウンド {round_num} 開始 ---")
+
     available_numbers = list(range(1, 101))
 
+    player_cards.clear()
+    sorted_all_cards = []
+    used_numbers = []
+
     for p in participants:
-        # カード生成
         cards = random.sample(available_numbers, round_num)
+
         for c in cards:
             available_numbers.remove(c)
 
         cards.sort()
         player_cards[p] = cards
-        player_index[p] = 0
 
         try:
             await p.send(f"あなたに配られた数字は {cards} です。\n小さい順に出してください。")
         except:
             await ctx.send(f"{p.mention} にDMを送れませんでした。")
 
-    await ctx.send(f"カードを配布しました。\n場のライフ: {field_life}\n`!push <数字>` で数字を出してください！")
+        sorted_all_cards.extend(cards)
 
+    sorted_all_cards.sort()
 
-# ==================
-# 全プレイヤーの残りカードのうち最小を返す
-# ==================
-def get_global_expected():
-    remaining = []
-    for p in player_cards:
-        idx = player_index[p]
-        if idx < len(player_cards[p]):
-            remaining.append(player_cards[p][idx])
-    return min(remaining) if remaining else None
+    await ctx.send(
+        f"カードを配布しました。\n"
+        f"場のライフ: {field_life}\n"
+        f"`!push <数字>` で数字を出してください！"
+    )
 
 
 # ==================
@@ -1763,16 +1769,15 @@ def get_global_expected():
 # ==================
 @bot.command()
 async def ito(ctx):
-    global game_active, participants, player_cards, player_index, field_life, round_num
+    global participants, game_active, field_life, round_num, player_cards
 
     participants = []
     game_active = True
-    player_cards = {}
-    player_index = {}
     field_life = 3
     round_num = 1
+    player_cards = {}
 
-    await ctx.send("`join` と送信すると参加できます。\n`start` と送信するとゲーム開始！")
+    await ctx.send("`join` → 参加\n`start` → ゲーム開始")
 
     def check(m):
         return m.channel == ctx.channel and m.content.lower() in ["join", "start"]
@@ -1783,17 +1788,16 @@ async def ito(ctx):
         if msg.content.lower() == "join":
             if msg.author not in participants:
                 participants.append(msg.author)
-                await ctx.send(f"{msg.author.mention} が参加しました！（{len(participants)}人）")
+                await ctx.send(f"{msg.author.mention} が参加！（{len(participants)}人）")
             else:
                 await ctx.send("あなたはすでに参加しています。")
-        else:  # start
+        else:
             if len(participants) == 0:
                 await ctx.send("参加者がいません！")
             else:
                 await ctx.send("ゲーム開始！")
                 break
 
-    # 最初のラウンド開始
     await start_round(ctx)
 
 
@@ -1802,7 +1806,8 @@ async def ito(ctx):
 # ==================
 @bot.command()
 async def push(ctx, num_input: int):
-    global player_cards, player_index, field_life, game_active, round_num
+    global field_life, game_active, sorted_all_cards, used_numbers
+    global round_num, max_rounds
 
     if not game_active:
         await ctx.send("ゲームは開始されていません。")
@@ -1814,77 +1819,65 @@ async def push(ctx, num_input: int):
         await ctx.send(f"{player.mention} はゲームに参加していません。")
         return
 
-    if player_index[player] >= len(player_cards[player]):
-        await ctx.send(f"{player.mention} は全てのカードを出しています。")
-        return
-
-    remaining = player_cards[player][player_index[player]:]
-
-    # 手札に無い数字 → ライフ -1
-    if num_input not in remaining:
+    # 手札にない数字
+    if num_input not in player_cards[player]:
         field_life -= 1
         await ctx.send(
-            f"{player.mention} この数字は手札にありません！\n"
-            f"場のライフが-1 → 現在のライフ：{field_life}"
+            f"{player.mention} 手札にない数字です！\n"
+            f"ライフ -1 → {field_life}"
         )
         if field_life <= 0:
-            await ctx.send("場のライフが0になりました。ゲーム終了！")
+            await ctx.send("ライフが0！ゲーム終了！")
             await reset_game(ctx)
         return
 
-    # 正しい順番か？
-    expected = get_global_expected()
+    # 既に出された数字は無効
+    if num_input in used_numbers:
+        await ctx.send(f"{player.mention} その数字はすでに出されています！")
+        return
 
-    # 全体での残りカードを作成
-    all_remaining = []
-    for p in player_cards:
-        idx = player_index[p]
-        all_remaining.extend(player_cards[p][idx:])
-    all_remaining.sort()
+    # 「次に正しく出すべき数字」
+    correct_number = sorted_all_cards[len(used_numbers)]
 
-    if num_input == expected:
-        await ctx.send(f"{player.mention} 正解！")
-        player_index[player] += 1
-        await ctx.send(f"現在の数字：{num_input}")
-
+    # 正解
+    if num_input == correct_number:
+        used_numbers.append(num_input)
+        await ctx.send(f"{player.mention} 正解！ → {num_input}")
+    
     else:
-        if num_input not in all_remaining:
-            # あり得ない状況だが安全対策
-            missed_count = len(all_remaining)  # 全飛ばし扱い
-        else:
-            missed_count = all_remaining.index(num_input)
+        # 飛ばした枚数を計算
+        correct_index = sorted_all_cards.index(correct_number)
+        wrong_index = sorted_all_cards.index(num_input)
 
-        # 何枚飛ばしたか
-        missed_count = all_remaining.index(num_input)
+        missed_count = wrong_index - correct_index
 
-        # ライフ減少
         field_life -= missed_count
 
         await ctx.send(
-            f"{player.mention} 間違い！\n"
+            f"{player.mention} 不正解！\n"
             f"{missed_count}枚飛ばしました。\n"
-            f"場のライフが-{missed_count} → 現在のライフ：{field_life}\n"
-            f"現在の数字：{num_input}"
+            f"ライフ -{missed_count} → {field_life}\n"
+            f"出した数字 → {num_input}"
         )
 
-        # 一気に index を進める
-        player_index[player] += missed_count + 1
-
         if field_life <= 0:
-            await ctx.send("場のライフが0になりました。ゲーム終了！")
+            await ctx.send("ライフが0！ゲーム終了！")
             await reset_game(ctx)
             return
 
-    # 全員終了？
-    if all(player_index[p] >= len(player_cards[p]) for p in player_cards):
+        # 不正解でも数字は使用済みにする
+        used_numbers.append(num_input)
+
+    # すべてのカードを使い切った？
+    if len(used_numbers) == len(sorted_all_cards):
         if round_num >= max_rounds:
-            await ctx.send("最大ラウンドに到達！ゲームクリア！！")
+            await ctx.send("最大ラウンド到達！ゲームクリア！")
             await reset_game(ctx)
             return
 
-        await ctx.send(f"ラウンド {round_num} クリア！ 次へ進みます。")
-
+        await ctx.send(f"ラウンド {round_num} クリア！ 次のラウンドへ！")
         round_num += 1
+
         if field_life < 3:
             field_life += 1
 
@@ -1895,16 +1888,22 @@ async def push(ctx, num_input: int):
 # ゲームリセット
 # ==================
 async def reset_game(ctx):
-    global player_cards, player_index, participants, field_life, round_num, game_active
+    global participants, game_active, field_life, round_num
+    global player_cards, sorted_all_cards, used_numbers
 
-    player_cards.clear()
-    player_index.clear()
     participants.clear()
-    round_num = 1
+    player_cards.clear()
+    sorted_all_cards.clear()
+    used_numbers.clear()
+
     field_life = 3
+    round_num = 1
     game_active = False
 
-    await ctx.send("ゲーム状態をリセットしました。新しいゲームを開始できます。")
+    await ctx.send("ゲームをリセットしました。")
+
+
+
 
 
 
