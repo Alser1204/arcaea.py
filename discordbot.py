@@ -1772,7 +1772,6 @@ async def ito(ctx, a:str=None):
     global participants, game_active, field_life, round_num, player_cards
 
     if a == "reset":
-        await ctx.send("ゲームをリセットしました！")
         await reset_game(ctx)
         return
 
