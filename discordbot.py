@@ -1919,4 +1919,22 @@ async def rand(ctx):
     number=random.randint(1,100)
     await ctx.send(f"乱数：{number}")
 
+@bot.command()
+async def odai(ctx):
+    try:
+        with open("odai.txt", "r", encoding="utf-8") as f:
+            words = [line.strip() for line in f if line.strip()]
+        
+        if not words:
+            await ctx.send("odai.txt に単語が入っていません。")
+            return
+        
+        import random
+        word = random.choice(words)
+        await ctx.send(f"お題：{word}")
+
+    except FileNotFoundError:
+        await ctx.send("odai.txt が見つかりません。")
+
+
 bot.run(TOKEN)
