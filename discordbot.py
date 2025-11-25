@@ -1768,8 +1768,18 @@ async def start_round(ctx):
 # ゲーム開始
 # ==================
 @bot.command()
-async def ito(ctx):
+async def ito(ctx, a:str=None):
     global participants, game_active, field_life, round_num, player_cards
+
+    if a == "reset":
+        await ctx.send("ゲームをリセットしました！")
+        await reset_game(ctx)
+        return
+
+    if game_active:
+        await ctx.send("すでにゲーム中です！")
+        await ctx.send("リセットする場合は!ito resetと送信してください！")
+        return
 
     participants = []
     game_active = True
@@ -1902,7 +1912,9 @@ async def reset_game(ctx):
 
     await ctx.send("ゲームをリセットしました。")
 
-
-
+@bot.command()
+async def rand(ctx):
+    number=random.randint(1,100)
+    await ctx.send(f"乱数：{number}")
 
 bot.run(TOKEN)
