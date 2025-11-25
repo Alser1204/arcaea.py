@@ -1849,8 +1849,11 @@ async def push(ctx, num_input: int):
         correct_index = sorted_all_cards.index(correct_number)
         wrong_index = sorted_all_cards.index(num_input)
 
-        missed_count = wrong_index - correct_index
-
+        skipped = [x for x in sorted_all_cards if x < num_input and x not in used_numbers] # 飛ばした数字
+        used_numbers.extend(skipped)
+        used_numbers.append(num_input)
+        
+        missed_count = len(skipped)
         field_life -= missed_count
 
         await ctx.send(
@@ -1864,9 +1867,6 @@ async def push(ctx, num_input: int):
             await ctx.send("ライフが0！ゲーム終了！")
             await reset_game(ctx)
             return
-
-        # 不正解でも数字は使用済みにする
-        used_numbers.append(num_input)
 
     # すべてのカードを使い切った？
     if len(used_numbers) == len(sorted_all_cards):
