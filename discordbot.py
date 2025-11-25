@@ -1406,6 +1406,9 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
     elif text_file in ["英語", "english", "English"]:
         text_file = "english.csv"
         name = "英語"
+    elif text_file in ["MyGO!!!!!", "Mygo", "mygo", "まいご", "迷子"]:
+        text_file = "mygo.txt"
+        name = "MyGO!!!!!"
 
     # ファイルを読み込む
     if text_file == "english.csv":
