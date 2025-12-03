@@ -1410,6 +1410,14 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         text_file = "mygo.txt"
         name = "MyGO!!!!!"
 
+    elif text_file in ["マイクラ", "マインクラフト"]:
+        text_file = "minecraft_item.txt"
+        name = "マイクラ"
+
+    elif text_file in ["minecraft", "マイクラ英語", "マイクラen", "マイクラEN"]:
+        text_file = "minecraft_item_en.txt"
+        name = "マイクラ(英語)"
+
     # ファイルを読み込む
     if text_file == "english.csv":
         import csv
