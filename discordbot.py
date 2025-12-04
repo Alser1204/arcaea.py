@@ -1579,12 +1579,16 @@ async def hang(ctx, letters: str=None):
         await ctx.send("すべての文字がすでに使われています。")
         return
 
-    word_categories = {char_category(c) for c in word}
+    hidden_categories = {
+        char_category(c)
+        for c, h in zip(word, game["hidden"])
+        if h == "ˍ"   # 未解答部分のみ
+    }
 
     input_categories = {char_category(c) for c in new_letters}
 
     # 1つも共通カテゴリがない場合 → 文字種が違うので return
-    if input_categories.isdisjoint(word_categories):
+    if input_categories.isdisjoint(hidden_categories):
         await ctx.send("その文字種はこの単語に含まれていません。")
         return
 
