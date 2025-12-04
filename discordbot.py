@@ -1536,11 +1536,15 @@ async def hang(ctx, letters: str=None):
         await ctx.send("まず `!hangman` でゲームを始めてください。")
         return
 
-    if letters is None:
-        await ctx.send("引数を入力してください。") 
-        return
-
     game = games[ctx.channel.id]
+
+    if letters is None:
+        if game["guessed"]:
+            sorted_letters = sorted(game["guessed"])
+            await ctx.send(f"📌 これまでに使われた文字: {', '.join(sorted_letters)}")
+        else:
+            await ctx.send("まだ使われた文字はありません。")
+        return
     word = game["word"]
 
     # ✅ 英字のみ小文字化（日本語はそのまま）
@@ -1554,6 +1558,18 @@ async def hang(ctx, letters: str=None):
     new_letters = [ch for ch in letters if ch not in game["guessed"]]
     if not new_letters:
         await ctx.send("すべての文字がすでに使われています。")
+        return
+
+    normalized_word = normalize_japanese(word)
+    
+    # new_letters の中に、正解ワードと文字種が一致するものがあるか？
+    has_valid_category = any(
+        normalize_japanese(ch) in normalized_word
+        for ch in new_letters
+    )
+    
+    if not has_valid_category:
+        await ctx.send("その文字種はこの単語に含まれていません。")
         return
 
     game["guessed"].extend(new_letters)
