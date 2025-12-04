@@ -1530,6 +1530,25 @@ async def hangfinish(ctx):
     else:
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
+def char_category(ch):
+    # ひらがな
+    if 'ぁ' <= ch <= 'ゖ':
+        return "kana"  # ひらがな・カタカナ共通カテゴリ
+    # カタカナ
+    if 'ァ' <= ch <= 'ヶ':
+        return "kana"  # ひらがな・カタカナ共通カテゴリ
+    # 漢字
+    if '\u4E00' <= ch <= '\u9FFF':
+        return "kanji"
+    # 英字
+    if ch.isalpha():
+        return "alpha"
+    # 数字
+    if ch.isdigit():
+        return "digit"
+    return "other"
+
+
 @bot.command(aliases=["h"])
 async def hang(ctx, letters: str=None):
     if ctx.channel.id not in games:
@@ -1560,15 +1579,12 @@ async def hang(ctx, letters: str=None):
         await ctx.send("すべての文字がすでに使われています。")
         return
 
-    normalized_word = normalize_japanese(word)
-    
-    # new_letters の中に、正解ワードと文字種が一致するものがあるか？
-    has_valid_category = any(
-        normalize_japanese(ch) in normalized_word
-        for ch in new_letters
-    )
-    
-    if not has_valid_category:
+    word_categories = {char_category(c) for c in word}
+
+    input_categories = {char_category(c) for c in new_letters}
+
+    # 1つも共通カテゴリがない場合 → 文字種が違うので return
+    if input_categories.isdisjoint(word_categories):
         await ctx.send("その文字種はこの単語に含まれていません。")
         return
 
