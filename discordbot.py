@@ -1424,6 +1424,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         import csv
         WORDS = []
         EXPLANATIONS = []
+        JP_WORDS = None
         TYPE = None
         BAND = None
         with open(text_file, "r", encoding="utf-8") as f:
@@ -1436,10 +1437,11 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
                 elif len(row) == 1:
                     WORDS.append(row[0].strip())
                     EXPLANATIONS.append(None)
-    elif text_file == "BanGDream.csv" or "PJSekai.csv":
+    elif text_file in ["BanGDream.csv", "PJSekai.csv"]:
         import csv
         WORDS = []
         EXPLANATIONS = None
+        JP_WORDS = None
         TYPE = []
         BAND = []
         with open(text_file, "r", encoding="utf-8") as f:
@@ -1473,6 +1475,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         BAND = None
     else:
         EXPLANATIONS = None
+        JP_WORDS = None
         TYPE = None
         BAND = None
         with open(text_file, "r", encoding="utf-8") as file:
@@ -1541,13 +1544,14 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
 async def hangfinish(ctx):
     """現在のハングマンゲームを強制終了"""
     if ctx.channel.id in games:
-        del games[ctx.channel.id]
+        game = games[ctx.channel.id]
         await ctx.send("🛑 ハングマンゲームを強制終了しました。")
         await ctx.send(f"正解は `{game["raw_word"]}` でした。")
         if game["explanation"]:
             await ctx.send(f"📘 **解説:** {game['explanation']}")
         if game["jp_word"]:
             await ctx.send(f"**日本語名:** {game['jp_word']}")
+        del games[ctx.channel.id]
     else:
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
