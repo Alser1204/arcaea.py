@@ -1550,7 +1550,7 @@ async def hangfinish(ctx):
         if game["explanation"]:
             await ctx.send(f"📘 **解説:** {game['explanation']}")
         if game["jp_word"]:
-            await ctx.send(f"**日本語名:** {game['jp_word']}")
+            await ctx.send(f"📘 **日本語名:** {game['jp_word']}")
         del games[ctx.channel.id]
     else:
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
@@ -1651,14 +1651,14 @@ async def hang(ctx, letters: str=None):
         if game["explanation"]:
             await ctx.send(f"📘 **解説:** {game['explanation']}")
         if game["jp_word"]:
-            await ctx.send(f"**日本語名:** {game['jp_word']}")
+            await ctx.send(f"📘 **日本語名:** {game['jp_word']}")
         del games[ctx.channel.id]
     elif game["tries"] <= 0:
         await ctx.send(f"💀 ゲームオーバー！正解は `{game["raw_word"]}` でした。")
         if game["explanation"]:
             await ctx.send(f"📘 **解説:** {game['explanation']}")
         if game["jp_word"]:
-            await ctx.send(f"**日本語名:** {game['jp_word']}")
+            await ctx.send(f"📘 **日本語名:** {game['jp_word']}")
         del games[ctx.channel.id]
 
 
