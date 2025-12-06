@@ -1392,30 +1392,28 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         text_file = "Arcaea.txt"
         name = "Arcaea"
     elif text_file in ["プロセカ", "プロジェクトセカイ", "プロジェクトセカイ カラフルステージ feat. 初音ミク"]:
-        text_file = "proseka.txt"
+        text_file = "PJSekai.txt"
         name = "プロセカ"
     elif text_file in ["国", "国名"]:
-        text_file = "country.txt"
+        text_file = "Country.txt"
         name = "国名"
     elif text_file in ["バンドリ", "ガルパ"]:
-        text_file = "bangdream.csv"
+        text_file = "BanGDream.csv"
         name = "バンドリ"
     elif text_file in ["バンドリhard", "ガルパhard"]:
-        text_file = "bangdream.txt"
+        text_file = "BanGDream.txt"
         name = "バンドリ(詳細なし版)"
     elif text_file in ["英語", "english", "English"]:
-        text_file = "english.csv"
+        text_file = "English.csv"
         name = "英語"
     elif text_file in ["MyGO!!!!!", "Mygo", "mygo", "まいご", "迷子"]:
-        text_file = "mygo.txt"
+        text_file = "Mygo.txt"
         name = "MyGO!!!!!"
-
     elif text_file in ["マイクラ", "マインクラフト"]:
-        text_file = "minecraft_item.txt"
+        text_file = "Minecraft_item.txt"
         name = "マイクラ"
-
     elif text_file in ["minecraft", "マイクラ英語", "マイクラen", "マイクラEN"]:
-        text_file = "minecraft_item_en.txt"
+        text_file = "Minecraft_item_en.txt"
         name = "マイクラ(英語)"
 
     # ファイルを読み込む
@@ -1966,11 +1964,11 @@ async def rand(ctx):
 @bot.command()
 async def odai(ctx):
     try:
-        with open("odai.txt", "r", encoding="utf-8") as f:
+        with open("Odai.txt", "r", encoding="utf-8") as f:
             words = [line.strip() for line in f if line.strip()]
         
         if not words:
-            await ctx.send("odai.txt に単語が入っていません。")
+            await ctx.send("Odai.txt に単語が入っていません。")
             return
         
         import random
@@ -1978,7 +1976,7 @@ async def odai(ctx):
         await ctx.send(f"お題：{word}")
 
     except FileNotFoundError:
-        await ctx.send("odai.txt が見つかりません。")
+        await ctx.send("Odai.txt が見つかりません。")
 
 
 bot.run(TOKEN)
