@@ -1458,6 +1458,19 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
                     WORDS.append(row[0].strip())
                     TYPE.append(None)
                     BAND.append(None)
+    elif text_file == "Minecraft_item_en.txt":
+        # 英語ファイルを読み込み
+        with open("Minecraft_item_en.txt", "r", encoding="utf-8") as f:
+            WORDS = [line.strip() for line in f if line.strip()]
+    
+        # 日本語ファイルも読み込む
+        with open("Minecraft_item.txt", "r", encoding="utf-8") as f:
+            JP_WORDS = [line.strip() for line in f if line.strip()]
+    
+        # 説明・タイプ・バンドは使わないので初期化
+        EXPLANATIONS = None
+        TYPE = None
+        BAND = None
     else:
         EXPLANATIONS = None
         TYPE = None
@@ -1481,6 +1494,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
     raw_word = WORDS[idx]
     word = WORDS[idx].lower()
     explanation = EXPLANATIONS[idx] if EXPLANATIONS else None
+    jp_word = JP_WORDS[idx] if text_file == "Minecraft_item_en.txt" else None
     song_type = TYPE[idx] if TYPE else None
     band = BAND[idx] if BAND else None
     hidden = ["ˍ" if re.match(r"[A-Za-z0-9ぁ-んァ-ヶ一-龯々]", c) else c for c in word]  # 記号はそのまま表示
@@ -1492,6 +1506,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         "tries": num,
         "guessed": [],
         "explanation": explanation,
+        "jp_word": jp_word,
         "song_type": song_type,
         "band": band
     }
@@ -1528,6 +1543,11 @@ async def hangfinish(ctx):
     if ctx.channel.id in games:
         del games[ctx.channel.id]
         await ctx.send("🛑 ハングマンゲームを強制終了しました。")
+        await ctx.send(f"正解は `{game["raw_word"]}` でした。")
+        if game["explanation"]:
+            await ctx.send(f"📘 **解説:** {game['explanation']}")
+        if game["jp_word"]:
+            await ctx.send(f"**日本語名:** {game['jp_word']}")
     else:
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
@@ -1626,11 +1646,15 @@ async def hang(ctx, letters: str=None):
         await ctx.send(f"🎉 クリア！単語は `{game["raw_word"]}` でした！")
         if game["explanation"]:
             await ctx.send(f"📘 **解説:** {game['explanation']}")
+        if game["jp_word"]:
+            await ctx.send(f"**日本語名:** {game['jp_word']}")
         del games[ctx.channel.id]
     elif game["tries"] <= 0:
         await ctx.send(f"💀 ゲームオーバー！正解は `{game["raw_word"]}` でした。")
         if game["explanation"]:
             await ctx.send(f"📘 **解説:** {game['explanation']}")
+        if game["jp_word"]:
+            await ctx.send(f"**日本語名:** {game['jp_word']}")
         del games[ctx.channel.id]
 
 
