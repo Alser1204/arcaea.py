@@ -1391,8 +1391,11 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
     elif text_file in ["Arcaea", "アーケア"]:
         text_file = "Arcaea.txt"
         name = "Arcaea"
-    elif text_file in ["プロセカ", "プロジェクトセカイ", "プロジェクトセカイ カラフルステージ feat. 初音ミク"]:
+    elif text_file in ["プロセカhard", "プロジェクトセカイhard"]:
         text_file = "PJSekai.txt"
+        name = "プロセカ(詳細なし版)"
+    elif text_file in ["プロセカ", "プロジェクトセカイ", "プロジェクトセカイ カラフルステージ feat. 初音ミク"]:
+        text_file = "PJSekai.csv"
         name = "プロセカ"
     elif text_file in ["国", "国名"]:
         text_file = "Country.txt"
@@ -1417,7 +1420,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
         name = "マイクラ(英語)"
 
     # ファイルを読み込む
-    if text_file == "english.csv":
+    if text_file == "English.csv":
         import csv
         WORDS = []
         EXPLANATIONS = []
@@ -1433,7 +1436,7 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
                 elif len(row) == 1:
                     WORDS.append(row[0].strip())
                     EXPLANATIONS.append(None)
-    elif text_file == "bangdream.csv":
+    elif text_file == "BanGDream.csv" or "PJSekai.csv":
         import csv
         WORDS = []
         EXPLANATIONS = None
