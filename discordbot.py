@@ -1374,15 +1374,15 @@ def analyze_word_characters(word: str) -> str:
 
     return "、".join(result_parts)
 
-default_text_file = "Arcaea"
+default_text_files = {}
 
 @bot.command()
 async def hangman(ctx, text_file:str=None, num:int=6):
 
-    global default_text_file
+    channel_id = ctx.channel.id
 
     if text_file is None:
-        text_file = default_text_file
+        text_file = default_text_files.get(channel_id, "Arcaea")
 
     if text_file == "原神":
         text_file = "Genshin.txt"
@@ -1427,7 +1427,7 @@ async def hangman(ctx, text_file:str=None, num:int=6):
         await ctx.send("対応していないジャンルです")
         return
 
-    default_text_file = name
+    default_text_files[channel_id] = name
 
         
     # ファイルを読み込む
