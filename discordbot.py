@@ -1374,10 +1374,15 @@ def analyze_word_characters(word: str) -> str:
 
     return "、".join(result_parts)
 
-
+default_text_file = "Arcaea"
 
 @bot.command()
-async def hangman(ctx, text_file:str="Arcaea", num:int=6):
+async def hangman(ctx, text_file:str=None, num:int=6):
+
+    global default_text_file
+
+    if text_file is None:
+        text_file = default_text_file
 
     if text_file == "原神":
         text_file = "Genshin.txt"
@@ -1418,7 +1423,13 @@ async def hangman(ctx, text_file:str="Arcaea", num:int=6):
     elif text_file in ["minecraft", "マイクラ英語", "マイクラen", "マイクラEN"]:
         text_file = "Minecraft_item_en.txt"
         name = "マイクラ(英語)"
+    else:
+        await ctx.send("対応していないジャンルです")
+        return
 
+    default_text_file = name
+
+        
     # ファイルを読み込む
     if text_file == "English.csv":
         import csv
