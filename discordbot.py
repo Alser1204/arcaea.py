@@ -1268,50 +1268,120 @@ async def codename(ctx, genre:str="原神"):
     
     
 @bot.command()
-async def wordwolf(ctx, text_file: str, num: int):
+async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, reveal_vil: bool = False):
+    if num < 1:
+        await ctx.send("カード枚数は1以上にしてください")
+        return
     # テキストファイルの選択
     if text_file == "原神":
         text_file = "Genshin.txt"
+        name = "原神"
     elif text_file in ["学マス", "学園アイドルマスター"]:
         text_file = "GakuenIMAS.txt"
+        name = "学マス"
     elif text_file in ["ブルアカ", "ブルーアーカイブ"]:
         text_file = "BlueArchive.txt"
+        name = "ブルアカ"
     elif text_file in ["Arcaea", "アーケア"]:
         text_file = "Arcaea.txt"
+        name = "Arcaea"
+    elif text_file in ["プロセカhard", "プロジェクトセカイhard"]:
+        text_file = "PJSekai.txt"
+        name = "プロセカ(詳細なし版)"
+    elif text_file in ["プロセカ", "プロジェクトセカイ", "プロジェクトセカイ カラフルステージ feat. 初音ミク"]:
+        text_file = "PJSekai.csv"
+        name = "プロセカ"
+    elif text_file in ["国", "国名"]:
+        text_file = "Country.txt"
+        name = "国名"
+    elif text_file in ["バンドリ", "ガルパ"]:
+        text_file = "BanGDream.csv"
+        name = "バンドリ"
+    elif text_file in ["バンドリhard", "ガルパhard"]:
+        text_file = "BanGDream.txt"
+        name = "バンドリ(詳細なし版)"
+    elif text_file in ["英語", "english", "English"]:
+        text_file = "English.csv"
+        name = "英語"
+    elif text_file in ["MyGO!!!!!", "Mygo", "mygo", "まいご", "迷子"]:
+        text_file = "Mygo.txt"
+        name = "MyGO!!!!!"
+    elif text_file in ["マイクラ", "マインクラフト"]:
+        text_file = "Minecraft_item.txt"
+        name = "マイクラ"
+    elif text_file in ["minecraft", "マイクラ英語", "マイクラen", "マイクラEN"]:
+        text_file = "Minecraft_item_en.txt"
+        name = "マイクラ(英語)"
+    else:
+        await ctx.send("対応していないジャンルです")
+        return
 
-    # ファイルを読み込む
+    # ファイル読み込み
     with open(text_file, "r", encoding="utf-8") as file:
         char_list = file.read().strip().split("\n")
 
-    # 2つのワードを選ぶ
     def choose(lst):
         chosen = random.choice(lst)
         lst.remove(chosen)
         return chosen
 
-    majority = choose(char_list)
-    minority = choose(char_list)
+    majority = []
+    minority = []
 
-    # 参加者を集める
+    # 基準カードと違うカード
+    base_word = choose(char_list)
+    diff_word = choose(char_list)
+    
+    majority = [base_word] * num
+    minority = [base_word] * (num - 1) + [diff_word]
+    random.shuffle(minority)
+
     participants = []
 
-    await ctx.send(f"{num} 人が `join` と送信するとゲームが開始されます！")
+    await ctx.send(
+        "参加する人は `join` と送信してください。\n"
+        "全員集まったら `start` と送ると開始します。"
+    )
 
     def check(m):
-        return m.content.lower() == "join" and m.channel == ctx.channel and m.author not in participants
+        return (
+            m.channel == ctx.channel and
+            (
+                (m.content.lower() == "join" and m.author not in participants) or
+                (m.content.lower() == "start" and m.author == ctx.author)
+            )
+        )
 
-    while len(participants) < num:
+    while True:
         msg = await bot.wait_for("message", check=check)
-        participants.append(msg.author)
-        await ctx.send(f"{msg.author.mention} が参加しました！ ({len(participants)}/{num})")
 
-    # 参加者リストをシャッフル
+        if msg.content.lower() == "join":
+            participants.append(msg.author)
+            await ctx.send(f"{msg.author.mention} が参加しました！ ({len(participants)}人)")
+        elif msg.content.lower() == "start":
+            await ctx.send(f"ジャンル：{name}")
+            break
+
     random.shuffle(participants)
+    participants_num = len(participants)
+    wolf = random.choice(participants)
 
-    # ワードを配布
-    for i, player in enumerate(participants):
-        word = majority if i < num - 1 else minority
-        await player.send(f"あなたのワードは {word} です。")
+    for player in participants:
+        is_wolf = (player == wolf)
+        hand = minority if is_wolf else majority
+    
+        message_lines = []
+    
+        # 役職通知
+        if is_wolf and reveal_wolf:
+            message_lines.append("あなたは **人狼** です。")
+        if (not is_wolf) and reveal_vil:
+            message_lines.append("あなたは **村人** です。")
+    
+        # 手札は必ず表示
+        message_lines.append(f"あなたの手札：{', '.join(hand)}")
+    
+        await player.send("\n".join(message_lines))
 
     await ctx.send("全員にワードを送信しました！ゲームを開始してください！")
 
