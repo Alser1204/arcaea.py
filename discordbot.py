@@ -1328,12 +1328,10 @@ async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, re
     majority = []
     minority = []
 
-    # 基準カードと違うカード
-    base_word = choose(char_list)
-    diff_word = choose(char_list)
-    
-    majority = [base_word] * num
-    minority = [base_word] * (num - 1) + [diff_word]
+    for _ in range(num):
+        majority.append(choose(char_list))
+    minority = majority.copy()
+    minority[-1] = choose(char_list)
     random.shuffle(minority)
 
     participants = []
@@ -1367,6 +1365,7 @@ async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, re
     wolf = random.choice(participants)
 
     for player in participants:
+        random.shuffle(majority)
         is_wolf = (player == wolf)
         hand = minority if is_wolf else majority
     
