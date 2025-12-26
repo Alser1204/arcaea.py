@@ -14,6 +14,7 @@ from collections import defaultdict
 import json
 import datetime
 from discord.utils import escape_markdown
+import csv
 
 # サーバーごとのデフォルト設定を保持する辞書
 server_settings = {}
@@ -1265,6 +1266,38 @@ async def codename(ctx, genre:str="原神"):
     await ctx.send("最初は青のターンからです！")
     #await ctx.send(file=discord.File(imgleader_buffer, "leaderoutput.png"))
     await ctx.send(file=discord.File(img_buffer, "output.png"))
+
+def for_csv_read(csv_file, num):
+    with open(csv_file, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    # attribute / country ごとにグループ化
+    attr_groups = {}
+    country_groups = {}
+
+    for r in rows:
+        attr_groups.setdefault(r["attribute"], []).append(r["name"])
+        country_groups.setdefault(r["country"], []).append(r["name"])
+
+    # 2人以上いるグループだけ残す
+    valid_groups = [
+        v for v in list(attr_groups.values()) + list(country_groups.values())
+        if len(v) >= num + 1
+    ]
+
+    if not valid_groups:
+        raise ValueError("共通項目を持つキャラが不足しています")
+
+    group = random.choice(valid_groups)
+    random.shuffle(group)
+
+    majority = group[:num]
+    minority = majority.copy()
+    minority[-1] = random.choice([x for x in group if x not in majority])
+
+    random.shuffle(minority)
+    return majority, minority
     
     
 @bot.command()
@@ -1272,10 +1305,15 @@ async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, re
     if num < 1:
         await ctx.send("カード枚数は1以上にしてください")
         return
+    use_csv = False
     # テキストファイルの選択
     if text_file == "原神":
         text_file = "Genshin.txt"
         name = "原神"
+    elif text_file == "はらがみ":
+        text_file = "Genshin.csv"
+        name = "共通要素アリ原神"
+        use_csv = True
     elif text_file in ["学マス", "学園アイドルマスター"]:
         text_file = "GakuenIMAS.txt"
         name = "学マス"
@@ -1317,8 +1355,9 @@ async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, re
         return
 
     # ファイル読み込み
-    with open(text_file, "r", encoding="utf-8") as file:
-        char_list = file.read().strip().split("\n")
+    if not use_csv:
+        with open(text_file, "r", encoding="utf-8") as file:
+            char_list = file.read().strip().split("\n")
 
     def choose(lst):
         chosen = random.choice(lst)
@@ -1328,11 +1367,14 @@ async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, re
     majority = []
     minority = []
 
-    for _ in range(num):
-        majority.append(choose(char_list))
-    minority = majority.copy()
-    minority[-1] = choose(char_list)
-    random.shuffle(minority)
+    if use_csv:
+        majority, minority = for_csv_read(text_file, num)
+    else:
+        for _ in range(num):
+            majority.append(choose(char_list))
+        minority = majority.copy()
+        minority[-1] = choose(char_list)
+        random.shuffle(minority)
 
     participants = []
 
@@ -1501,7 +1543,6 @@ async def hangman(ctx, text_file:str=None, num:int=6):
         
     # ファイルを読み込む
     if text_file == "English.csv":
-        import csv
         WORDS = []
         EXPLANATIONS = []
         JP_WORDS = None
@@ -1518,7 +1559,6 @@ async def hangman(ctx, text_file:str=None, num:int=6):
                     WORDS.append(row[0].strip())
                     EXPLANATIONS.append(None)
     elif text_file in ["BanGDream.csv", "PJSekai.csv"]:
-        import csv
         WORDS = []
         EXPLANATIONS = None
         JP_WORDS = None
@@ -2081,8 +2121,7 @@ async def odai(ctx):
         if not words:
             await ctx.send("Odai.txt に単語が入っていません。")
             return
-        
-        import random
+
         word = random.choice(words)
         await ctx.send(f"お題：{word}")
 
