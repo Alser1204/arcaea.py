@@ -1314,6 +1314,7 @@ async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, re
         text_file = "Genshin.csv"
         name = "共通要素アリ原神"
         use_csv = True
+        num = 1
     elif text_file in ["学マス", "学園アイドルマスター"]:
         text_file = "GakuenIMAS.txt"
         name = "学マス"
