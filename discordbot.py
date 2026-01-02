@@ -2373,6 +2373,21 @@ async def ana(ctx, *, guess: str):
         f"残り {game['tries']} 回"
     )
 
+from collections import Counter
+
+def minus_count(A: str, B: str) -> str:
+    cnt = Counter(B)
+    result = []
+
+    for c in A:
+        if cnt[c] > 0:
+            cnt[c] -= 1
+        else:
+            result.append(c)
+
+    return "".join(result)
+
+
 @bot.command()
 async def minus(ctx, A: str, B: str):
     """
