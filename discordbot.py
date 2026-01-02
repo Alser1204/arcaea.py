@@ -2157,7 +2157,7 @@ async def anagram(ctx, text_file: str=None, num: int = 6):
     elif text_file in ["Arcaea", "アーケア"]:
         text_file = "Arcaea.txt"
         name = "Arcaea"
-    elif text_file in ["プロセカhard", "プロジェクトセカイhard"]:
+    elif text_file in ["プロセカhard", "プロジェクトセカイhard", "プロセカ(詳細なし版)"]:
         text_file = "PJSekai.txt"
         name = "プロセカ(詳細なし版)"
     elif text_file in ["プロセカ", "プロジェクトセカイ", "プロジェクトセカイ カラフルステージ feat. 初音ミク"]:
@@ -2169,7 +2169,7 @@ async def anagram(ctx, text_file: str=None, num: int = 6):
     elif text_file in ["バンドリ", "ガルパ"]:
         text_file = "BanGDream.csv"
         name = "バンドリ"
-    elif text_file in ["バンドリhard", "ガルパhard"]:
+    elif text_file in ["バンドリhard", "ガルパhard", "バンドリ(詳細なし版)"]:
         text_file = "BanGDream.txt"
         name = "バンドリ(詳細なし版)"
     elif text_file in ["英語", "english", "English"]:
@@ -2181,7 +2181,7 @@ async def anagram(ctx, text_file: str=None, num: int = 6):
     elif text_file in ["マイクラ", "マインクラフト"]:
         text_file = "Minecraft_item.txt"
         name = "マイクラ"
-    elif text_file in ["minecraft", "マイクラ英語", "マイクラen", "マイクラEN"]:
+    elif text_file in ["minecraft", "マイクラ英語", "マイクラen", "マイクラEN", "マイクラ(英語)"]:
         text_file = "Minecraft_item_en.txt"
         name = "マイクラ(英語)"
     else:
@@ -2389,16 +2389,17 @@ async def minus(ctx, A: str, B: str):
 
 @bot.command()
 async def anafinish(ctx):
-    channel_id = ctx.channel.id
-    if channel_id not in games:
-        return
-
-    game = games[channel_id]
-    if game["type"] != "anagram":
-        return
-
-    await ctx.send(f"🏳️ 正解は **{game['raw_word']}** でした")
-    del games[channel_id]
+    if ctx.channel.id in games:
+        game = games[ctx.channel.id]
+        await ctx.send("🛑 アナグラムゲームを強制終了しました。")
+        await ctx.send(f"正解は `{game["raw_word"]}` でした。")
+        if game["explanation"]:
+            await ctx.send(f"📘 **解説:** {game['explanation']}")
+        if game["jp_word"]:
+            await ctx.send(f"📘 **日本語名:** {game['jp_word']}")
+        del games[ctx.channel.id]
+    else:
+        await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
 
 
