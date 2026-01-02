@@ -2352,10 +2352,14 @@ async def ana(ctx, *, guess: str):
     )
 
     if game["tries"] <= 0:
-        await ctx.send(
-            f"💀 **失敗！**\n"
-            f"正解は **{game['raw_word']}** でした"
-        )
+        msg = f"💀 **失敗！**\n正解は **{game['raw_word']}** でした"
+
+        if game["explanation"]:
+            msg += f"\n📖 {game['explanation']}"
+        if game["jp_word"]:
+            msg += f"\n🇯🇵 日本語名: {game['jp_word']}"
+
+        await ctx.send(msg)
         del games[channel_id]
         return
 
@@ -2368,6 +2372,19 @@ async def ana(ctx, *, guess: str):
         f"並び替え：`{shuffled}`\n"
         f"残り {game['tries']} 回"
     )
+
+@bot.command()
+async def minus(ctx, A: str, B: str):
+    """
+    文字列Aから、文字列Bに含まれる文字を回数分だけ削除する
+    使用例: !minus aaabbb aab
+    """
+    result = minus_count(A, B)
+
+    if result == "":
+        await ctx.send("（すべて削除されました）")
+    else:
+        await ctx.send(f"結果: `{result}`")
 
 
 @bot.command()
