@@ -1298,7 +1298,8 @@ def for_csv_read(csv_file, num):
 
     random.shuffle(minority)
     return majority, minority
-    
+
+current_wolf = None
     
 @bot.command()
 async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, reveal_vil: bool = False):
@@ -1405,11 +1406,12 @@ async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, re
 
     random.shuffle(participants)
     participants_num = len(participants)
-    wolf = random.choice(participants)
+    global current_wolf
+    current_wolf = random.choice(participants)
 
     for player in participants:
         random.shuffle(majority)
-        is_wolf = (player == wolf)
+        is_wolf = (player == current_wolf)
         hand = minority if is_wolf else majority
     
         message_lines = []
@@ -1426,6 +1428,13 @@ async def wordwolf(ctx, text_file: str, num:int=3, reveal_wolf: bool = False, re
         await player.send("\n".join(message_lines))
 
     await ctx.send("全員にワードを送信しました！ゲームを開始してください！")
+
+@bot.command()
+async def wolf(ctx):
+    global current_wolf
+    await ctx.send(f"人狼は{current_wolf.mention}でした！")
+    current_wolf = None
+    
 
 # --- Arcaea.txt から単語リストを読み込み ---
 def load_words(filename="Arcaea.txt"):
@@ -1508,7 +1517,7 @@ async def hangman(ctx, text_file:str=None, num:int=6):
     elif text_file in ["Arcaea", "アーケア"]:
         text_file = "Arcaea.txt"
         name = "Arcaea"
-    elif text_file in ["プロセカhard", "プロジェクトセカイhard"]:
+    elif text_file in ["プロセカhard", "プロジェクトセカイhard", "プロセカ(詳細なし版)"]:
         text_file = "PJSekai.txt"
         name = "プロセカ(詳細なし版)"
     elif text_file in ["プロセカ", "プロジェクトセカイ", "プロジェクトセカイ カラフルステージ feat. 初音ミク"]:
@@ -1520,7 +1529,7 @@ async def hangman(ctx, text_file:str=None, num:int=6):
     elif text_file in ["バンドリ", "ガルパ"]:
         text_file = "BanGDream.csv"
         name = "バンドリ"
-    elif text_file in ["バンドリhard", "ガルパhard"]:
+    elif text_file in ["バンドリhard", "ガルパhard", "バンドリ(詳細なし版)"]:
         text_file = "BanGDream.txt"
         name = "バンドリ(詳細なし版)"
     elif text_file in ["英語", "english", "English"]:
@@ -1532,7 +1541,7 @@ async def hangman(ctx, text_file:str=None, num:int=6):
     elif text_file in ["マイクラ", "マインクラフト"]:
         text_file = "Minecraft_item.txt"
         name = "マイクラ"
-    elif text_file in ["minecraft", "マイクラ英語", "マイクラen", "マイクラEN"]:
+    elif text_file in ["minecraft", "マイクラ英語", "マイクラen", "マイクラEN", "マイクラ(英語)"]:
         text_file = "Minecraft_item_en.txt"
         name = "マイクラ(英語)"
     else:
@@ -1812,7 +1821,7 @@ async def quiz(ctx):
     await ctx.send("クイズ！ この曲は何でしょう？\n回答は **!answer** または **!a**")
 
 # ---- !answer / !a ----
-@bot.command(name='answer', aliases=['a'])
+@bot.command(name='answer', aliases=['ans'])
 async def answer(ctx, *, user_answer: str = None):
 
 
@@ -2128,6 +2137,252 @@ async def odai(ctx):
 
     except FileNotFoundError:
         await ctx.send("Odai.txt が見つかりません。")
+
+@bot.command()
+async def anagram(ctx, text_file: str=None, num: int = 6):
+    channel_id = ctx.channel.id
+
+    if text_file is None:
+        text_file = default_text_files.get(channel_id, "Arcaea")
+
+    if text_file == "原神":
+        text_file = "Genshin.txt"
+        name = "原神"
+    elif text_file in ["学マス", "学園アイドルマスター"]:
+        text_file = "GakuenIMAS.txt"
+        name = "学マス"
+    elif text_file in ["ブルアカ", "ブルーアーカイブ"]:
+        text_file = "BlueArchive.txt"
+        name = "ブルアカ"
+    elif text_file in ["Arcaea", "アーケア"]:
+        text_file = "Arcaea.txt"
+        name = "Arcaea"
+    elif text_file in ["プロセカhard", "プロジェクトセカイhard"]:
+        text_file = "PJSekai.txt"
+        name = "プロセカ(詳細なし版)"
+    elif text_file in ["プロセカ", "プロジェクトセカイ", "プロジェクトセカイ カラフルステージ feat. 初音ミク"]:
+        text_file = "PJSekai.csv"
+        name = "プロセカ"
+    elif text_file in ["国", "国名"]:
+        text_file = "Country.txt"
+        name = "国名"
+    elif text_file in ["バンドリ", "ガルパ"]:
+        text_file = "BanGDream.csv"
+        name = "バンドリ"
+    elif text_file in ["バンドリhard", "ガルパhard"]:
+        text_file = "BanGDream.txt"
+        name = "バンドリ(詳細なし版)"
+    elif text_file in ["英語", "english", "English"]:
+        text_file = "English.csv"
+        name = "英語"
+    elif text_file in ["MyGO!!!!!", "Mygo", "mygo", "まいご", "迷子"]:
+        text_file = "Mygo.txt"
+        name = "MyGO!!!!!"
+    elif text_file in ["マイクラ", "マインクラフト"]:
+        text_file = "Minecraft_item.txt"
+        name = "マイクラ"
+    elif text_file in ["minecraft", "マイクラ英語", "マイクラen", "マイクラEN"]:
+        text_file = "Minecraft_item_en.txt"
+        name = "マイクラ(英語)"
+    else:
+        await ctx.send("対応していないジャンルです")
+        return
+
+    default_text_files[channel_id] = name
+
+        
+    # ファイルを読み込む
+    if text_file == "English.csv":
+        WORDS = []
+        EXPLANATIONS = []
+        JP_WORDS = None
+        TYPE = None
+        BAND = None
+        with open(text_file, "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            next(reader, None)  # ヘッダーがあれば読み飛ばす
+            for row in reader:
+                if len(row) >= 2:
+                    WORDS.append(row[0].strip())
+                    EXPLANATIONS.append(row[1].strip())
+                elif len(row) == 1:
+                    WORDS.append(row[0].strip())
+                    EXPLANATIONS.append(None)
+    elif text_file in ["BanGDream.csv", "PJSekai.csv"]:
+        WORDS = []
+        EXPLANATIONS = None
+        JP_WORDS = None
+        TYPE = []
+        BAND = []
+        with open(text_file, "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            next(reader, None)  # ヘッダーがあれば読み飛ばす
+            for row in reader:
+                if len(row) >= 3:
+                    WORDS.append(row[0].strip())
+                    TYPE.append(row[1].strip())
+                    BAND.append(row[2].strip())
+                elif len(row) == 2:
+                    WORDS.append(row[0].strip())
+                    TYPE.append(row[1].strip())
+                    BAND.append(None)
+                elif len(row) == 1:
+                    WORDS.append(row[0].strip())
+                    TYPE.append(None)
+                    BAND.append(None)
+    elif text_file == "Minecraft_item_en.txt":
+        # 英語ファイルを読み込み
+        with open("Minecraft_item_en.txt", "r", encoding="utf-8") as f:
+            WORDS = [line.strip() for line in f if line.strip()]
+    
+        # 日本語ファイルも読み込む
+        with open("Minecraft_item.txt", "r", encoding="utf-8") as f:
+            JP_WORDS = [line.strip() for line in f if line.strip()]
+    
+        # 説明・タイプ・バンドは使わないので初期化
+        EXPLANATIONS = None
+        TYPE = None
+        BAND = None
+    else:
+        EXPLANATIONS = None
+        JP_WORDS = None
+        TYPE = None
+        BAND = None
+        with open(text_file, "r", encoding="utf-8") as file:
+            WORDS = [line.strip() for line in file if line.strip()]
+
+    if channel_id in games:
+        await ctx.send("すでにゲームが進行中です！")
+        return
+
+    if not WORDS:
+        await ctx.send("単語リストが空です")
+        return
+
+    idx = random.randrange(len(WORDS))
+    raw_word = WORDS[idx]
+    word = raw_word.lower()
+
+    # ====== シャッフル（元と同じは禁止） ======
+    chars = list(word)
+    shuffled = chars[:]
+    
+    if len(set(chars)) > 1:
+        while shuffled == chars:
+            random.shuffle(shuffled)
+
+    composition = analyze_word_characters(word)
+
+    explanation = EXPLANATIONS[idx] if EXPLANATIONS else None
+    jp_word = JP_WORDS[idx] if JP_WORDS else None
+    song_type = TYPE[idx] if TYPE else None
+    band = BAND[idx] if BAND else None
+
+    games[channel_id] = {
+        "type": "anagram",
+        "word": word,
+        "raw_word": raw_word,
+        "shuffled": shuffled,
+        "tries": num,
+        "revealed": 0,
+        "explanation": explanation,
+        "jp_word": jp_word,
+        "song_type": song_type,
+        "band": band
+    }
+
+    msg = (
+        f"🔀 **アナグラム開始！**\n"
+        f"並び替えられた文字:\n"
+        f"`{' '.join(shuffled)}`\n"
+        f"文字数: {len(word)}\n"
+        f"文字構成: {composition}\n"
+        f"出題ジャンル: {name}\n"
+    )
+
+    if song_type and band:
+        msg += f"楽曲タイプ: {song_type}\n演奏バンド: {band}\n"
+
+    msg += (
+        f"残り挑戦回数: {num}\n"
+        f"`!ana 単語` で回答してください！"
+    )
+
+    await ctx.send(msg)
+
+def make_hint(word, revealed):
+    hint = []
+    for i, c in enumerate(word):
+        if i < revealed:
+            hint.append(c)
+        else:
+            hint.append("＿")
+    return " ".join(hint)
+
+
+@bot.command(aliases=["a"])
+async def ana(ctx, *, guess: str):
+    channel_id = ctx.channel.id
+
+    if channel_id not in games:
+        return
+
+    game = games[channel_id]
+    if game["type"] != "anagram":
+        return
+
+    # 正解判定
+    if guess.strip().lower() == game["word"]:
+        msg = f"🎉 **正解！**\n答えは **{game['raw_word']}** でした！"
+
+        if game["explanation"]:
+            msg += f"\n📖 {game['explanation']}"
+        if game["jp_word"]:
+            msg += f"\n🇯🇵 日本語名: {game['jp_word']}"
+
+        await ctx.send(msg)
+        del games[channel_id]
+        return
+
+    # 不正解処理
+    game["tries"] -= 1
+    game["revealed"] = min(
+        game["revealed"] + 1,
+        len(game["word"])
+    )
+
+    if game["tries"] <= 0:
+        await ctx.send(
+            f"💀 **失敗！**\n"
+            f"正解は **{game['raw_word']}** でした"
+        )
+        del games[channel_id]
+        return
+
+    hint = make_hint(game["word"], game["revealed"])
+    shuffled = " ".join(game["shuffled"])
+
+    await ctx.send(
+        f"❌ 不正解！\n"
+        f"ヒント：`{hint}`\n"
+        f"並び替え：`{shuffled}`\n"
+        f"残り {game['tries']} 回"
+    )
+
+
+@bot.command()
+async def anafinish(ctx):
+    channel_id = ctx.channel.id
+    if channel_id not in games:
+        return
+
+    game = games[channel_id]
+    if game["type"] != "anagram":
+        return
+
+    await ctx.send(f"🏳️ 正解は **{game['raw_word']}** でした")
+    del games[channel_id]
+
 
 
 bot.run(TOKEN)
