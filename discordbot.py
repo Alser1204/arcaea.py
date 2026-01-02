@@ -963,7 +963,7 @@ async def next(ctx):
         await ctx.send("次は青のターンです。")
 
 @bot.command()
-async def set(ctx, vain:str, n:int):
+async def sets(ctx, vain:str, n:int):
     global FLAG
     global FLAGS
     FLAGS=0
