@@ -2305,7 +2305,7 @@ async def anagram(ctx, text_file: str=None, num: int = 6):
 
     msg += (
         f"残り挑戦回数: {num}\n"
-        f"`!ana(!h) 単語` で回答してください！"
+        f"`!ana(!a) 単語` で回答してください！"
     )
 
     await ctx.send(msg)
