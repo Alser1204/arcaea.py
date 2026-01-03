@@ -2138,7 +2138,7 @@ async def odai(ctx):
     except FileNotFoundError:
         await ctx.send("Odai.txt が見つかりません。")
 
-@bot.command()
+@bot.command(aliases=["angman"])
 async def anagram(ctx, text_file: str=None, num: int = 6):
     channel_id = ctx.channel.id
 
@@ -2305,7 +2305,7 @@ async def anagram(ctx, text_file: str=None, num: int = 6):
 
     msg += (
         f"残り挑戦回数: {num}\n"
-        f"`!ana 単語` で回答してください！"
+        f"`!ana(!h) 単語` で回答してください！"
     )
 
     await ctx.send(msg)
