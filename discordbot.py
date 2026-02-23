@@ -169,7 +169,7 @@ async def dgacha_rare(ctx, n: int = 10):
 
     results = []
     for _ in range(n):
-        item, rarity = random_choice()
+        item, rarity = random_choice_rare()
         results.append(item)
 
         if rarity not in user_counts[user_name]:
