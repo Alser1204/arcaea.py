@@ -102,17 +102,17 @@ user_counts = load_data()
     
 SECRET = ["マン屁ラップバトル"]
 
-N = ["アナニー","チクニー","レイプ","放尿","フェラ","露出プレイ","催眠","時間停止","睡眠姦","ソフトSM","おもらし","逆レイプ","手コキ","足コキ","匂い","お姉さん","巨乳","レイプ目","目隠し","貧乳","無乳","授乳手コキ","触手","壁尻","腋コキ","あまあま","ヤンデレ","ツンデレ","クーデレ","サキュバス","唾液","パイズリ","素股","ペド","ロリババア","口内射精","ぶっかけ"]
+N = ["アナニー","チクニー","レイプ","放尿","フェラ","露出プレイ","催眠","時間停止","睡眠姦","ソフトSM","おもらし","逆レイプ","手コキ","足コキ","匂い","お姉さん","巨乳","レイプ目","目隠し","貧乳","無乳","授乳手コキ","触手","壁尻","腋コキ","あまあま","ヤンデレ","ツンデレ","クーデレ","サキュバス","唾液","パイズリ","素股","ペド","ロリババア","口内射精","ぶっかけ", "どこにも居場所がカニ"]
 
-R = ["排便","ロリレイプ","男の娘","ふたなり","ケモ","アナルヒクヒク","オホ声","アヘ顔","緊縛","球体関節","常識改変","ボテ腹","近親相姦","キメセク","首絞め","髪コキ","人外","人形","メカ","義妹","イラマチオ"]
+R = ["排便","ロリレイプ","男の娘","ふたなり","ケモ","アナルヒクヒク","オホ声","アヘ顔","緊縛","球体関節","常識改変","ボテ腹","近親相姦","キメセク","首絞め","髪コキ","人外","人形","メカ","義妹","イラマチオ", "毛蟹"]
 
 SR = ["アルマジロのケツマンコ","小笠原祐子","熟女陵辱プレイ","フィギュアぶっかけ","四肢欠損","リョナ","獣姦","超乳","実妹"]
 
-SSR = ["陰毛着火","ゲロモンスター","淫夢","ドラゴンカーセックス","ガナニー","ガンダム","首ちんこ","蟲姦", "梅沢富美男のTSマン屁","ゲップオナサポ","スカトロASMR","複乳"]
+SSR = ["陰毛着火","ゲロモンスター","淫夢","ドラゴンカーセックス","ガナニー","ガンダム","首ちんこ","蟲姦", "梅沢富美男のTSマン屁","ゲップオナサポ","スカトロASMR","複乳", "スケベガニ"]
 
-UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ","夏井いつき"]
+UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ","夏井いつき", "エッチガニ"]
 
-# 確率に応じた選択
+# 通常排出率
 def random_choice():
     roll = random.random()
     if roll < 0.50:
@@ -130,6 +130,20 @@ def random_choice():
     else:
         return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "???"
 
+# レアガチャ排出率
+def random_choice_rare():
+    roll = random.random()
+    if roll < 0.5:
+        return "SR " + random.choice(SR), "SR"
+    elif roll < 0.80:
+        return "SSR " + random.choice(SSR), "SSR"
+    elif roll < 0.95:
+        return "UR " + random.choice(UR), "UR"
+    elif roll < 0.99:
+        return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
+    else:
+        return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "???"
+
 in_battle = False
 in_battle_2 = False
 battle_member = []
@@ -138,6 +152,103 @@ battle_i = 0
 battle_member_2 = []
 battle_score_2 = []
 battle_i_2 = 0
+
+@bot.command()
+async def dgacha_rare(ctx, n: int = 10):
+    if n>100:
+        await ctx.send("ガチャの回数は100回以内にしてください。\n")
+        return
+    global battle_member, battle_score, in_battle, battle_i
+    global battle_member_2, battle_score_2, in_battle_2, battle_i_2
+    user_name = ctx.author.name  # user_name に変更
+    gacha_score = 0
+
+    # ユーザーのデータがなければ初期化
+    if user_name not in user_counts:
+        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0,"???":0, "Rate":1000, "coin":0}
+
+    results = []
+    for _ in range(n):
+        item, rarity = random_choice()
+        results.append(item)
+
+        if rarity not in user_counts[user_name]:
+            user_counts[user_name][rarity] = 0
+
+        if in_battle:
+            if user_name not in battle_member:
+                battle_member.append(user_name)  # user_name を格納
+                battle_score.append(0)
+
+            idx = battle_member.index(user_name)
+
+            # レアリティごとのスコア加算
+            score = {
+                "N": 1,
+                "R": 2,
+                "SR": 3,
+                "SSR": 5,
+                "UR": 10,
+                "SECRET": 15,
+                "???": 100,
+            }.get(rarity, 0)
+
+            battle_score[idx] += score
+
+        score = {
+                "N": 1,
+                "R": 2,
+                "SR": 3,
+                "SSR": 5,
+                "UR": 10,
+                "SECRET": 15,
+                "???": 100,
+            }.get(rarity, 0)
+
+        gacha_score += score
+            
+        if in_battle_2:
+            if user_name not in battle_member_2:
+                battle_member_2.append(user_name)  # user_name を格納
+                battle_score_2.append(0)
+                
+            idx_2 = battle_member_2.index(user_name)
+
+            # レアリティごとのスコア加算
+            score = {
+                "N": 1,
+                "R": 2,
+                "SR": 3,
+                "SSR": 5,
+                "UR": 10,
+                "SECRET": 15,
+                "???": 100,
+            }.get(rarity, 0)
+
+            battle_score_2[idx_2] += score
+
+    save_data()  # データ保存
+
+    count_details = "\n".join(
+        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
+    )
+
+    if gacha_score == n and n>=10:
+            await ctx.send(f"Nが一致です！{round(n*2.5)}のボーナス！")
+            gacha_score += round(n*2.5)
+
+    await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
+                   f"結果:\n{'\n'.join(results)}\n"
+                   f"スコア:{gacha_score}\n")
+    if in_battle:
+        idx = battle_member.index(user_name)
+        if battle_score[idx] == n and n>=10:
+            await ctx.send(f"Nが一致です！{round(n*2.5)}のボーナス！")
+            battle_score[idx]+=round(n*2.5)
+        
+    
+    battle_i += 1
+    battle_i_2 += 1
 
 
 @bot.command()
