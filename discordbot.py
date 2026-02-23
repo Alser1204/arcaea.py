@@ -133,13 +133,13 @@ def random_choice():
 # レアガチャ排出率
 def random_choice_rare():
     roll = random.random()
-    if roll < 0.5:
+    if roll < 0.76:
         return "SR " + random.choice(SR), "SR"
-    elif roll < 0.80:
+    elif roll < 0.91:
         return "SSR " + random.choice(SSR), "SSR"
-    elif roll < 0.95:
+    elif roll < 0.975:
         return "UR " + random.choice(UR), "UR"
-    elif roll < 0.99:
+    elif roll < 0.995:
         return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
     else:
         return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "???"
