@@ -130,7 +130,7 @@ def random_choice():
     elif roll < 0.9999:
         return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
     else:
-        return "!!!!!ULTIMATE SECRET!!!!!\n"+ random.choice(ULT_SECRET), "???"
+        return "!!!!!ULTIMATE SECRET!!!!!\n"+ random.choice(ULT_SECRET), "ULT_SECRET"
 
 # レアガチャ排出率
 def random_choice_rare():
@@ -363,77 +363,17 @@ def check_achievements(user, pulled_names, pulled_rarities):
 # ⑤ ガチャコマンド
 # ============================
 
+in_battle = False
+in_battle_2 = False
+battle_member = []
+battle_score = []
+battle_i = 0
+battle_member_2 = []
+battle_score_2 = []
+battle_i_2 = 0
+
 @bot.command()
 async def dgacha(ctx, n: int = 10):
-
-    if n > 100:
-        await ctx.send("ガチャの回数は100回以内にしてください。")
-        return
-
-    user_name = ctx.author.name
-    gacha_score = 0
-
-    if user_name not in user_counts:
-        user_counts[user_name] = {
-            "total": 0,
-            "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0,
-            "coin": 0,
-            "battle_count": 0,
-            "win_count": 0,
-            "Achievements": {}
-        }
-
-    results = []
-    pulled_names = []
-    pulled_rarities = []
-
-    for _ in range(n):
-
-        item, rarity = random_choice_rare()
-        item_name = item.split(" ", 1)[1]
-
-        results.append(item)
-        pulled_names.append(item_name)
-        pulled_rarities.append(rarity)
-
-        user_counts[user_name][rarity] += 1
-        user_counts[user_name]["total"] += 1
-
-        score = {
-            "N": 1,
-            "R": 2,
-            "SR": 3,
-            "SSR": 5,
-            "UR": 10
-        }.get(rarity, 0)
-
-        gacha_score += score
-
-    # 実績判定
-    unlocked = check_achievements(
-        user_name,
-        pulled_names,
-        pulled_rarities
-    )
-
-    # 保存
-    save_data()
-
-    # 結果表示
-    await ctx.send(
-        f"{user_name} さんが {n}回 ガチャを引きました。\n\n"
-        f"結果:\n" + "\n".join(results) +
-        f"\n\nスコア: {gacha_score}"
-    )
-
-    # 実績表示
-    for msg in unlocked:
-        await ctx.send(f"🎉 アチーブ解放！\n{msg}")
-        
-        
-
-@bot.command()
-async def dgacha_rare(ctx, n: int = 10):
     if n>100:
         await ctx.send("ガチャの回数は100回以内にしてください。\n")
         return
@@ -444,15 +384,35 @@ async def dgacha_rare(ctx, n: int = 10):
 
     # ユーザーのデータがなければ初期化
     if user_name not in user_counts:
-        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0,"???":0, "Rate":1000, "coin":0}
+        user_counts[user_name] = {
+            "total": 0,
+            "N": 0, "R": 0, 
+            "SR": 0, 
+            "SSR": 0, 
+            "UR": 0, 
+            "SECRET": 0,
+            "???":0,
+            "Rate":1000, 
+            "coin":0, 
+            "battle_count": 0,
+            "win_count": 0,
+            "Achievements": {}
+        }
 
     results = []
+    pulled_names = []
+    pulled_rarities = []
     for _ in range(n):
-        item, rarity = random_choice_rare()
-        results.append(item)
 
-        if rarity not in user_counts[user_name]:
-            user_counts[user_name][rarity] = 0
+        item, rarity = random_choice()
+        item_name = item.split(" ", 1)[1]
+
+        results.append(item)
+        pulled_names.append(item_name)
+        pulled_rarities.append(rarity)
+
+        user_counts[user_name][rarity] += 1
+        user_counts[user_name]["total"] += 1
 
         if in_battle:
             if user_name not in battle_member:
@@ -505,11 +465,120 @@ async def dgacha_rare(ctx, n: int = 10):
             }.get(rarity, 0)
 
             battle_score_2[idx_2] += score
+            
+    # 実績判定
+    unlocked = check_achievements(
+        user_name,
+        pulled_names,
+        pulled_rarities
+    )
 
     save_data()  # データ保存
 
     count_details = "\n".join(
         f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
+    )
+
+    if gacha_score == n and n>=10:
+            await ctx.send(f"Nが一致です！{round(n*2.5)}のボーナス！")
+            gacha_score += round(n*2.5)
+
+    await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
+                   f"結果:\n{'\n'.join(results)}\n"
+                   f"スコア:{gacha_score}\n")
+    user_counts[user_name]["coin"] += round(gacha_score/10)
+    if in_battle:
+        idx = battle_member.index(user_name)
+        if battle_score[idx] == n and n>=10:
+            await ctx.send(f"Nが一致です！{round(n*2.5)}のボーナス！")
+            battle_score[idx]+=round(n*2.5)
+        
+    # 実績表示
+    for msg in unlocked:
+        await ctx.send(f"🎉 アチーブ解放！\n{msg}")
+    battle_i += 1
+    battle_i_2 += 1
+
+        
+
+@bot.command()
+async def dgacha_rare(ctx, n: int = 10):
+    if n>100:
+        await ctx.send("ガチャの回数は100回以内にしてください。\n")
+        return
+    global battle_member, battle_score, in_battle, battle_i
+    global battle_member_2, battle_score_2, in_battle_2, battle_i_2
+    user_name = ctx.author.name  # user_name に変更
+    gacha_score = 0
+
+    # ユーザーのデータがなければ初期化
+    if user_name not in user_counts:
+        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0,"ULT_SECRET":0, "Rate":1000, "coin":0}
+
+    results = []
+    for _ in range(n):
+        item, rarity = random_choice_rare()
+        results.append(item)
+
+        if rarity not in user_counts[user_name]:
+            user_counts[user_name][rarity] = 0
+
+        if in_battle:
+            if user_name not in battle_member:
+                battle_member.append(user_name)  # user_name を格納
+                battle_score.append(0)
+
+            idx = battle_member.index(user_name)
+
+            # レアリティごとのスコア加算
+            score = {
+                "N": 1,
+                "R": 2,
+                "SR": 3,
+                "SSR": 5,
+                "UR": 10,
+                "SECRET": 15,
+                "ULT_SECRET": 100,
+            }.get(rarity, 0)
+
+            battle_score[idx] += score
+
+        score = {
+                "N": 1,
+                "R": 2,
+                "SR": 3,
+                "SSR": 5,
+                "UR": 10,
+                "SECRET": 15,
+                "ULT_SECRET": 100,
+            }.get(rarity, 0)
+
+        gacha_score += score
+            
+        if in_battle_2:
+            if user_name not in battle_member_2:
+                battle_member_2.append(user_name)  # user_name を格納
+                battle_score_2.append(0)
+                
+            idx_2 = battle_member_2.index(user_name)
+
+            # レアリティごとのスコア加算
+            score = {
+                "N": 1,
+                "R": 2,
+                "SR": 3,
+                "SSR": 5,
+                "UR": 10,
+                "SECRET": 15,
+                "ULT_SECRET": 100,
+            }.get(rarity, 0)
+
+            battle_score_2[idx_2] += score
+
+    save_data()  # データ保存
+
+    count_details = "\n".join(
+        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","ULT_SECRET"]
     )
 
     if gacha_score == n and n>=10:
@@ -548,7 +617,7 @@ async def dgacha_check(ctx):
     count_details = "\n".join(
         f"{rarity}: {user_counts[user_name][rarity]} "
         f"({(user_counts[user_name][rarity] / total_count * 100):.2f}%)"
-        for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
+        for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","ULT_SECRET"]
     )
 
     # レート情報の追加
@@ -575,7 +644,7 @@ async def dgacha_reset(ctx):
             "SSR": 0,
             "UR": 0,
             "SECRET": 0,
-            "???":0,
+            "ULT_SECRET":0,
             "Rate": Rate,
             "coin": coin
             
