@@ -340,7 +340,7 @@ def check_achievements(user, pulled_names, pulled_rarities):
             icon = TIER_ICON.get(value["tier"], "")
 
             unlocked.append(
-                f"{icon}【{value['name']}\n"
+                f"{icon}【{value['name']}】\n"
                 f"{value['description']}"
             )
 
