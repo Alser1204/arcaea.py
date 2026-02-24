@@ -99,6 +99,8 @@ def save_data():
 
 # ユーザーごとのカウントを管理
 user_counts = load_data()
+
+ULT_SECRET = ["!!!!!!! d e e m a n !!!!!!!"]
     
 SECRET = ["マン屁ラップバトル"]
 
@@ -128,7 +130,7 @@ def random_choice():
     elif roll < 0.9999:
         return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
     else:
-        return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "???"
+        return "!!!!!ULTIMATE SECRET!!!!!\n"+ random.choice(ULT_SECRET), "???"
 
 # レアガチャ排出率
 def random_choice_rare():
@@ -142,16 +144,262 @@ def random_choice_rare():
     elif roll < 0.995:
         return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
     else:
-        return "!!!!!ULTIMATE SECRET!!!!!\n!!!!!!! d e e m a n !!!!!!!", "???"
+        return "!!!!!ULTIMATE SECRET!!!!!\n"+ random.choice(ULT_SECRET), "ULT_SECRET"
 
-in_battle = False
-in_battle_2 = False
-battle_member = []
-battle_score = []
-battle_i = 0
-battle_member_2 = []
-battle_score_2 = []
-battle_i_2 = 0
+# ============================
+# ① レアリティ定義
+# ============================
+
+GACHA_POOL = {
+    "N": set(N),
+    "R": set(R),
+    "SR": set(SR),
+    "SSR": set(SSR),
+    "UR": set(UR),
+    "SECRET": set(SECRET),
+    "ULT_SECRET": set(ULT_SECRET)
+}
+
+# ============================
+# ② 実績レア度
+# ============================
+
+TIER_ICON = {
+    "NORMAL": "⚪",
+    "RARE": "🔵",
+    "EPIC": "🟣",
+    "LEGEND": "👑"
+}
+
+# ============================
+# ③ 実績定義
+# ============================
+
+ACHIEVEMENTS = {}
+
+# --- 混合特定キャラセット ---
+ACHIEVEMENTS["H_clab_4"] = {
+    "type": "specific_set",
+    "characters": {"エッチガニ", "毛蟹", "どこにも居場所がカニ", "スケベガニ"},
+    "name": "Hなカニ4選",
+    "description": "Hなカニ4選を揃える",
+    "tier": "LEGEND"
+}
+
+ACHIEVEMENTS["get_SECRET"] = {
+    "type": "specific_set",
+    "characters": {"!!!!!!! d e e m a n !!!!!!!"},
+    "name": "YOU ARE DEEMAN",
+    "description": "deemanを引く",
+    "tier": "LEGEND"
+}
+
+ACHIEVEMENTS["get_ULT_SECRET"] = {
+    "type": "specific_set",
+    "characters": {"マン屁ラップバトル"},
+    "name": "プロマン屁ラップバトラー",
+    "description": "マン屁ラップバトルを引く",
+    "tier": "LEGEND"
+}
+
+# --- 枚数系 ---
+ACHIEVEMENTS["triple_ur"] = {
+    "type": "count_rarity",
+    "rarity": "UR",
+    "count": 3,
+    "name": "URトリプル",
+    "description": "1回のガチャでURを3体引く",
+    "tier": "EPIC"
+}
+
+ACHIEVEMENTS["all_n_10plus"] = {
+    "type": "all_same_rarity",
+    "rarity": "N",
+    "min_pull": 10,
+    "name": "完全爆死",
+    "description": "10連以上で全てNを引く",
+    "tier": "RARE"
+}
+
+ACHIEVEMENTS["first_battle"] = {
+    "type": "first_time",
+    "key": "battle_count",
+    "name": "初陣",
+    "description": "dgacha_battleを初めてプレイする",
+    "tier": "NORMAL"
+}
+
+ACHIEVEMENTS["first_win"] = {
+    "type": "win_count",
+    "count": 1,
+    "name": "初勝利",
+    "description": "dgacha_battleで初勝利する",
+    "tier": "RARE"
+}
+
+ACHIEVEMENTS["achievement_master"] = {
+    "type": "complete_all",
+    "name": "全実績制覇",
+    "description": "すべての実績を獲得する",
+    "tier": "LEGEND"
+}
+
+# ============================
+# ④ 実績判定関数
+# ============================
+
+def check_achievements(user, pulled_names, pulled_rarities):
+
+    user_counts[user].setdefault("Achievements", {})
+    unlocked = []
+
+    pulled_set = set(pulled_names)
+    rarity_counter = Counter(pulled_rarities)
+
+    for key, value in ACHIEVEMENTS.items():
+
+        if user_counts[user]["Achievements"].get(key, False):
+            continue
+
+        success = False
+        achievement_type = value["type"]
+
+        # --- レアリティ完全制覇 ---
+        if achievement_type == "rarity_complete":
+            rarity = value["rarity"]
+            required = value["characters"]
+
+            pulled_target = {
+                name for name in pulled_set
+                if name in GACHA_POOL[rarity]
+            }
+
+            if required.issubset(pulled_target):
+                success = True
+
+        # --- 混合特定セット ---
+        elif achievement_type == "specific_set":
+            if value["characters"].issubset(pulled_set):
+                success = True
+
+        # --- 枚数系 ---
+        elif achievement_type == "count_rarity":
+            if rarity_counter.get(value["rarity"], 0) >= value["count"]:
+                success = True
+                
+        elif achievement_type == "all_same_rarity":
+            target_rarity = value["rarity"]
+            min_pull = value.get("min_pull", 1)
+
+            if len(pulled_rarities) >= min_pull:
+                if all(r == target_rarity for r in pulled_rarities):
+                    success = True
+                    
+        elif achievement_type == "battle_count":
+            if user_counts[user].get("battle_count", 0) >= value["count"]:
+                success = True
+
+        elif achievement_type == "win_count":
+            if user_counts[user].get("win_count", 0) >= value["count"]:
+                success = True
+                
+        elif achievement_type == "complete_all":
+            user_achievements = user_counts[user].get("Achievements", {})
+
+            # コンプリート実績自身を除外
+            total_achievements = [
+                key for key in ACHIEVEMENTS.keys()
+                if ACHIEVEMENTS[key]["type"] != "complete_all"
+            ]
+
+            if all(user_achievements.get(key, False) for key in total_achievements):
+                success = True
+
+        # --- 解放 ---
+        if success:
+            user_counts[user]["Achievements"][key] = True
+            icon = TIER_ICON.get(value["tier"], "")
+
+            unlocked.append(
+                f"{icon}【{value['name']}】({value['tier']})\n"
+                f"{value['description']}"
+            )
+
+    return unlocked
+
+
+# ============================
+# ⑤ ガチャコマンド
+# ============================
+
+@bot.command()
+async def dgacha(ctx, n: int = 10):
+
+    if n > 100:
+        await ctx.send("ガチャの回数は100回以内にしてください。")
+        return
+
+    user_name = ctx.author.name
+    gacha_score = 0
+
+    if user_name not in user_counts:
+        user_counts[user_name] = {
+            "total": 0,
+            "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0,
+            "coin": 0,
+            "battle_count": 0,
+            "win_count": 0,
+            "Achievements": {}
+        }
+
+    results = []
+    pulled_names = []
+    pulled_rarities = []
+
+    for _ in range(n):
+
+        item, rarity = random_choice_rare()
+        item_name = item.split(" ", 1)[1]
+
+        results.append(item)
+        pulled_names.append(item_name)
+        pulled_rarities.append(rarity)
+
+        user_counts[user_name][rarity] += 1
+        user_counts[user_name]["total"] += 1
+
+        score = {
+            "N": 1,
+            "R": 2,
+            "SR": 3,
+            "SSR": 5,
+            "UR": 10
+        }.get(rarity, 0)
+
+        gacha_score += score
+
+    # 実績判定
+    unlocked = check_achievements(
+        user_name,
+        pulled_names,
+        pulled_rarities
+    )
+
+    # 保存
+    save_data()
+
+    # 結果表示
+    await ctx.send(
+        f"{user_name} さんが {n}回 ガチャを引きました。\n\n"
+        f"結果:\n" + "\n".join(results) +
+        f"\n\nスコア: {gacha_score}"
+    )
+
+    # 実績表示
+    for msg in unlocked:
+        await ctx.send(f"🎉 アチーブ解放！\n{msg}")
+        
+        
 
 @bot.command()
 async def dgacha_rare(ctx, n: int = 10):
@@ -249,109 +497,6 @@ async def dgacha_rare(ctx, n: int = 10):
     
     battle_i += 1
     battle_i_2 += 1
-
-
-@bot.command()
-async def dgacha(ctx, n: int = 10):
-    if n>100:
-        await ctx.send("ガチャの回数は100回以内にしてください。\n")
-        return
-    global battle_member, battle_score, in_battle, battle_i
-    global battle_member_2, battle_score_2, in_battle_2, battle_i_2
-    user_name = ctx.author.name  # user_name に変更
-    gacha_score = 0
-
-    # ユーザーのデータがなければ初期化
-    if user_name not in user_counts:
-        user_counts[user_name] = {"total": 0, "N": 0, "R": 0, "SR": 0, "SSR": 0, "UR": 0, "SECRET": 0,"???":0, "Rate":1000, "coin":0}
-
-    results = []
-    for _ in range(n):
-        item, rarity = random_choice()
-        results.append(item)
-
-        if rarity not in user_counts[user_name]:
-            user_counts[user_name][rarity] = 0
-            
-        user_counts[user_name][rarity] += 1
-        user_counts[user_name]["total"] += 1
-
-        if in_battle:
-            if user_name not in battle_member:
-                battle_member.append(user_name)  # user_name を格納
-                battle_score.append(0)
-
-            idx = battle_member.index(user_name)
-
-            # レアリティごとのスコア加算
-            score = {
-                "N": 1,
-                "R": 2,
-                "SR": 3,
-                "SSR": 5,
-                "UR": 10,
-                "SECRET": 15,
-                "???": 100,
-            }.get(rarity, 0)
-
-            battle_score[idx] += score
-
-        score = {
-                "N": 1,
-                "R": 2,
-                "SR": 3,
-                "SSR": 5,
-                "UR": 10,
-                "SECRET": 15,
-                "???": 100,
-            }.get(rarity, 0)
-
-        gacha_score += score
-            
-        if in_battle_2:
-            if user_name not in battle_member_2:
-                battle_member_2.append(user_name)  # user_name を格納
-                battle_score_2.append(0)
-                
-            idx_2 = battle_member_2.index(user_name)
-
-            # レアリティごとのスコア加算
-            score = {
-                "N": 1,
-                "R": 2,
-                "SR": 3,
-                "SSR": 5,
-                "UR": 10,
-                "SECRET": 15,
-                "???": 100,
-            }.get(rarity, 0)
-
-            battle_score_2[idx_2] += score
-
-    save_data()  # データ保存
-
-    count_details = "\n".join(
-        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
-    )
-
-    if gacha_score == n and n>=10:
-            await ctx.send(f"Nが一致です！{round(n*2.5)}のボーナス！")
-            gacha_score += round(n*2.5)
-
-    await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
-                   f"結果:\n{'\n'.join(results)}\n"
-                   f"スコア:{gacha_score}\n")
-    user_counts[user_name]["coin"] += round(gacha_score/10)
-    if in_battle:
-        idx = battle_member.index(user_name)
-        if battle_score[idx] == n and n>=10:
-            await ctx.send(f"Nが一致です！{round(n*2.5)}のボーナス！")
-            battle_score[idx]+=round(n*2.5)
-        
-    
-    battle_i += 1
-    battle_i_2 += 1
-
 
 
 @bot.command()
@@ -495,6 +640,39 @@ async def dgacha_battle(ctx):
         # --------------------------
         for i in range(n):
             user_counts[sorted_member[i]]["Rate"] += rounded_changes[i]
+
+        # ==========================
+        # 参加者の回数加算
+        # ==========================
+        for member in battle_member:
+
+            user_counts.setdefault(member, {})
+            user_counts[member].setdefault("battle_count", 0)
+            user_counts[member].setdefault("win_count", 0)
+            user_counts[member].setdefault("Achievements", {})
+
+            # 参加回数＋1
+            user_counts[member]["battle_count"] += 1
+
+        # ==========================
+        # 勝者の勝利回数加算
+        # ==========================
+        for winner in max_members:
+            user_counts[winner]["win_count"] += 1
+
+        # ==========================
+        # 実績判定
+        # ==========================
+        for member in battle_member:
+
+            unlocked = check_achievements(
+                member,
+                pulled_names=[],
+                pulled_rarities=[]
+            )
+
+            for msg in unlocked:
+                await ctx.send(f"🎉 {member} さんが実績解放！\n{msg}")
 
         # --------------------------
         # 勝者発表
