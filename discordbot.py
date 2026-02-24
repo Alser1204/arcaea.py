@@ -391,7 +391,7 @@ async def dgacha(ctx, n: int = 10):
             "SSR": 0, 
             "UR": 0, 
             "SECRET": 0,
-            "???":0,
+            "ULT_SECRET":0,
             "Rate":1000, 
             "coin":0, 
             "battle_count": 0,
@@ -429,7 +429,7 @@ async def dgacha(ctx, n: int = 10):
                 "SSR": 5,
                 "UR": 10,
                 "SECRET": 15,
-                "???": 100,
+                "ULT_SECRET": 100,
             }.get(rarity, 0)
 
             battle_score[idx] += score
@@ -441,7 +441,7 @@ async def dgacha(ctx, n: int = 10):
                 "SSR": 5,
                 "UR": 10,
                 "SECRET": 15,
-                "???": 100,
+                "ULT_SECRET": 100,
             }.get(rarity, 0)
 
         gacha_score += score
@@ -461,7 +461,7 @@ async def dgacha(ctx, n: int = 10):
                 "SSR": 5,
                 "UR": 10,
                 "SECRET": 15,
-                "???": 100,
+                "ULT_SECRET": 100,
             }.get(rarity, 0)
 
             battle_score_2[idx_2] += score
@@ -476,7 +476,7 @@ async def dgacha(ctx, n: int = 10):
     save_data()  # データ保存
 
     count_details = "\n".join(
-        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","???"]
+        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","ULT_SECRET"]
     )
 
     if gacha_score == n and n>=10:
