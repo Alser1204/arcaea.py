@@ -205,7 +205,7 @@ ACHIEVEMENTS["get_ULT_SECRET"] = {
 # --- 枚数系 ---
 ACHIEVEMENTS["double_SECRET"] = {
     "type": "count_rarity",
-    "rarity": "UR",
+    "rarity": "SECRET",
     "count": 2,
     "name": "SECRET SECRET",
     "description": "1回のガチャでSECRETを二枚引く",
