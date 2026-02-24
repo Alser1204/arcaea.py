@@ -199,17 +199,17 @@ ACHIEVEMENTS["get_ULT_SECRET"] = {
     "characters": {"マン屁ラップバトル"},
     "name": "プロマン屁ラップバトラー",
     "description": "マン屁ラップバトルを引く",
-    "tier": "LEGEND"
+    "tier": "EPIC"
 }
 
 # --- 枚数系 ---
-ACHIEVEMENTS["triple_ur"] = {
+ACHIEVEMENTS["double_SECRET"] = {
     "type": "count_rarity",
     "rarity": "UR",
-    "count": 3,
-    "name": "URトリプル",
-    "description": "1回のガチャでURを3体引く",
-    "tier": "EPIC"
+    "count": 2,
+    "name": "SECRET SECRET",
+    "description": "1回のガチャでSECRETを二枚引く",
+    "tier": "RARE"
 }
 
 ACHIEVEMENTS["all_n_10plus"] = {
@@ -234,7 +234,7 @@ ACHIEVEMENTS["first_win"] = {
     "count": 1,
     "name": "初勝利",
     "description": "dgacha_battleで初勝利する",
-    "tier": "RARE"
+    "tier": "NORMAL"
 }
 
 ACHIEVEMENTS["achievement_master"] = {
@@ -242,6 +242,16 @@ ACHIEVEMENTS["achievement_master"] = {
     "name": "全実績制覇",
     "description": "すべての実績を獲得する",
     "tier": "LEGEND"
+}
+
+ACHIEVEMENTS["ur_double_10pull"] = {
+    "type": "count_rarity_10",   # 枚数系
+    "rarity": "UR",
+    "count": 2,               # 条件: 2枚以上
+    "required_n": 10,         # 10回限定
+    "name": "URダブル",
+    "description": "10連ガチャでURを2枚以上引く",
+    "tier": "EPIC"
 }
 
 # ============================
@@ -287,6 +297,15 @@ def check_achievements(user, pulled_names, pulled_rarities):
             if rarity_counter.get(value["rarity"], 0) >= value["count"]:
                 success = True
                 
+        elif achievement_type == "count_rarity_10":
+            # 10連限定なら pulled_names の長さで判定
+            required_n = value.get("required_n", 0)
+            if required_n > 0 and len(pulled_names) != required_n:
+                continue  # 条件に合わないので判定しない
+        
+            if rarity_counter.get(value["rarity"], 0) >= value["count"]:
+                success = True
+                
         elif achievement_type == "all_same_rarity":
             target_rarity = value["rarity"]
             min_pull = value.get("min_pull", 1)
@@ -321,7 +340,7 @@ def check_achievements(user, pulled_names, pulled_rarities):
             icon = TIER_ICON.get(value["tier"], "")
 
             unlocked.append(
-                f"{icon}【{value['name']}】({value['tier']})\n"
+                f"{icon}【{value['name']}\n"
                 f"{value['description']}"
             )
 
