@@ -373,6 +373,26 @@ battle_score_2 = []
 battle_i_2 = 0
 
 @bot.command()
+async def achievements(ctx):
+    """獲得済み実績だけ表示"""
+    user = ctx.author.name
+
+    if user not in user_counts or "Achievements" not in user_counts[user]:
+        await ctx.send("まだ実績はありません。")
+        return
+
+    unlocked = [
+        ACHIEVEMENTS[key]["name"]
+        for key, got in user_counts[user]["Achievements"].items()
+        if got
+    ]
+
+    if unlocked:
+        await ctx.send("🏆 獲得済み実績:\n" + "\n".join(unlocked))
+    else:
+        await ctx.send("まだ実績はありません。")
+
+@bot.command()
 async def dgacha(ctx, n: int = 10):
     if n>100:
         await ctx.send("ガチャの回数は100回以内にしてください。\n")
