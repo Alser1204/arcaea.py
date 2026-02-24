@@ -254,6 +254,13 @@ ACHIEVEMENTS["ur_double_10pull"] = {
     "tier": "EPIC"
 }
 
+ACHIEVEMENTS["first_pull"] = {
+    "type": "first_pull",
+    "name": "初ガチャ",
+    "description": "初めてガチャを回した",
+    "tier": "NORMAL"
+}
+
 # ============================
 # ④ 実績判定関数
 # ============================
@@ -332,6 +339,11 @@ def check_achievements(user, pulled_names, pulled_rarities):
             ]
 
             if all(user_achievements.get(key, False) for key in total_achievements):
+                success = True
+
+        elif achievement_type == "first_pull":
+            # Achievements にまだ記録がなければ解放
+            if not user_counts[user].get("Achievements", {}).get(key, False):
                 success = True
 
         # --- 解放 ---
