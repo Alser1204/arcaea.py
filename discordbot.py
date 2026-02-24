@@ -476,7 +476,8 @@ async def dgacha(ctx, n: int = 10):
     save_data()  # データ保存
 
     count_details = "\n".join(
-        f"{rarity}: {user_counts[user_name][rarity]}" for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET","ULT_SECRET"]
+        f"{rarity}: {user_counts[user_name].get(rarity, 0)}"
+        for rarity in ["N", "R", "SR", "SSR", "UR", "SECRET", "ULT_SECRET"]
     )
 
     if gacha_score == n and n>=10:
