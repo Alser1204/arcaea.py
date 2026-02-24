@@ -412,63 +412,115 @@ from collections import defaultdict
 
 @bot.command()
 async def dgacha_battle(ctx):
-    global in_battle, battle_member, battle_score, battle_i
-    
+    global in_battle, battle_member, battle_score, battle_i, user_counts
+
+    # ==========================
+    # バトル終了処理
+    # ==========================
     if in_battle:
-        battle_value = []
         in_battle = False
-        max_score = 0
-        max_member = []  # 複数の勝者を保持するリスト
+
+        if len(battle_member) == 0:
+            await ctx.send("参加者がいません。")
+            return
 
         await ctx.send("dgacha_battleが終わりました！\n結果:")
 
+        # スコア表示
         for i in range(len(battle_member)):
             await ctx.send(f"{battle_member[i]}さんのスコア: {battle_score[i]}")
 
-            if battle_score[i] > max_score:  # 新たに最大スコアが見つかった場合
-                max_score = battle_score[i]
-                max_member = [battle_member[i]]  # 勝者をリセットして新たに追加
-            elif battle_score[i] == max_score:  # 同点の場合、勝者リストに追加
-                max_member.append(battle_member[i])
+        # --------------------------
+        # 勝者判定（同点あり）
+        # --------------------------
+        max_score = max(battle_score)
+        max_members = [
+            battle_member[i]
+            for i in range(len(battle_member))
+            if battle_score[i] == max_score
+        ]
 
-        # スコア順にソート
-        sorted_member, sorted_score = zip(*sorted(zip(battle_member, battle_score), key=lambda x: x[1]))
+        # --------------------------
+        # ソート（スコア昇順）
+        # --------------------------
+        sorted_data = sorted(
+            zip(battle_member, battle_score),
+            key=lambda x: x[1]
+        )
 
-        # グループ化して同点者をまとめる
+        sorted_member = [x[0] for x in sorted_data]
+        sorted_score = [x[1] for x in sorted_data]
+
+        n = len(sorted_score)
+        average = sum(sorted_score) / n
+
+        # --------------------------
+        # 同点グループ化
+        # --------------------------
         score_groups = defaultdict(list)
-        for i in range(len(sorted_member)):
-            score_groups[sorted_score[i]].append(sorted_member[i])
+        for idx, score in enumerate(sorted_score):
+            score_groups[score].append(idx)
 
-        # リストに戻す
-        sorted_member = list(sorted_member)
-        sorted_score = list(sorted_score)
-        average = sum(sorted_score) / len(sorted_score)
+        # --------------------------
+        # レート変動計算
+        # --------------------------
+        rate_changes = [0.0] * n
 
-        # 各グループごとにレート変動を計算
-        rank = 0  # 順位カウント
-        for score, members in score_groups.items():
-            # グループ内で同じレート変動を計算
-            value = score - average + 2 * (rank + (len(members) / 2) - len(sorted_score) / 2)
-            for member in members:
-                user_counts[member]["Rate"] += round(value)
-                battle_value.append(value)
-                rank += 1  # 次の順位へ
+        for score, indices in score_groups.items():
 
-        # 最大スコアの持ち主を発表
-        await ctx.send(f"\n{'、'.join(max_member)}さんがスコア{max_score}で勝利です！")
+            group_size = len(indices)
+
+            # 同順位は「平均順位」にする
+            avg_rank = sum(indices) / group_size
+
+            for idx in indices:
+                value = (
+                    (sorted_score[idx] - average)
+                    + 2 * (avg_rank - (n - 1) / 2)
+                )
+                rate_changes[idx] = value
+
+        # --------------------------
+        # 丸め処理（平均保存補正）
+        # --------------------------
+        rounded_changes = [round(v) for v in rate_changes]
+        total_change = sum(rounded_changes)
+
+        # 合計が0になるよう補正
+        if total_change != 0:
+            rounded_changes[-1] -= total_change
+
+        # --------------------------
+        # レート反映
+        # --------------------------
+        for i in range(n):
+            user_counts[sorted_member[i]]["Rate"] += rounded_changes[i]
+
+        # --------------------------
+        # 勝者発表
+        # --------------------------
+        await ctx.send(
+            f"\n{'、'.join(max_members)}さんがスコア{max_score}で勝利です！"
+        )
         await ctx.send("参加者のレートが変動しました！")
 
-        for i in range(len(sorted_member)):
-            await ctx.send(f"{sorted_member[i]}さん {user_counts[sorted_member[i]]['Rate']} ({battle_value[i]:+.2f})")
-        
+        for i in range(n):
+            await ctx.send(
+                f"{sorted_member[i]}さん "
+                f"{user_counts[sorted_member[i]]['Rate']} "
+                f"({rounded_changes[i]:+})"
+            )
+
         return
-    
-    # バトルが始まる場合
+
+    # ==========================
+    # バトル開始処理
+    # ==========================
     await ctx.send("dgacha_battleが始まりました！")
     in_battle = True
     battle_i = 0
-    battle_member = []  # 新しいバトルのためにリセット
-    battle_score = []  # 新しいバトルのためにリセット
+    battle_member = []
+    battle_score = []
 
 
 from collections import defaultdict
