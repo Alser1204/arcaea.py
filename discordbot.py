@@ -108,9 +108,9 @@ N = ["アナニー","チクニー","レイプ","放尿","フェラ","露出プ�
 
 R = ["排便","ロリレイプ","男の娘","ふたなり","ケモ","アナルヒクヒク","オホ声","アヘ顔","緊縛","球体関節","常識改変","ボテ腹","近親相姦","キメセク","首絞め","髪コキ","人外","人形","メカ","義妹","イラマチオ", "毛蟹"]
 
-SR = ["アルマジロのケツマンコ","小笠原祐子","熟女陵辱プレイ","フィギュアぶっかけ","四肢欠損","リョナ","獣姦","超乳","実妹"]
+SR = ["アルマジロのケツマンコ","小笠原祐子","熟女陵辱プレイ","フィギュアぶっかけ","四肢欠損","リョナ","獣姦","超乳","実妹","梅沢富美男のTSマン屁"]
 
-SSR = ["陰毛着火","ゲロモンスター","淫夢","ドラゴンカーセックス","ガナニー","ガンダム","首ちんこ","蟲姦", "梅沢富美男のTSマン屁","ゲップオナサポ","スカトロASMR","複乳", "スケベガニ"]
+SSR = ["陰毛着火","ゲロモンスター","淫夢","ドラゴンカーセックス","ガナニー","ガンダム","首ちんこ","蟲姦","ゲップオナサポ","スカトロASMR","複乳", "スケベガニ"]
 
 UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ","夏井いつき", "エッチガニ"]
 
@@ -186,15 +186,15 @@ ACHIEVEMENTS["H_clab_4"] = {
     "tier": "LEGEND"
 }
 
-ACHIEVEMENTS["get_SECRET"] = {
+ACHIEVEMENTS["get_ULT_SECRET"] = {
     "type": "specific_set",
-    "characters": {"!!!!!!! d e e m a n !!!!!!!"},
+    "characters": {"!!!!!!! d e e m a n !!!!!!!\n"},
     "name": "YOU ARE DEEMAN",
     "description": "deemanを引く",
     "tier": "LEGEND"
 }
 
-ACHIEVEMENTS["get_ULT_SECRET"] = {
+ACHIEVEMENTS["get_SECRET"] = {
     "type": "specific_set",
     "characters": {"マン屁ラップバトル"},
     "name": "プロマン屁ラップバトラー",
@@ -219,14 +219,6 @@ ACHIEVEMENTS["all_n_10plus"] = {
     "name": "完全爆死",
     "description": "10連以上で全てNを引く",
     "tier": "RARE"
-}
-
-ACHIEVEMENTS["first_battle"] = {
-    "type": "first_time",
-    "key": "battle_count",
-    "name": "初陣",
-    "description": "dgacha_battleを初めてプレイする",
-    "tier": "NORMAL"
 }
 
 ACHIEVEMENTS["first_win"] = {
