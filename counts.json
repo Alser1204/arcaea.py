@@ -1,1 +1,210 @@
-{"moon1204.": {"total": 2511, "N": 1264, "R": 746, "SR": 414, "SSR": 67, "UR": 15, "SECRET": 4, "ULT_SECRET": 1, "Rate": 1050.5, "coin": 0}, "1alias": {"total": 3783, "N": 1879, "R": 1149, "SR": 595, "SSR": 115, "UR": 36, "SECRET": 8, "ULT_SECRET": 1, "Rate": 1012.25, "coin": 139}, "kaedewand": {"total": 430, "N": 223, "R": 117, "SR": 75, "SSR": 10, "UR": 4, "SECRET": 1, "ULT_SECRET": 0, "Rate": 1000, "coin": 0}, "frtk__": {"total": 31552, "N": 15977, "R": 9337, "SR": 4990, "SSR": 918, "UR": 271, "SECRET": 59, "ULT_SECRET": 0, "Rate": 944, "coin": 60}, "rabuch1": {"total": 80, "N": 33, "R": 29, "SR": 16, "SSR": 2, "UR": 0, "SECRET": 0, "ULT_SECRET": 0, "Rate": 1000, "coin": 6}, "12shi": {"total": 750, "N": 366, "R": 208, "SR": 131, "SSR": 36, "UR": 6, "SECRET": 3, "ULT_SECRET": 0, "Rate": 993.0, "coin": 133}, "hshnty": {"total": 40, "N": 23, "R": 12, "SR": 3, "SSR": 1, "UR": 0, "SECRET": 1, "ULT_SECRET": 0, "Rate": 1000, "coin": 5}, "rkswand": {"total": 94, "N": 54, "R": 21, "SR": 14, "SSR": 5, "UR": 0, "SECRET": 0, "ULT_SECRET": 0, "Rate": 1002.75, "coin": 0}, "keio_sagamihara": {"total": 61, "N": 35, "R": 14, "SR": 8, "SSR": 2, "UR": 2, "SECRET": 0, "ULT_SECRET": 0, "Rate": 1013.75, "coin": 0}, "aaaatuti": {"total": 60, "N": 37, "R": 13, "SR": 9, "SSR": 1, "UR": 0, "SECRET": 0, "ULT_SECRET": 0, "Rate": 983.75, "coin": 0}, "s2nell": {"total": 10, "N": 4, "R": 4, "SR": 2, "SSR": 0, "UR": 0, "SECRET": 0, "ULT_SECRET": 0, "Rate": 1000, "coin": 0}, "tomo_ppoi": {"total": 50, "N": 26, "R": 16, "SR": 6, "SSR": 2, "UR": 0, "SECRET": 0, "ULT_SECRET": 0, "Rate": 999, "coin": 0}, "aizuuumi": {"total": 100, "N": 44, "R": 33, "SR": 18, "SSR": 3, "UR": 1, "SECRET": 1, "ULT_SECRET": 0, "Rate": 1000, "coin": 20}}
+{
+    "moon1204.": {
+        "total": 2671,
+        "N": 1341,
+        "R": 802,
+        "SR": 436,
+        "SSR": 72,
+        "UR": 15,
+        "SECRET": 4,
+        "ULT_SECRET": 1,
+        "Rate": 1050.5,
+        "coin": 30,
+        "Achievements": {
+            "first_pull": true
+        }
+    },
+    "1alias": {
+        "total": 6473,
+        "N": 3237,
+        "R": 1913,
+        "SR": 1059,
+        "SSR": 196,
+        "UR": 55,
+        "SECRET": 12,
+        "ULT_SECRET": 1,
+        "Rate": 946.25,
+        "coin": 639,
+        "Achievements": {
+            "first_pull": true,
+            "get_SECRET": true,
+            "first_win": true,
+            "H_clab_4": true
+        },
+        "battle_count": 6,
+        "win_count": 1
+    },
+    "kaedewand": {
+        "total": 430,
+        "N": 223,
+        "R": 117,
+        "SR": 75,
+        "SSR": 10,
+        "UR": 4,
+        "SECRET": 1,
+        "ULT_SECRET": 0,
+        "Rate": 1000,
+        "coin": 0
+    },
+    "frtk__": {
+        "total": 45588,
+        "N": 23005,
+        "R": 13528,
+        "SR": 7270,
+        "SSR": 1338,
+        "UR": 361,
+        "SECRET": 85,
+        "ULT_SECRET": 1,
+        "Rate": 1277,
+        "coin": 2608,
+        "Achievements": {
+            "first_pull": true,
+            "first_win": true,
+            "get_ULT_SECRET" = true,
+            "get_SECRET": true,
+            "H_clab_4": true,
+            "double_SECRET": true
+        },
+        "battle_count": 6,
+        "win_count": 3
+    },
+    "rabuch1": {
+        "total": 80,
+        "N": 33,
+        "R": 29,
+        "SR": 16,
+        "SSR": 2,
+        "UR": 0,
+        "SECRET": 0,
+        "ULT_SECRET": 0,
+        "Rate": 1000,
+        "coin": 6
+    },
+    "12shi": {
+        "total": 1160,
+        "N": 568,
+        "R": 330,
+        "SR": 189,
+        "SSR": 58,
+        "UR": 12,
+        "SECRET": 3,
+        "ULT_SECRET": 0,
+        "Rate": 1001.0,
+        "coin": 212,
+        "Achievements": {
+            "first_pull": true,
+            "first_win": true,
+            "H_clab_4": true
+        },
+        "battle_count": 5,
+        "win_count": 2
+    },
+    "hshnty": {
+        "total": 40,
+        "N": 23,
+        "R": 12,
+        "SR": 3,
+        "SSR": 1,
+        "UR": 0,
+        "SECRET": 1,
+        "ULT_SECRET": 0,
+        "Rate": 1000,
+        "coin": 5
+    },
+    "rkswand": {
+        "total": 94,
+        "N": 54,
+        "R": 21,
+        "SR": 14,
+        "SSR": 5,
+        "UR": 0,
+        "SECRET": 0,
+        "ULT_SECRET": 0,
+        "Rate": 1002.75,
+        "coin": 0
+    },
+    "keio_sagamihara": {
+        "total": 61,
+        "N": 35,
+        "R": 14,
+        "SR": 8,
+        "SSR": 2,
+        "UR": 2,
+        "SECRET": 0,
+        "ULT_SECRET": 0,
+        "Rate": 1013.75,
+        "coin": 0
+    },
+    "aaaatuti": {
+        "total": 60,
+        "N": 37,
+        "R": 13,
+        "SR": 9,
+        "SSR": 1,
+        "UR": 0,
+        "SECRET": 0,
+        "ULT_SECRET": 0,
+        "Rate": 983.75,
+        "coin": 0
+    },
+    "s2nell": {
+        "total": 10,
+        "N": 4,
+        "R": 4,
+        "SR": 2,
+        "SSR": 0,
+        "UR": 0,
+        "SECRET": 0,
+        "ULT_SECRET": 0,
+        "Rate": 1000,
+        "coin": 0
+    },
+    "tomo_ppoi": {
+        "total": 50,
+        "N": 26,
+        "R": 16,
+        "SR": 6,
+        "SSR": 2,
+        "UR": 0,
+        "SECRET": 0,
+        "ULT_SECRET": 0,
+        "Rate": 999,
+        "coin": 0
+    },
+    "aizuuumi": {
+        "total": 6810,
+        "N": 3418,
+        "R": 2063,
+        "SR": 1046,
+        "SSR": 210,
+        "UR": 61,
+        "SECRET": 12,
+        "ULT_SECRET": 0,
+        "Rate": 725,
+        "coin": 1251,
+        "Achievements": {
+            "first_pull": true,
+            "get_SECRET": true,
+            "double_SECRET": true
+        },
+        "battle_count": 1,
+        "win_count": 0
+    },
+    "x4lqt_": {
+        "total": 370,
+        "N": 175,
+        "R": 104,
+        "SR": 79,
+        "SSR": 12,
+        "UR": 0,
+        "SECRET": 0,
+        "ULT_SECRET": 0,
+        "Rate": 1000,
+        "coin": 70,
+        "battle_count": 0,
+        "win_count": 0,
+        "Achievements": {
+            "first_pull": true
+        }
+    }
+}
