@@ -60,7 +60,7 @@
         "Achievements": {
             "first_pull": true,
             "first_win": true,
-            "get_ULT_SECRET" = true,
+            "get_ULT_SECRET": true,
             "get_SECRET": true,
             "H_clab_4": true,
             "double_SECRET": true
