@@ -1,36 +1,38 @@
 {
     "moon1204.": {
-        "total": 4751,
-        "N": 2412,
-        "R": 1408,
-        "SR": 761,
-        "SSR": 128,
+        "total": 4851,
+        "N": 2467,
+        "R": 1433,
+        "SR": 775,
+        "SSR": 133,
         "UR": 32,
-        "SECRET": 9,
+        "SECRET": 10,
         "ULT_SECRET": 1,
         "Rate": 1050.5,
         "coin": 421,
         "Achievements": {
             "first_pull": true,
-            "get_RAP_BATTLE": true
+            "get_RAP_BATTLE": true,
+            "get_WoT": true
         }
     },
     "1alias": {
-        "total": 7113,
-        "N": 3560,
-        "R": 2090,
-        "SR": 1177,
-        "SSR": 214,
-        "UR": 59,
+        "total": 7933,
+        "N": 3987,
+        "R": 2332,
+        "SR": 1300,
+        "SSR": 238,
+        "UR": 63,
         "SECRET": 12,
         "ULT_SECRET": 1,
         "Rate": 946.25,
-        "coin": 763,
+        "coin": 907,
         "Achievements": {
             "first_pull": true,
             "get_RAP_BATTLE": true,
             "first_win": true,
-            "H_clab_4": true
+            "H_clab_4": true,
+            "masterbation": true
         },
         "battle_count": 6,
         "win_count": 1
