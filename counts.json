@@ -12,7 +12,7 @@
         "coin": 421,
         "Achievements": {
             "first_pull": true,
-            "get_SECRET": true
+            "get_RAP_BATTLE": true
         }
     },
     "1alias": {
@@ -28,7 +28,7 @@
         "coin": 763,
         "Achievements": {
             "first_pull": true,
-            "get_SECRET": true,
+            "get_RAP_BATTLE": true,
             "first_win": true,
             "H_clab_4": true
         },
@@ -62,7 +62,7 @@
             "first_pull": true,
             "first_win": true,
             "get_ULT_SECRET": true,
-            "get_SECRET": true,
+            "get_RAP_BATTLE": true,
             "H_clab_4": true,
             "double_SECRET": true
         },
@@ -186,7 +186,7 @@
         "Achievements": {
             "first_pull": true,
             "get_ULT_SECRET": true,
-            "get_SECRET": true,
+            "get_RAP_BATTLE": true,
             "double_SECRET": true
         },
         "battle_count": 1,
