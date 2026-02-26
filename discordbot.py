@@ -254,7 +254,7 @@ ACHIEVEMENTS["get_RAP_BATTLE"] = {
 ACHIEVEMENTS["get_WoT"] = {
     "type": "specific_set",
     "characters": {"World pf Tanks"},
-    "name": ARE YOU DEEMAN?,
+    "name": "ARE YOU DEEMAN?",
     "description": "World pf Tanksを引く",
     "tier": "EPIC"
 }
