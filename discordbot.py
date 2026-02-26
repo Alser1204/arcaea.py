@@ -118,19 +118,52 @@ UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ","夏井い�
 def random_choice():
     roll = random.random()
     if roll < 0.50:
-        return "N " + random.choice(N), "N"
+        name = random.choice(N)
+        return f"N {name}", name, "N"
     elif roll < 0.80:
-        return "R " + random.choice(R), "R"
+        name = random.choice(R)
+        return f"R {name}", name, "R"
     elif roll < 0.96:
-        return "SR " + random.choice(SR), "SR"
+        name = random.choice(SR)
+        return f"SR {name}", name, "SR"
     elif roll < 0.99:
-        return "SSR " + random.choice(SSR), "SSR"
+        name = random.choice(SSR)
+        return f"SSR {name}", name, "SSR"
     elif roll < 0.998:
-        return "UR " + random.choice(UR), "UR"
+        name = random.choice(UR)
+        return f"UR {name}", name, "UR"
     elif roll < 0.9999:
-        return "!!!SECRET!!! " + random.choice(SECRET), "SECRET"
+        name = random.choice(SECRET)
+        return f"!!!SECRET!!! {name}", name, "SECRET"
     else:
-        return "!!!!!ULTIMATE SECRET!!!!!\n"+ random.choice(ULT_SECRET), "ULT_SECRET"
+        name = random.choice(ULT_SECRET)
+        return f"!!!!!ULTIMATE SECRET!!!!!\n{name}", name, "ULT_SECRET"
+
+"""デバッグ用確率
+def random_choice():
+    roll = random.random()
+    if roll < 0.50:
+        name = random.choice(N)
+        return f"!!!!!ULTIMATE SECRET!!!!!\n{name}", name, "ULT_SECRET"
+    elif roll < 0.80:
+        name = random.choice(R)
+        return f"R {name}", name, "R"
+    elif roll < 0.96:
+        name = random.choice(SR)
+        return f"SR {name}", name, "SR"
+    elif roll < 0.99:
+        name = random.choice(SSR)
+        return f"SSR {name}", name, "SSR"
+    elif roll < 0.998:
+        name = random.choice(UR)
+        return f"UR {name}", name, "UR"
+    elif roll < 0.9999:
+        name = random.choice(SECRET)
+        return f"!!!SECRET!!! {name}", name, "SECRET"
+    else:
+        name = random.choice(ULT_SECRET)
+        return f"!!!!!ULTIMATE SECRET!!!!!\n{name}", name, "ULT_SECRET"
+"""
 
 # レアガチャ排出率
 def random_choice_rare():
@@ -188,7 +221,7 @@ ACHIEVEMENTS["H_clab_4"] = {
 
 ACHIEVEMENTS["get_ULT_SECRET"] = {
     "type": "specific_set",
-    "characters": {"!!!!!!! d e e m a n !!!!!!!\n"},
+    "characters": {"!!!!!!! d e e m a n !!!!!!!"},
     "name": "YOU ARE DEEMAN",
     "description": "deemanを引く",
     "tier": "LEGEND"
@@ -416,10 +449,9 @@ async def dgacha(ctx, n: int = 10):
     pulled_rarities = []
     for _ in range(n):
 
-        item, rarity = random_choice()
-        item_name = item.split(" ", 1)[1]
+        item_display, item_name, rarity = random_choice()
 
-        results.append(item)
+        results.append(item_display)
         pulled_names.append(item_name)
         pulled_rarities.append(rarity)
 
