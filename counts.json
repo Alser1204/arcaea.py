@@ -208,5 +208,27 @@
         "Achievements": {
             "first_pull": true
         }
+    },
+    "azuki_ba": {
+        "total": 3700,
+        "N": 1750,
+        "R": 1176,
+        "SR": 636,
+        "SSR": 93,
+        "UR": 41,
+        "SECRET": 4,
+        "ULT_SECRET": 0,
+        "Rate": 1000,
+        "coin": 675,
+        "battle_count": 0,
+        "win_count": 0,
+        "Achievements": {
+            "masterbation": true,
+            "first_pull": true,
+            "pain": true,
+            "get_RAP_BATTLE": true,
+            "get_WoT": true,
+            "H_clab_4": true
+        }
     }
 }
