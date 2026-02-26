@@ -113,7 +113,7 @@ SR = ["アルマジロのケツマンコ","小笠原祐子","熟女陵辱プレ�
 SSR = ["陰毛着火","ゲロモンスター","淫夢","ドラゴンカーセックス","ガナニー","ガンダム","首ちんこ","蟲姦","ゲップオナサポ","スカトロASMR","複乳", "スケベガニ"]
 
 UR = ["ジジイの顔面騎乗下痢噴射","メガレックウザ","夏井いつき", "エッチガニ"]
-"""
+
 # 通常排出率
 def random_choice():
     roll = random.random()
@@ -163,6 +163,7 @@ def random_choice():
     else:
         name = random.choice(ULT_SECRET)
         return f"!!!!!ULTIMATE SECRET!!!!!\n{name}", name, "ULT_SECRET"
+"""
 
 # レアガチャ排出率
 def random_choice_rare():
