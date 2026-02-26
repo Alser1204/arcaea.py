@@ -101,8 +101,8 @@ def save_data():
 user_counts = load_data()
 
 ULT_SECRET = ["!!!!!!! d e e m a n !!!!!!!"]
-    
-SECRET = ["マン屁ラップバトル", "World pf Tanks"]
+
+SECRET = ["マン屁ラップバトル", "World of Tanks"]
 
 N = ["アナニー","チクニー","レイプ","放尿","フェラ","露出プレイ","催眠","時間停止","睡眠姦","ソフトSM","おもらし","逆レイプ","手コキ","足コキ","匂い","お姉さん","巨乳","レイプ目","目隠し","貧乳","無乳","授乳手コキ","触手","壁尻","腋コキ","あまあま","ヤンデレ","ツンデレ","クーデレ","サキュバス","唾液","パイズリ","素股","ペド","ロリババア","口内射精","ぶっかけ", "どこにも居場所がカニ"]
 
@@ -253,9 +253,9 @@ ACHIEVEMENTS["get_RAP_BATTLE"] = {
 
 ACHIEVEMENTS["get_WoT"] = {
     "type": "specific_set",
-    "characters": {"World pf Tanks"},
+    "characters": {"World of Tanks"},
     "name": "ARE YOU DEEMAN?",
-    "description": "World pf Tanksを引く",
+    "description": "World of Tanksを引く",
     "tier": "EPIC"
 }
 
