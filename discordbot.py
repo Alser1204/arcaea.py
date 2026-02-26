@@ -139,10 +139,11 @@ def random_choice():
         name = random.choice(ULT_SECRET)
         return f"!!!!!ULTIMATE SECRET!!!!!\n{name}", name, "ULT_SECRET"
 """
+# デバッグ用
 def random_choice():
     roll = random.random()
     if roll < 0.50:
-        name = random.choice(N)
+        name = random.choice(ULT_SECRET)
         return f"!!!!!ULTIMATE SECRET!!!!!\n{name}", name, "ULT_SECRET"
     elif roll < 0.80:
         name = random.choice(R)
