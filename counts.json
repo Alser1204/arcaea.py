@@ -229,7 +229,8 @@
             "first_pull": true,
             "pain": true,
             "get_RAP_BATTLE": true,
-            "H_clab_4": true
+            "H_clab_4": true,
+            "get_WoT": true
         }
     }
 }
