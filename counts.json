@@ -1,17 +1,18 @@
 {
     "moon1204.": {
-        "total": 2671,
-        "N": 1341,
-        "R": 802,
-        "SR": 436,
-        "SSR": 72,
-        "UR": 15,
-        "SECRET": 4,
+        "total": 4751,
+        "N": 2412,
+        "R": 1408,
+        "SR": 761,
+        "SSR": 128,
+        "UR": 32,
+        "SECRET": 9,
         "ULT_SECRET": 1,
         "Rate": 1050.5,
-        "coin": 30,
+        "coin": 421,
         "Achievements": {
-            "first_pull": true
+            "first_pull": true,
+            "get_SECRET": true
         }
     },
     "1alias": {
@@ -47,16 +48,16 @@
         "coin": 0
     },
     "frtk__": {
-        "total": 45879,
-        "N": 23149,
-        "R": 13616,
-        "SR": 7321,
-        "SSR": 1344,
-        "UR": 363,
-        "SECRET": 85,
+        "total": 45989,
+        "N": 23202,
+        "R": 13653,
+        "SR": 7337,
+        "SSR": 1346,
+        "UR": 364,
+        "SECRET": 86,
         "ULT_SECRET": 1,
         "Rate": 1277,
-        "coin": 2660,
+        "coin": 2682,
         "Achievements": {
             "first_pull": true,
             "first_win": true,
