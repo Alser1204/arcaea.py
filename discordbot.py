@@ -710,7 +710,10 @@ async def dbreed(ctx, up: int=1):
     user_counts[user_name]["coin"] -= 50 * up
     user_counts[user_name]["dbreed"]["level"] += gain
 
-    await ctx.send(f"{up}回育成して、レベルが{gain}上がりました！(現在レベル: {user_counts[user_name]["dbreed"]["level"]}")
+    await ctx.send(
+        f"{up}回育成して、レベルが{gain}上がりました！"
+        f"(現在レベル: {user_counts[user_name]['dbreed']['level']})"
+    )
     
     
 prof_0 = [
