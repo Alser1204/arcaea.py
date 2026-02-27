@@ -990,6 +990,7 @@ async def dgacha_check(ctx):
         profile = ""
 
     await ctx.send(f"{profile}{user_name} さんの累計ガチャ結果:\n"
+                   f"レベル: {user_counts[user_name]["dbreed"]["level"]}\n"
                    f"ガチャ回数: {total_count}\n"
                    f"カウント詳細:\n{count_details}")
 
