@@ -1,3 +1,6 @@
+# リログ用
+
+
 from discord.ext import commands, tasks
 import discord
 import os
