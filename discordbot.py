@@ -370,10 +370,6 @@ def check_achievements(user, pulled_names, pulled_rarities):
                 if all(r == target_rarity for r in pulled_rarities):
                     success = True
                     
-        elif achievement_type == "battle_count":
-            if user_counts[user].get("battle_count", 0) >= value["count"]:
-                success = True
-
         elif achievement_type == "win_count":
             if user_counts[user].get("win_count", 0) >= value["count"]:
                 success = True
@@ -465,7 +461,9 @@ async def dgacha(ctx, n: int = 10):
             "coin":0, 
             "battle_count": 0,
             "win_count": 0,
-            "Achievements": {}
+            "Achievements": {},
+            "dbreed": {"level":0},
+            "profile": None
         }
 
     results = []
@@ -551,8 +549,15 @@ async def dgacha(ctx, n: int = 10):
     if gacha_score == n and n>=10:
             await ctx.send(f"Nが一致です！{round(n*2.5)}のボーナス！")
             gacha_score += round(n*2.5)
+            
+    profile_raw = user_counts[user_name].get("profile")
 
-    await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
+    if profile_raw:
+        profile = f"[{profile_raw}]"
+    else:
+        profile = ""
+
+    await ctx.send(f"{profile}{user_name} さんが {n}回 ガチャを引きました。\n"
                    f"結果:\n{'\n'.join(results)}\n"
                    f"スコア:{gacha_score}\n")
     user_counts[user_name]["coin"] += round(gacha_score/10)
@@ -653,8 +658,15 @@ async def dgacha_rare(ctx, n: int = 10):
     if gacha_score == n and n>=10:
             await ctx.send(f"Nが一致です！{round(n*2.5)}のボーナス！")
             gacha_score += round(n*2.5)
+            
+    profile_raw = user_counts[user_name].get("profile")
 
-    await ctx.send(f"{user_name} さんが {n}回 ガチャを引きました。\n"
+    if profile_raw:
+        profile = f"[{profile_raw}]"
+    else:
+        profile = ""
+
+    await ctx.send(f"{profile}{user_name} さんが {n}回 ガチャを引きました。\n"
                    f"結果:\n{'\n'.join(results)}\n"
                    f"スコア:{gacha_score}\n")
     if in_battle:
@@ -667,6 +679,243 @@ async def dgacha_rare(ctx, n: int = 10):
     battle_i += 1
     battle_i_2 += 1
 
+@bot.command()
+async def dbreed(ctx, up: int=1):
+    user_name = ctx.author.name
+
+    if user_name not in user_counts:
+        await ctx.send(f"{user_name} さんのデータが見つかりませんでした。")
+        return
+
+    coin = user_counts[user_name]["coin"]
+
+    if coin < 50:
+        await ctx.send("コインが足りません。")
+        return
+
+    max_up = coin // 50
+
+    if up > max_up:
+        await ctx.send(
+            f"{up}回育成にはコインが足りません。{max_up}回育成します。"
+        )
+        up = max_up
+
+    user_counts[user_name].setdefault("dbreed", {"level": 0})
+
+    gain = 0
+    for i in range(up):
+        gain += random.randint(0, 1)
+
+    user_counts[user_name]["coin"] -= 50 * up
+    user_counts[user_name]["dbreed"]["level"] += gain
+
+    await ctx.send(f"{up}回育成して、レベルが{gain}上がりました！(現在レベル: {user_counts[user_name]["dbreed"]["level"]}")
+    
+    
+prof_0 = [
+    "の",
+    "を",
+    "に",
+    "が",
+    "と",
+    "へ",
+    "で",
+    "や",
+    "より",
+    "まで",
+    "から",
+    "だけ",
+    "ほど",
+    "こそ",
+    "すら",
+    "さえ",
+    "でも",
+    "とか",
+    "って",
+    "なり"
+]
+prof_5 = [
+    "優秀",
+    "有能",
+    "実力派",
+    "堅実",
+    "挑戦者",
+    "達人",
+    "専門家",
+    "実践者",
+    "成長株",
+    "経験豊富"
+]
+prof_10 = N.copy()
+prof_15 = [
+    "上級者",
+    "熟練者",
+    "エース",
+    "第一人者",
+    "成功者",
+    "先駆者",
+    "開拓者",
+    "実力者",
+    "リーダー",
+    "カリスマ"
+]
+prof_20 = R.copy()
+prof_25 = [
+    "天才",
+    "鬼才",
+    "英雄",
+    "覇者",
+    "王者",
+    "怪物",
+    "革命家",
+    "逸材",
+    "猛者",
+    "支配者"
+]
+prof_30 = SR.copy()
+prof_35 = [
+    "神",
+    "神童",
+    "魔王",
+    "覇王",
+    "創造主",
+    "絶対者",
+    "伝説",
+    "超越者",
+    "救世主",
+    "無双"
+]
+prof_40 = SSR.copy()
+prof_45 = [
+    "絶対",
+    "至高",
+    "究極",
+    "最強",
+    "無敵",
+    "圧倒的",
+    "伝説級",
+    "規格外",
+    "完全体",
+    "唯一無二"
+]
+prof_50 = UR.copy()
+prof_60 = SECRET.copy()
+prof_70 = ULT_SECRET.copy()
+
+@bot.command()
+async def dprof(ctx, prof_1: str=None, prof_2: str=None, prof_3: str=None):
+    user_name = ctx.author.name
+
+    # ユーザー存在確認
+    if user_name not in user_counts:
+        await ctx.send(f"{user_name} さんのデータが見つかりませんでした。")
+        return
+
+    # デフォルト作成
+    user_counts[user_name].setdefault("profile", None)
+    user_counts[user_name].setdefault("dbreed", {"level": 0})
+
+    level = user_counts[user_name]["dbreed"]["level"]
+
+    # 引数なし → 現在のプロフィール表示
+    if prof_1 is None and prof_2 is None and prof_3 is None:
+        current = user_counts[user_name]["profile"]
+        if current:
+            await ctx.send(f"現在の称号：{current}")
+        else:
+            await ctx.send("称号はまだ設定されていません。")
+            
+        level = user_counts[user_name]["dbreed"]["level"]
+        unlocking = 5 * (level // 5)
+
+        lines = []
+        lines.append(f"{user_name} の使用可能称号一覧\n")
+        lines.append(f"現在レベル: {level}")
+        lines.append(f"解放帯: Lv{unlocking}\n")
+
+        if unlocking >= 5:
+            lines.append("▼Lv5")
+            lines.append(" / ".join(prof_5))
+            lines.append("")
+
+        if unlocking >= 15:
+            lines.append("▼Lv15")
+            lines.append(" / ".join(prof_15))
+            lines.append("")
+
+        if unlocking >= 25:
+            lines.append("▼Lv25")
+            lines.append(" / ".join(prof_25))
+            lines.append("")
+
+        if unlocking >= 35:
+            lines.append("▼Lv35")
+            lines.append(" / ".join(prof_35))
+            lines.append("")
+
+        if unlocking >= 45:
+            lines.append("▼Lv45")
+            lines.append(" / ".join(prof_45))
+            lines.append("")
+
+        lines.append("▼助詞")
+        lines.append(" / ".join(prof_0))
+
+        text = "\n".join(lines)
+
+        # ファイル書き出し
+        with open("profile_list.txt", "w", encoding="utf-8") as f:
+            f.write(text)
+
+        await ctx.send(file=discord.File("profile_list.txt"))
+        return
+
+    # レベル制限（5刻み）
+    unlocking = 5 * (level // 5)
+
+    # 使える単語をまとめる
+    available_words = []
+    if unlocking >= 5:
+        available_words += prof_5
+    if unlocking >= 10:
+        available_words += prof_10
+    if unlocking >= 15:
+        available_words += prof_15
+    if unlocking >= 20:
+        available_words += prof_20
+    if unlocking >= 25:
+        available_words += prof_25
+    if unlocking >= 30:
+        available_words += prof_30
+    if unlocking >= 35:
+        available_words += prof_35
+    if unlocking >= 40:
+        available_words += prof_40
+    if unlocking >= 45:
+        available_words += prof_45
+    if unlocking >= 50:
+        available_words += prof_50
+    if unlocking >= 60:
+        available_words += prof_60
+    if unlocking >= 70:
+        available_words += prof_70
+
+    available_words += prof_0  # 助詞は常にOK
+
+    # 入力チェック
+    for word in [prof_1, prof_2, prof_3]:
+        if word is not None and word not in available_words:
+            await ctx.send(f"{word} はまだ使用できません。")
+            return
+
+    # 結合
+    profile = f"{prof_1 or ''}{prof_2 or ''}{prof_3 or ''}"
+
+    # 保存
+    user_counts[user_name]["profile"] = profile
+
+    await ctx.send(f"新しい称号：{profile}")
 
 @bot.command()
 async def dgacha_check(ctx):
@@ -691,8 +940,15 @@ async def dgacha_check(ctx):
 
     # レート情報の追加
     count_details += f"\nレート: {user_counts[user_name]['Rate']}\nコイン: {user_counts[user_name]['coin']}\n"
+    
+    profile_raw = user_counts[user_name].get("profile")
 
-    await ctx.send(f"{user_name} さんの累計ガチャ結果:\n"
+    if profile_raw:
+        profile = f"[{profile_raw}]"
+    else:
+        profile = ""
+
+    await ctx.send(f"{profile}{user_name} さんの累計ガチャ結果:\n"
                    f"ガチャ回数: {total_count}\n"
                    f"カウント詳細:\n{count_details}")
 
