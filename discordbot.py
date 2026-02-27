@@ -966,6 +966,8 @@ async def dgacha_check(ctx):
         await ctx.send(f"{user_name} さんのデータが見つかりませんでした。")
         return
 
+    user_counts[user_name].setdefault("dbreed", {"level": 0})
+
     total_count = user_counts[user_name]["total"]
 
     if total_count == 0:
