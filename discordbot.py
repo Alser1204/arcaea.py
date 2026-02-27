@@ -713,7 +713,7 @@ async def dbreed(ctx, up: int=1):
     await ctx.send(
         f"{up}回育成して、レベルが{gain}上がりました！"
         f"(現在レベル: {user_counts[user_name]['dbreed']['level']})"
-        f"(残りコイン: {user_counts[user_name]['dbreed']['coin']})"
+        f"(残りコイン: {user_counts[user_name]['coin']})"
     )
     
     
