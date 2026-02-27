@@ -1,9 +1,9 @@
 {
     "moon1204.": {
-        "total": 4851,
-        "N": 2467,
-        "R": 1433,
-        "SR": 775,
+        "total": 4861,
+        "N": 2473,
+        "R": 1435,
+        "SR": 777,
         "SSR": 133,
         "UR": 32,
         "SECRET": 10,
@@ -14,7 +14,11 @@
             "first_pull": true,
             "get_RAP_BATTLE": true,
             "get_WoT": true
-        }
+        },
+        "dbreed": {
+            "level": 0
+        },
+        "profile": "\u304c\u306a\u306b"
     },
     "1alias": {
         "total": 8183,
@@ -50,16 +54,16 @@
         "coin": 0
     },
     "frtk__": {
-        "total": 46129,
-        "N": 23278,
-        "R": 13686,
-        "SR": 7360,
+        "total": 46139,
+        "N": 23284,
+        "R": 13688,
+        "SR": 7362,
         "SSR": 1352,
         "UR": 366,
         "SECRET": 86,
         "ULT_SECRET": 1,
         "Rate": 1277,
-        "coin": 2710,
+        "coin": 12,
         "Achievements": {
             "first_pull": true,
             "first_win": true,
@@ -69,7 +73,11 @@
             "double_SECRET": true
         },
         "battle_count": 6,
-        "win_count": 3
+        "win_count": 3,
+        "dbreed": {
+            "level": 19
+        },
+        "profile": "\u30ab\u30ea\u30b9\u30de\u30ed\u30ea\u30d0\u30d0\u30a2"
     },
     "rabuch1": {
         "total": 80,
