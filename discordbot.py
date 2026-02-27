@@ -844,25 +844,60 @@ async def dprof(ctx, prof_1: str=None, prof_2: str=None, prof_3: str=None):
             lines.append("▼Lv5")
             lines.append(" / ".join(prof_5))
             lines.append("")
-
+        
+        if unlocking >= 10:
+            lines.append("▼Lv10")
+            lines.append(" / ".join(prof_10))
+            lines.append("")
+        
         if unlocking >= 15:
             lines.append("▼Lv15")
             lines.append(" / ".join(prof_15))
             lines.append("")
-
+        
+        if unlocking >= 20:
+            lines.append("▼Lv20")
+            lines.append(" / ".join(prof_20))
+            lines.append("")
+        
         if unlocking >= 25:
             lines.append("▼Lv25")
             lines.append(" / ".join(prof_25))
             lines.append("")
-
+        
+        if unlocking >= 30:
+            lines.append("▼Lv30")
+            lines.append(" / ".join(prof_30))
+            lines.append("")
+        
         if unlocking >= 35:
             lines.append("▼Lv35")
             lines.append(" / ".join(prof_35))
             lines.append("")
-
+        
+        if unlocking >= 40:
+            lines.append("▼Lv40")
+            lines.append(" / ".join(prof_40))
+            lines.append("")
+        
         if unlocking >= 45:
             lines.append("▼Lv45")
             lines.append(" / ".join(prof_45))
+            lines.append("")
+        
+        if unlocking >= 50:
+            lines.append("▼Lv50")
+            lines.append(" / ".join(prof_50))
+            lines.append("")
+        
+        if unlocking >= 60:
+            lines.append("▼Lv60")
+            lines.append(" / ".join(prof_60))
+            lines.append("")
+        
+        if unlocking >= 70:
+            lines.append("▼Lv70")
+            lines.append(" / ".join(prof_70))
             lines.append("")
 
         lines.append("▼助詞")
