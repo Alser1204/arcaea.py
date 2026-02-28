@@ -9,37 +9,45 @@
         "SECRET": 10,
         "ULT_SECRET": 1,
         "Rate": 1050.5,
-        "coin": 421,
+        "coin": 21,
         "Achievements": {
             "first_pull": true,
             "get_RAP_BATTLE": true,
             "get_WoT": true
         },
         "dbreed": {
-            "level": 0
+            "level": 5
         },
         "profile": "\u304c\u306a\u306b"
     },
     "1alias": {
-        "total": 8183,
-        "N": 4118,
-        "R": 2402,
-        "SR": 1339,
-        "SSR": 246,
-        "UR": 65,
-        "SECRET": 12,
+        "total": 13633,
+        "N": 6805,
+        "R": 4084,
+        "SR": 2192,
+        "SSR": 420,
+        "UR": 106,
+        "SECRET": 25,
         "ULT_SECRET": 1,
         "Rate": 946.25,
-        "coin": 953,
+        "coin": 52,
         "Achievements": {
             "first_pull": true,
             "get_RAP_BATTLE": true,
             "first_win": true,
             "H_clab_4": true,
-            "masterbation": true
+            "masterbation": true,
+            "get_WoT": true,
+            "double_SECRET": true,
+            "pain": true,
+            "ur_double_10pull": true
         },
         "battle_count": 6,
-        "win_count": 1
+        "win_count": 1,
+        "dbreed": {
+            "level": 19
+        },
+        "profile": "\u30a8\u30fc\u30b9\u306e\u30c1\u30af\u30cb\u30fc"
     },
     "kaedewand": {
         "total": 430,
@@ -54,30 +62,31 @@
         "coin": 0
     },
     "frtk__": {
-        "total": 46139,
-        "N": 23284,
-        "R": 13688,
-        "SR": 7362,
-        "SSR": 1352,
-        "UR": 366,
-        "SECRET": 86,
+        "total": 47359,
+        "N": 23911,
+        "R": 14038,
+        "SR": 7555,
+        "SSR": 1390,
+        "UR": 375,
+        "SECRET": 89,
         "ULT_SECRET": 1,
         "Rate": 1277,
-        "coin": 12,
+        "coin": 36,
         "Achievements": {
             "first_pull": true,
             "first_win": true,
             "get_ULT_SECRET": true,
             "get_RAP_BATTLE": true,
             "H_clab_4": true,
-            "double_SECRET": true
+            "double_SECRET": true,
+            "masterbation": true
         },
         "battle_count": 6,
         "win_count": 3,
         "dbreed": {
-            "level": 19
+            "level": 22
         },
-        "profile": "\u30ab\u30ea\u30b9\u30de\u30ed\u30ea\u30d0\u30d0\u30a2"
+        "profile": "\u6bdb\u87f9\u3063\u3066\u30aa\u30db\u58f0"
     },
     "rabuch1": {
         "total": 80,
