@@ -227,15 +227,31 @@ ACHIEVEMENTS["masterbation"] = {
     "characters": {"アナニー", "チクニー", "ビルオナ", "ガナニー"},
     "name": "オナニーズ",
     "description": "オナニーを揃える",
-    "tier": "EPIC"
+    "tier": "RARE"
 }
 
 ACHIEVEMENTS["pain"] = {
     "type": "specific_set",
-    "characters": {"四肢欠損", "リョナ", "陰毛着火", "首ちんこ"},
+    "characters": {"四肢欠損", "リョナ", "陰毛着火", "首ちんこ", "首絞め"},
     "name": "痛そう",
     "description": "痛そうな性癖を揃える",
-    "tier": "EPIC"
+    "tier": "RARE"
+}
+
+ACHIEVEMENTS["burp"] = {
+    "type": "specific_set",
+    "characters": {"ゲップオナサポ"},
+    "name": "「やんやん♪　私だって女の子なんですからぁ♪　そんな期待されてもゲップなんてしませ…っ、げぇ～～～～っぷっ♪」",
+    "description": "ゲップオナサポを引く",
+    "tier": "RARE"
+}
+
+ACHIEVEMENTS["koki"] = {
+    "type": "specific_set",
+    "characters": {"手コキ","足コキ","授乳手コキ", "腋コキ", "髪コキ"},
+    "name": "コキの歌",
+    "description": "コキを揃える",
+    "tier": "RARE"
 }
 
 ACHIEVEMENTS["get_ULT_SECRET"] = {
@@ -269,29 +285,38 @@ ACHIEVEMENTS["double_SECRET"] = {
     "count": 2,
     "name": "SECRET SECRET",
     "description": "1回のガチャでSECRETを二枚引く",
-    "tier": "RARE"
+    "tier": "EPIC"
+}
+
+ACHIEVEMENTS["8_SSR"] = {
+    "type": "count_rarity",
+    "rarity": "SSR",
+    "count": 8,
+    "name": "変な性癖してますね。",
+    "description": "1回のガチャでSSRを8枚引く",
+    "tier": "EPIC"
 }
 
 ACHIEVEMENTS["all_n_10plus"] = {
     "type": "all_same_rarity",
     "rarity": "N",
     "min_pull": 10,
-    "name": "完全爆死",
+    "name": "大爆死",
     "description": "10連以上で全てNを引く",
-    "tier": "RARE"
+    "tier": "NORMAL"
 }
 
 ACHIEVEMENTS["first_win"] = {
     "type": "win_count",
     "count": 1,
-    "name": "初勝利",
+    "name": "dgacha_battler",
     "description": "dgacha_battleで初勝利する",
     "tier": "NORMAL"
 }
 
 ACHIEVEMENTS["achievement_master"] = {
     "type": "complete_all",
-    "name": "全実績制覇",
+    "name": "トロフィーコンプリート",
     "description": "すべての実績を獲得する",
     "tier": "LEGEND"
 }
@@ -301,14 +326,14 @@ ACHIEVEMENTS["ur_double_10pull"] = {
     "rarity": "UR",
     "count": 2,               # 条件: 2枚以上
     "required_n": 10,         # 10回限定
-    "name": "URダブル",
+    "name": "URお徳用セット",
     "description": "10連ガチャでURを2枚以上引く",
-    "tier": "EPIC"
+    "tier": "LEGEND"
 }
 
 ACHIEVEMENTS["first_pull"] = {
     "type": "first_pull",
-    "name": "初ガチャ",
+    "name": "dgachaへようこそ",
     "description": "初めてガチャを回した",
     "tier": "NORMAL"
 }
