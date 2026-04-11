@@ -1,6 +1,14 @@
 # Pythonの公式イメージをベースにする
 FROM python:3.12-slim
 
+# MeCabとIPAdicをインストール
+RUN apt-get update && apt-get install -y \
+    mecab \
+    libmecab-dev \
+    mecab-ipadic-utf8 \
+    swig \
+    && apt-get clean
+
 # 作業ディレクトリを作成
 WORKDIR /app
 
