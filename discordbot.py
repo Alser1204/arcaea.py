@@ -3307,7 +3307,7 @@ def get_last_char(word):
 # =========================
 # MeCab初期化
 # =========================
-mecab = MeCab.Tagger()
+mecab = MeCab.Tagger("-d /var/lib/mecab/dic/ipadic-utf8")
 
 def get_reading_mecab(word):
     """MeCabで単語の読み（ひらがな）を取得。取得できなければ入力をそのまま正規化して返す"""
