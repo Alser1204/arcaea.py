@@ -2,4 +2,5 @@ discord.py
 Pillow
 python-dotenv
 matplotlib
+mecab-python3
 jaconv
