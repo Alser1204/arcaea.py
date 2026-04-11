@@ -1384,7 +1384,7 @@ async def potential(ctx: commands.context, const: float, score: float) -> None:
             await ctx.send(potential)
 
 
-@bot.command(aliases=["s"])
+@bot.command()
 async def skip(ctx):
     global skip_flag
     skip_flag = True
@@ -3258,6 +3258,167 @@ async def anafinish(ctx):
     else:
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
+# =========================
+# 小文字 → 大文字
+# =========================
+SMALL_TO_LARGE = {
+    "ぁ": "あ", "ぃ": "い", "ぅ": "う", "ぇ": "え", "ぉ": "お",
+    "ゃ": "や", "ゅ": "ゆ", "ょ": "よ",
+    "っ": "つ"
+}
 
+# =========================
+# 母音変換
+# =========================
+def get_vowel(char):
+    table = {
+        "あ": "あ","か": "あ","さ": "あ","た": "あ","な": "あ","は": "あ","ま": "あ","や": "あ","ら": "あ","わ": "あ",
+        "い": "い","き": "い","し": "い","ち": "い","に": "い","ひ": "い","み": "い","り": "い",
+        "う": "う","く": "う","す": "う","つ": "う","ぬ": "う","ふ": "う","む": "う","ゆ": "う","る": "う",
+        "え": "え","け": "え","せ": "え","て": "え","ね": "え","へ": "え","め": "え","れ": "え",
+        "お": "お","こ": "お","そ": "お","と": "お","の": "お","ほ": "お","も": "お","よ": "お","ろ": "お"
+    }
+    return table.get(char, char)
+
+# =========================
+# 正規化
+# =========================
+def normalize(word):
+    word = jaconv.kata2hira(word)
+
+    result = []
+    for ch in word:
+        if ch in SMALL_TO_LARGE:
+            ch = SMALL_TO_LARGE[ch]
+
+        if ch == "ー" and result:
+            ch = get_vowel(result[-1])
+
+        result.append(ch)
+
+    return "".join(result)
+
+def get_first_char(word):
+    return normalize(word)[0]
+
+def get_last_char(word):
+    return normalize(word)[-1]
+
+# =========================
+# 辞書
+# =========================
+def load_nouns(path):
+    nouns = []
+
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            cols = line.strip().split(",")
+
+            if len(cols) < 3:
+                continue
+
+            surface = cols[0]
+            reading = cols[1]
+            pos = cols[2]
+
+            if pos.startswith("名詞") and "一般" in pos:
+                if reading == "*":
+                    continue
+
+                reading_hira = normalize(reading)
+
+                if reading_hira.endswith("ん"):
+                    continue
+
+                nouns.append((surface, reading_hira))
+
+    return nouns
+
+def build_index(nouns):
+    index = {}
+
+    for surface, reading in nouns:
+        first = reading[0]
+
+        if first not in index:
+            index[first] = []
+
+        index[first].append((surface, reading))
+
+    return index
+
+def choose_word(prev_word, index, used):
+    last_char = get_last_char(prev_word)
+
+    if last_char not in index:
+        return None
+
+    candidates = index[last_char]
+    candidates = [w for w in candidates if w[0] not in used]
+
+    if not candidates:
+        return None
+
+    return random.choice(candidates)
+
+# =========================
+# 初期化
+# =========================
+nouns = load_nouns("dictionary.csv")
+index = build_index(nouns)
+
+# =========================
+# コマンド
+# =========================
+@bot.command(aliases=["s"])
+async def shiritori(ctx, *, word: str):
+    channel_id = ctx.channel.id
+
+    # ゲーム取得 or 作成
+    if channel_id not in games:
+        games[channel_id] = {
+            "last_word": None,
+            "used": set()
+        }
+
+    game = games[channel_id]
+
+    # 初回
+    if game["last_word"] is None:
+        game["last_word"] = word
+        game["used"] = {word}
+        await ctx.send(f"スタート！次は「{get_last_char(word)}」から！")
+        return
+
+    # 重複チェック（先にやる）
+    if word in game["used"]:
+        await ctx.send("その単語はもう使われてるよ")
+        return
+
+    # 接続チェック
+    if get_first_char(word) != get_last_char(game["last_word"]):
+        await ctx.send("つながってないよ")
+        return
+
+    # ん判定
+    if get_last_char(word) == "ん":
+        await ctx.send("あなたの負け！（ん）")
+        games[channel_id] = {"last_word": None, "used": set()}
+        return
+
+    game["used"].add(word)
+
+    # botのターン
+    bot_word = choose_word(word, index, game["used"])
+
+    if not bot_word:
+        await ctx.send("負けました…")
+        games[channel_id] = {"last_word": None, "used": set()}
+        return
+
+    game["used"].add(bot_word[0])
+    game["last_word"] = bot_word[0]
+
+    await ctx.send(bot_word[0])
 
 bot.run(TOKEN)
