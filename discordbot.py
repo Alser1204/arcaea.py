@@ -18,6 +18,7 @@ import json
 import datetime
 from discord.utils import escape_markdown
 import csv
+import jaconv
 
 # サーバーごとのデフォルト設定を保持する辞書
 server_settings = {}
