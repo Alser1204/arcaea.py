@@ -7,11 +7,13 @@ RUN apt-get update && apt-get install -y \
     swig \
     && apt-get clean
 
+# mecabrcのシンボリックリンクを作成
+RUN ln -s /etc/mecabrc /usr/local/etc/mecabrc
+
 WORKDIR /app
 
 COPY requirements.txt .
 
-# キャッシュを無効化するためにupgradeも追加
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
