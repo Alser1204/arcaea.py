@@ -3259,6 +3259,9 @@ async def anafinish(ctx):
     else:
         await ctx.send("現在、このチャンネルで進行中のゲームはありません。")
 
+import MeCab
+import csv
+
 # =========================
 # 小文字 → 大文字
 # =========================
@@ -3286,17 +3289,13 @@ def get_vowel(char):
 # =========================
 def normalize(word):
     word = jaconv.kata2hira(word)
-
     result = []
     for ch in word:
         if ch in SMALL_TO_LARGE:
             ch = SMALL_TO_LARGE[ch]
-
         if ch == "ー" and result:
             ch = get_vowel(result[-1])
-
         result.append(ch)
-
     return "".join(result)
 
 def get_first_char(word):
@@ -3306,60 +3305,75 @@ def get_last_char(word):
     return normalize(word)[-1]
 
 # =========================
-# 辞書
+# MeCab初期化
+# =========================
+mecab = MeCab.Tagger()
+
+def get_reading_mecab(word):
+    """MeCabで単語の読み（ひらがな）を取得。取得できなければ入力をそのまま正規化して返す"""
+    node = mecab.parseToNode(word)
+    readings = []
+    while node:
+        if node.surface == "":
+            node = node.next
+            continue
+        features = node.feature.split(",")
+        reading = features[7] if len(features) > 7 and features[7] != "*" else node.surface
+        readings.append(jaconv.kata2hira(reading))
+        node = node.next
+    if readings:
+        return normalize("".join(readings))
+    return normalize(word)
+
+# =========================
+# 辞書読み込み（IPAdic CSV）
+# IPAdicのCSV列: 表層形,左文脈ID,右文脈ID,コスト,品詞,品詞細分類1,品詞細分類2,品詞細分類3,活用型,活用形,原形,読み,発音
 # =========================
 def load_nouns(path):
     nouns = []
-
     with open(path, encoding="utf-8") as f:
-        for line in f:
-            cols = line.strip().split(",")
+        reader = csv.reader(f)
+        for cols in reader:
+            if len(cols) < 12:
+                continue
+            surface = cols[0]
+            pos     = cols[4]
+            pos_sub = cols[5]
+            reading = cols[11]
 
-            if len(cols) < 3:
+            if pos != "名詞":
+                continue
+            if pos_sub not in ("一般", "固有名詞", "サ変接続"):
+                continue
+            if reading in ("*", ""):
                 continue
 
-            surface = cols[0]
-            reading = cols[1]
-            pos = cols[2]
+            reading_hira = normalize(reading)
 
-            if pos.startswith("名詞") and "一般" in pos:
-                if reading == "*":
-                    continue
+            if reading_hira.endswith("ん"):
+                continue
+            if len(reading_hira) < 2:
+                continue
 
-                reading_hira = normalize(reading)
-
-                if reading_hira.endswith("ん"):
-                    continue
-
-                nouns.append((surface, reading_hira))
-
+            nouns.append((surface, reading_hira))
     return nouns
 
 def build_index(nouns):
     index = {}
-
     for surface, reading in nouns:
         first = reading[0]
-
         if first not in index:
             index[first] = []
-
         index[first].append((surface, reading))
-
     return index
 
-def choose_word(prev_word, index, used):
-    last_char = get_last_char(prev_word)
-
+def choose_word(prev_reading, index, used):
+    last_char = get_last_char(prev_reading)
     if last_char not in index:
         return None
-
-    candidates = index[last_char]
-    candidates = [w for w in candidates if w[0] not in used]
-
+    candidates = [w for w in index[last_char] if w[0] not in used]
     if not candidates:
         return None
-
     return random.choice(candidates)
 
 # =========================
@@ -3375,51 +3389,74 @@ index = build_index(nouns)
 async def shiritori(ctx, *, word: str):
     channel_id = ctx.channel.id
 
-    # ゲーム取得 or 作成
     if channel_id not in games:
         games[channel_id] = {
             "last_word": None,
+            "last_reading": None,
             "used": set()
         }
 
     game = games[channel_id]
 
-    # 初回
+    # ========== 初回 ==========
     if game["last_word"] is None:
+        reading = get_reading_mecab(word)
+        if reading.endswith("ん"):
+            await ctx.send("最初から「ん」で終わる単語はだめだよ")
+            return
+
         game["last_word"] = word
+        game["last_reading"] = reading
         game["used"] = {word}
-        await ctx.send(f"スタート！次は「{get_last_char(word)}」から！")
+        await ctx.send(f"スタート！「{word}」（{reading}）\n次は「{get_last_char(reading)}」から！")
         return
 
-    # 重複チェック（先にやる）
+    # ========== 重複チェック ==========
     if word in game["used"]:
         await ctx.send("その単語はもう使われてるよ")
         return
 
-    # 接続チェック
-    if get_first_char(word) != get_last_char(game["last_word"]):
-        await ctx.send("つながってないよ")
+    # ========== 読み取得 ==========
+    reading = get_reading_mecab(word)
+
+    # ========== 接続チェック ==========
+    if get_first_char(reading) != get_last_char(game["last_reading"]):
+        await ctx.send(f"「{get_last_char(game['last_reading'])}」から始まる単語を言ってね")
         return
 
-    # ん判定
-    if get_last_char(word) == "ん":
-        await ctx.send("あなたの負け！（ん）")
-        games[channel_id] = {"last_word": None, "used": set()}
+    # ========== ん判定 ==========
+    if get_last_char(reading) == "ん":
+        await ctx.send(f"「{word}」（{reading}）→ あなたの負け！（ん）")
+        games[channel_id] = {"last_word": None, "last_reading": None, "used": set()}
         return
 
     game["used"].add(word)
+    game["last_reading"] = reading
+    game["last_word"] = word
 
-    # botのターン
-    bot_word = choose_word(word, index, game["used"])
+    # ========== Botのターン ==========
+    bot_word = choose_word(reading, index, game["used"])
 
     if not bot_word:
-        await ctx.send("負けました…")
-        games[channel_id] = {"last_word": None, "used": set()}
+        await ctx.send("負けました…（次の単語が見つからない）")
+        games[channel_id] = {"last_word": None, "last_reading": None, "used": set()}
         return
 
     game["used"].add(bot_word[0])
     game["last_word"] = bot_word[0]
+    game["last_reading"] = bot_word[1]
 
-    await ctx.send(bot_word[0])
+    await ctx.send(f"{bot_word[0]}（{bot_word[1]}）\n次は「{get_last_char(bot_word[1])}」から！")
+
+@bot.command()
+async def shiritori_end(ctx):
+    """しりとりを強制終了"""
+    channel_id = ctx.channel.id
+    if channel_id in games:
+        games.pop(channel_id)
+        await ctx.send("しりとりを終了しました")
+    else:
+        await ctx.send("進行中のしりとりはありません")
+
 
 bot.run(TOKEN)
