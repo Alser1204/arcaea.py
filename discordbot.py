@@ -3356,10 +3356,15 @@ def load_nouns(path):
                 continue
 
             nouns.append((surface, reading_hira))
-            nouns = load_nouns("dictionary.csv")
-            print(f"読み込んだ名詞数: {len(nouns)}")  # ← 追加
-            index = build_index(nouns)
-            print(f"インデックスのキー数: {len(index)}")  # ← 追加
+            try:
+                nouns = load_nouns("dictionary.csv")
+                print(f"読み込んだ名詞数: {len(nouns)}")
+                index = build_index(nouns)
+                print(f"インデックスのキー数: {len(index)}")
+            except Exception as e:
+                print(f"辞書読み込みエラー: {e}")
+                nouns = []
+                index = {}
 
     return nouns
 
