@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     libmecab-dev \
     mecab-ipadic-utf8 \
     swig \
+    git \
     && apt-get clean
 
 RUN git clone --depth 1 https://github.com/taku910/mecab.git /tmp/mecab && \
