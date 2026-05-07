@@ -3356,17 +3356,21 @@ def load_nouns(path):
                 continue
 
             nouns.append((surface, reading_hira))
-            try:
-                nouns = load_nouns("dictionary.csv")
-                print(f"読み込んだ名詞数: {len(nouns)}")
-                index = build_index(nouns)
-                print(f"インデックスのキー数: {len(index)}")
-            except Exception as e:
-                print(f"辞書読み込みエラー: {e}")
-                nouns = []
-                index = {}
 
-    return nouns
+    return nouns  # ← ここで返す
+
+# =========================
+# 初期化（グローバルスコープ）
+# =========================
+try:
+    nouns = load_nouns("dictionary.csv")
+    print(f"読み込んだ名詞数: {len(nouns)}")
+    index = build_index(nouns)
+    print(f"インデックスのキー数: {len(index)}")
+except Exception as e:
+    print(f"辞書読み込みエラー: {e}")
+    nouns = []
+    index = {}
 
 def build_index(nouns):
     index = {}
@@ -3412,7 +3416,7 @@ async def shiritori(ctx, *, word: str):
     if game["last_word"] is None:
         reading = get_reading_mecab(word)
         if reading.endswith("ん"):
-            await ctx.send("最初から「ん」で終わる単語はだめだよ")
+            await ctx.send("最初から「ん」で終わる単語はだめだよ～")
             return
 
         game["last_word"] = word
