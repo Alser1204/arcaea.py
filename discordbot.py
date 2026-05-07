@@ -3325,6 +3325,24 @@ def get_reading_mecab(word):
         return normalize("".join(readings))
     return normalize(word)
 
+def build_index(nouns):
+    index = {}
+    for surface, reading in nouns:
+        first = reading[0]
+        if first not in index:
+            index[first] = []
+        index[first].append((surface, reading))
+    return index
+
+def choose_word(prev_reading, index, used):
+    last_char = get_last_char(prev_reading)
+    if last_char not in index:
+        return None
+    candidates = [w for w in index[last_char] if w[0] not in used]
+    if not candidates:
+        return None
+    return random.choice(candidates)
+
 # =========================
 # 辞書読み込み（IPAdic CSV）
 # IPAdicのCSV列: 表層形,左文脈ID,右文脈ID,コスト,品詞,品詞細分類1,品詞細分類2,品詞細分類3,活用型,活用形,原形,読み,発音
@@ -3378,24 +3396,6 @@ except Exception as e:
     print(f"辞書読み込みエラー: {e}")
     nouns = []
     index = {}
-
-def build_index(nouns):
-    index = {}
-    for surface, reading in nouns:
-        first = reading[0]
-        if first not in index:
-            index[first] = []
-        index[first].append((surface, reading))
-    return index
-
-def choose_word(prev_reading, index, used):
-    last_char = get_last_char(prev_reading)
-    if last_char not in index:
-        return None
-    candidates = [w for w in index[last_char] if w[0] not in used]
-    if not candidates:
-        return None
-    return random.choice(candidates)
 
 # =========================
 # 初期化
