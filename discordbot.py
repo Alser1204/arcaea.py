@@ -3396,12 +3396,21 @@ def choose_word(prev_reading, index, used):
 nouns = load_nouns("dictionary.csv")
 index = build_index(nouns)
 
+@bot.command()
+async def sdebug(ctx):
+    await ctx.send(f"名詞数: {len(nouns)}\nインデックスキー数: {len(index)}")
+
 # =========================
 # コマンド
 # =========================
 @bot.command(aliases=["s"])
-async def shiritori(ctx, *, word: str):
+async def shiritori(ctx, *, word: str = None):
     channel_id = ctx.channel.id
+
+    # 引数なしで呼ばれたらヘルプを表示
+    if word is None:
+        await ctx.send("使い方: `!shiritori <単語>` でしりとりを始めるよ！\n例: `!shiritori りんご`")
+        return
 
     if channel_id not in games:
         games[channel_id] = {
