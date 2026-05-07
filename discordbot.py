@@ -3331,14 +3331,14 @@ def get_reading_mecab(word):
 # =========================
 import glob
 
-def load_nouns_from_ipadic(dic_dir="/var/lib/mecab/dic/ipadic-utf8"):
+def load_nouns_from_ipadic(dic_dir="/app/ipadic_csv"):
     nouns = []
     csv_files = glob.glob(f"{dic_dir}/*.csv")
     print(f"[INFO] CSVファイル数: {len(csv_files)}")
     
     for csv_path in csv_files:
         try:
-            with open(csv_path, encoding="euc-jp") as f:  # IPAdicはEUC-JP
+            with open(csv_path, encoding="euc-jp") as f:
                 reader = csv.reader(f)
                 for cols in reader:
                     if len(cols) < 12:
@@ -3369,9 +3369,11 @@ def load_nouns_from_ipadic(dic_dir="/var/lib/mecab/dic/ipadic-utf8"):
     print(f"[INFO] load_nouns完了: {len(nouns)}件")
     return nouns
 
+# 初期化
 try:
     nouns = load_nouns_from_ipadic()
     index = build_index(nouns)
+    print(f"インデックスのキー数: {len(index)}")
 except Exception as e:
     print(f"辞書読み込みエラー: {e}")
     nouns = []
@@ -3398,8 +3400,8 @@ def choose_word(prev_reading, index, used):
 # =========================
 # 初期化
 # =========================
-nouns = load_nouns_from_ipadic("dictionary.csv")
-index = build_index(nouns)
+# nouns = load_nouns_from_ipadic("dictionary.csv")
+# index = build_index(nouns)
 
 @bot.command()
 async def sdebug(ctx):
