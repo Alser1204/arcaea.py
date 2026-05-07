@@ -3398,7 +3398,7 @@ def choose_word(prev_reading, index, used):
 # =========================
 # 初期化
 # =========================
-nouns = load_nouns("dictionary.csv")
+nouns = load_nouns_from_ipadic("dictionary.csv")
 index = build_index(nouns)
 
 @bot.command()
