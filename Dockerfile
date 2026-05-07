@@ -7,6 +7,11 @@ RUN apt-get update && apt-get install -y \
     swig \
     && apt-get clean
 
+RUN git clone --depth 1 https://github.com/taku910/mecab.git /tmp/mecab && \
+    mkdir -p /app/ipadic_csv && \
+    cp /tmp/mecab/mecab-ipadic/*.csv /app/ipadic_csv/ && \
+    rm -rf /tmp/mecab
+
 # mecabrcのシンボリックリンクを作成
 RUN ln -s /etc/mecabrc /usr/local/etc/mecabrc
 
