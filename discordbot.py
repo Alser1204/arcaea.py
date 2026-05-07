@@ -3329,44 +3329,49 @@ def get_reading_mecab(word):
 # 辞書読み込み（IPAdic CSV）
 # IPAdicのCSV列: 表層形,左文脈ID,右文脈ID,コスト,品詞,品詞細分類1,品詞細分類2,品詞細分類3,活用型,活用形,原形,読み,発音
 # =========================
-def load_nouns(path):
+import glob
+
+def load_nouns_from_ipadic(dic_dir="/var/lib/mecab/dic/ipadic-utf8"):
     nouns = []
-    with open(path, encoding="utf-8") as f:
-        reader = csv.reader(f)
-        for cols in reader:
-            if len(cols) < 12:
-                continue
-            surface = cols[0]
-            pos     = cols[4]
-            pos_sub = cols[5]
-            reading = cols[11]
+    csv_files = glob.glob(f"{dic_dir}/*.csv")
+    print(f"[INFO] CSVファイル数: {len(csv_files)}")
+    
+    for csv_path in csv_files:
+        try:
+            with open(csv_path, encoding="euc-jp") as f:  # IPAdicはEUC-JP
+                reader = csv.reader(f)
+                for cols in reader:
+                    if len(cols) < 12:
+                        continue
+                    surface = cols[0]
+                    pos     = cols[4]
+                    pos_sub = cols[5]
+                    reading = cols[11]
 
-            if pos != "名詞":
-                continue
-            if pos_sub not in ("一般", "固有名詞", "サ変接続"):
-                continue
-            if reading in ("*", ""):
-                continue
+                    if pos != "名詞":
+                        continue
+                    if pos_sub not in ("一般", "固有名詞", "サ変接続"):
+                        continue
+                    if reading in ("*", ""):
+                        continue
 
-            reading_hira = normalize(reading)
+                    reading_hira = normalize(reading)
 
-            if reading_hira.endswith("ん"):
-                continue
-            if len(reading_hira) < 2:
-                continue
+                    if reading_hira.endswith("ん"):
+                        continue
+                    if len(reading_hira) < 2:
+                        continue
 
-            nouns.append((surface, reading_hira))
+                    nouns.append((surface, reading_hira))
+        except Exception as e:
+            print(f"[WARN] {csv_path} 読み込み失敗: {e}")
 
-    return nouns  # ← ここで返す
+    print(f"[INFO] load_nouns完了: {len(nouns)}件")
+    return nouns
 
-# =========================
-# 初期化（グローバルスコープ）
-# =========================
 try:
-    nouns = load_nouns("dictionary.csv")
-    print(f"読み込んだ名詞数: {len(nouns)}")
+    nouns = load_nouns_from_ipadic()
     index = build_index(nouns)
-    print(f"インデックスのキー数: {len(index)}")
 except Exception as e:
     print(f"辞書読み込みエラー: {e}")
     nouns = []
