@@ -3405,6 +3405,12 @@ index = build_index(nouns)
 async def sdebug(ctx):
     await ctx.send(f"名詞数: {len(nouns)}\nインデックスキー数: {len(index)}")
 
+@bot.command()
+async def sdebug2(ctx):
+    import os, glob
+    files = glob.glob("/var/lib/mecab/dic/ipadic-utf8/*")
+    await ctx.send(f"```{str(files[:10])}```")
+
 # =========================
 # コマンド
 # =========================
